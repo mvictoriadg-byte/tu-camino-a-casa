@@ -68,9 +68,12 @@ const Dashboard = ({ result }: DashboardProps) => {
     totalMonthlyDebts,
     numBuyers,
     userProfile,
+    mortgagePercent,
+    pricePerSqm,
+    sqm,
   } = result;
 
-  const propertyDesc = `${propertyTypeLabels[preferences.propertyType] || preferences.propertyType} · ${preferences.size} m² · ${preferences.rooms} hab · ${zoneLabels[preferences.zone] || preferences.zone}`;
+  const propertyDesc = `${propertyTypeLabels[preferences.propertyType] || preferences.propertyType} · ${sqm} m² · ${preferences.rooms} hab · ${zoneLabels[preferences.zone] || preferences.zone}`;
 
   const displayYears = yearsToSave === 0 ? "¡Ya!" : yearsToSave === Infinity ? "—" : `~${yearsToSave} años`;
   const displayMonths = monthsToSave <= 0 ? "" : monthsToSave === -1 ? "" : `${monthsToSave} meses`;

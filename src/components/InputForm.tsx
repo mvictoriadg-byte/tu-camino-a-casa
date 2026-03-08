@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -21,12 +22,12 @@ import {
   BedDouble,
   MapPin,
   Wrench,
-  Calendar,
   Building2,
   User,
   Briefcase,
   CreditCard,
   Users,
+  Percent,
 } from "lucide-react";
 
 interface InputFormProps {
@@ -44,11 +45,11 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
   const [numBuyers, setNumBuyers] = useState("1");
   const [coBuyers, setCoBuyers] = useState<{ income: string; savings: string; monthlySavings: string; monthlyDebts: string }[]>([]);
   const [propertyType, setPropertyType] = useState("");
-  const [size, setSize] = useState("");
+  const [size, setSize] = useState(70);
   const [rooms, setRooms] = useState("");
   const [zone, setZone] = useState("");
   const [reformState, setReformState] = useState("");
-  const [timeline, setTimeline] = useState("");
+  const [mortgagePercent, setMortgagePercent] = useState(80);
 
   const handleNumBuyersChange = (val: string) => {
     setNumBuyers(val);
@@ -68,7 +69,7 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!city || !age || !employmentStatus || !income || !savings || !monthlySavings || !propertyType || !size || !rooms || !zone || !reformState || !timeline)
+    if (!city || !age || !employmentStatus || !income || !savings || !monthlySavings || !propertyType || !rooms || !zone || !reformState)
       return;
 
     const parsedCoBuyers: CoBuyer[] = coBuyers.map(cb => ({
@@ -86,9 +87,10 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
       savings: Number(savings),
       monthlySavings: Number(monthlySavings),
       monthlyDebts: Number(monthlyDebts) || 0,
-      preferences: { propertyType, size, rooms, zone, reformState, timeline },
+      preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers),
       coBuyers: parsedCoBuyers,
+      mortgagePercent,
     });
   };
 
@@ -235,19 +237,23 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <FieldLabel icon={Ruler}>Tamaño</FieldLabel>
-                <Select value={size} onValueChange={setSize}>
-                  <SelectTrigger><SelectValue placeholder="m²" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="<60">&lt;60 m²</SelectItem>
-                    <SelectItem value="60-90">60–90 m²</SelectItem>
-                    <SelectItem value="90-120">90–120 m²</SelectItem>
-                    <SelectItem value="120+">120+ m²</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className="space-y-2">
+              <FieldLabel icon={Ruler}>Tamaño: {size} m²</FieldLabel>
+              <Slider
+                value={[size]}
+                onValueChange={(v) => setSize(v[0])}
+                min={30}
+                max={200}
+                step={10}
+                className="mt-2"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>30 m²</span>
+                <span>200 m²</span>
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <FieldLabel icon={BedDouble}>Habitaciones</FieldLabel>
                 <Select value={rooms} onValueChange={setRooms}>
@@ -260,18 +266,17 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <FieldLabel icon={MapPin}>Zona preferida</FieldLabel>
-              <Select value={zone} onValueChange={setZone}>
-                <SelectTrigger><SelectValue placeholder="Selecciona zona" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="centro">Centro</SelectItem>
-                  <SelectItem value="metropolitana">Área metropolitana</SelectItem>
-                  <SelectItem value="periferia">Periferia</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="space-y-2">
+                <FieldLabel icon={MapPin}>Zona preferida</FieldLabel>
+                <Select value={zone} onValueChange={setZone}>
+                  <SelectTrigger><SelectValue placeholder="Zona" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="centro">Centro</SelectItem>
+                    <SelectItem value="metropolitana">Área metropolitana</SelectItem>
+                    <SelectItem value="periferia">Periferia</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -286,17 +291,25 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
               </Select>
             </div>
 
+            <SectionTitle icon={Percent}>Hipoteca</SectionTitle>
+
             <div className="space-y-2">
-              <FieldLabel icon={Calendar}>Plazo de compra</FieldLabel>
-              <Select value={timeline} onValueChange={setTimeline}>
-                <SelectTrigger><SelectValue placeholder="Selecciona plazo" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="asap">Lo antes posible</SelectItem>
-                  <SelectItem value="2-3">2–3 años</SelectItem>
-                  <SelectItem value="3-5">3–5 años</SelectItem>
-                  <SelectItem value="flexible">Flexible</SelectItem>
-                </SelectContent>
-              </Select>
+              <FieldLabel icon={Percent}>% a hipotecar: {mortgagePercent}%</FieldLabel>
+              <Slider
+                value={[mortgagePercent]}
+                onValueChange={(v) => setMortgagePercent(v[0])}
+                min={50}
+                max={90}
+                step={5}
+                className="mt-2"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>50%</span>
+                <span>90%</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Entrada necesaria: {100 - mortgagePercent}% del valor de la vivienda
+              </p>
             </div>
 
             <Button type="submit" size="lg" className="w-full font-semibold text-base mt-2">
