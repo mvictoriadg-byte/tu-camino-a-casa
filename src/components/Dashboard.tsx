@@ -19,6 +19,8 @@ import {
   Flag,
   Trophy,
   Shield,
+  Users,
+  Timer,
 } from "lucide-react";
 
 interface DashboardProps {
@@ -49,8 +51,8 @@ const Dashboard = ({ result }: DashboardProps) => {
     reformCostEstimate,
     savingsGap,
     yearsToSave,
+    monthsToSave,
     maxHomePrice,
-    affordabilityRatio,
     canAfford,
     monthlyMortgagePayment,
     savingsProgress,
@@ -60,44 +62,52 @@ const Dashboard = ({ result }: DashboardProps) => {
     milestones,
     isYoungBuyer,
     debtToIncomeRatio,
+    totalMonthlyIncome,
+    totalSavings,
+    totalMonthlySavings,
+    totalMonthlyDebts,
+    numBuyers,
     userProfile,
   } = result;
 
   const propertyDesc = `${propertyTypeLabels[preferences.propertyType] || preferences.propertyType} · ${preferences.size} m² · ${preferences.rooms} hab · ${zoneLabels[preferences.zone] || preferences.zone}`;
 
+  const displayYears = yearsToSave === 0 ? "¡Ya!" : yearsToSave === Infinity ? "—" : `~${yearsToSave} años`;
+  const displayMonths = monthsToSave <= 0 ? "" : monthsToSave === -1 ? "" : `${monthsToSave} meses`;
+
   return (
     <div className="space-y-6">
-      {/* Hero Status */}
+      {/* HERO: Time to Buy — Most prominent */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
       >
-        <Card className={`glow-card border-l-4 ${canAfford ? "border-l-success" : "border-l-primary"}`}>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${canAfford ? "bg-success/20" : "bg-primary/20"}`}>
-                {canAfford ? <Trophy className="h-5 w-5 text-success" /> : <Sparkles className="h-5 w-5 text-primary" />}
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold">
-                  {canAfford ? "¡Puedes comprar tu casa!" : "Tu camino hacia tu primera casa"}
-                </h2>
-                <p className="text-sm text-muted-foreground">{propertyDesc} en {city.name}</p>
-              </div>
+        <Card className={`glow-card border-2 ${canAfford ? "border-success" : "border-primary"}`}>
+          <CardContent className="p-8 text-center">
+            <div className={`inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-4 ${canAfford ? "bg-success/20" : "bg-primary/20"}`}>
+              {canAfford ? <Trophy className="h-8 w-8 text-success" /> : <Timer className="h-8 w-8 text-primary" />}
             </div>
-            {!canAfford && (
-              <p className="text-sm text-muted-foreground mt-2 pl-[52px]">
-                {savingsGap > 0
-                  ? `Te faltan ${formatCurrency(savingsGap)} — con tu plan actual lo conseguirás en ~${yearsToSave === Infinity ? "—" : `${yearsToSave} años`}. ¡Vamos a acelerarlo!`
-                  : "Tu capacidad hipotecaria está ajustada, pero hay opciones. ¡Sigue leyendo!"}
+            <p className="text-sm uppercase tracking-widest font-medium text-muted-foreground mb-2">
+              {canAfford ? "¡Puedes comprar ya!" : "Tiempo estimado hasta tu casa"}
+            </p>
+            <div className={`text-5xl sm:text-6xl font-bold mb-2 ${canAfford ? "text-success" : "text-primary"}`}>
+              {displayYears}
+            </div>
+            {!canAfford && displayMonths && (
+              <p className="text-lg text-muted-foreground font-mono">{displayMonths}</p>
+            )}
+            <p className="text-sm text-muted-foreground mt-3">{propertyDesc} en {city.name}</p>
+            {!canAfford && savingsGap > 0 && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Te faltan <span className="font-semibold text-primary">{formatCurrency(savingsGap)}</span> — ahorrando <span className="font-semibold text-primary">{formatCurrency(totalMonthlySavings)}/mes</span>
               </p>
             )}
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* Progress Toward Goal */}
+      {/* Progress Bar */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -120,12 +130,48 @@ const Dashboard = ({ result }: DashboardProps) => {
               />
             </div>
             <div className="flex justify-between text-xs text-muted-foreground mt-2">
-              <span>Ahorros: {formatCurrency(userProfile.savings)}</span>
+              <span>Ahorros: {formatCurrency(totalSavings)}</span>
               <span>Meta: {formatCurrency(totalUpfront)}</span>
             </div>
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Co-buyers summary */}
+      {numBuyers > 1 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+        >
+          <Card className="glow-card border-l-4 border-l-accent">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Users className="h-5 w-5 text-primary" />
+                <span className="text-sm font-semibold">Comprando entre {numBuyers} personas</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Ingresos totales</p>
+                  <p className="text-lg font-bold text-primary">{formatCurrency(totalMonthlyIncome)}<span className="text-xs font-normal text-muted-foreground">/mes</span></p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Ahorros totales</p>
+                  <p className="text-lg font-bold text-primary">{formatCurrency(totalSavings)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Ahorro mensual</p>
+                  <p className="text-lg font-bold text-primary">{formatCurrency(totalMonthlySavings)}<span className="text-xs font-normal text-muted-foreground">/mes</span></p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Deudas totales</p>
+                  <p className="text-lg font-bold text-muted-foreground">{formatCurrency(totalMonthlyDebts)}<span className="text-xs font-normal">/mes</span></p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Key Numbers */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -178,13 +224,7 @@ const Dashboard = ({ result }: DashboardProps) => {
         />
         <StatCard
           label="Tiempo estimado"
-          value={
-            yearsToSave === 0
-              ? "¡Ya!"
-              : yearsToSave === Infinity
-              ? "—"
-              : `~${yearsToSave} años`
-          }
+          value={displayYears}
           icon={Clock}
           subtitle={yearsToSave === 0 ? "Ya tienes los ahorros necesarios" : "A tu ritmo de ahorro actual"}
           variant={yearsToSave <= 2 ? "success" : yearsToSave <= 5 ? "warning" : "default"}
@@ -207,7 +247,6 @@ const Dashboard = ({ result }: DashboardProps) => {
           </CardHeader>
           <CardContent>
             <div className="relative">
-              {/* Timeline line */}
               <div className="absolute left-4 top-0 bottom-0 w-px bg-border" />
               <div className="space-y-4">
                 {milestones.map((m, i) => (
