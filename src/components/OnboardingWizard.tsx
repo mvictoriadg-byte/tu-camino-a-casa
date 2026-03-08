@@ -343,6 +343,19 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
         {step === 1 && (
           <p className="text-center text-xs text-muted-foreground mt-3">⏱ Solo te llevará 1 minuto · Es gratis</p>
         )}
+        {step === TOTAL_STEPS && (
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Al enviar tus datos, aceptas nuestros{" "}
+            <a href="/terminos" target="_blank" rel="noopener noreferrer" className="underline text-primary hover:text-primary/80">
+              Términos y Condiciones
+            </a>{" "}
+            y la{" "}
+            <a href="/terminos#proteccion-datos" target="_blank" rel="noopener noreferrer" className="underline text-primary hover:text-primary/80">
+              Política de Protección de Datos
+            </a>{" "}
+            conforme al RGPD (UE) y la LOPDGDD (España).
+          </p>
+        )}
       </div>
     </div>
   );
