@@ -64,6 +64,33 @@ const Portal = () => {
 
   const removeWishlistItem = async (id: string) => { await supabase.from("user_wishlist").delete().eq("id", id); setWishlist(prev => prev.filter(w => w.id !== id)); toast.success("Eliminada"); };
 
+  const handleRecalculate = async (profileData: UserProfile) => {
+    if (!user) return;
+    setIsCalculating(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    const r = calculateAffordability(profileData);
+    setResult(r);
+    setIsCalculating(false);
+    try {
+      const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
+      const payload = {
+        user_id: user.id, city: profileData.city, age: profileData.age, employment_status: profileData.employmentStatus,
+        monthly_income: profileData.monthlyIncome, savings: profileData.savings, monthly_savings: profileData.monthlySavings,
+        monthly_debts: profileData.monthlyDebts, num_buyers: profileData.numBuyers, co_buyers: profileData.coBuyers as any,
+        property_type: profileData.preferences.propertyType, size_sqm: Number(profileData.preferences.size),
+        rooms: profileData.preferences.rooms, zone: profileData.preferences.zone, reform_state: profileData.preferences.reformState,
+        mortgage_percent: profileData.mortgagePercent, result_json: r as any
+      };
+      if (existing && existing.length > 0) {
+        await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);
+      } else {
+        await supabase.from("user_financial_data").insert(payload);
+      }
+      setSavedFormData(profileData);
+      toast.success("Plan actualizado y guardado");
+    } catch { toast.error("Error al guardar"); }
+  };
+
   if (authLoading || loadingData) return (
     <div className="min-h-screen flex items-center justify-center bg-background"><div className="text-center"><RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" /><p className="text-muted-foreground">Cargando tu portal...</p></div></div>
   );
