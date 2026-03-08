@@ -28,7 +28,7 @@ const Index = () => {
             </span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold mb-3">
-            Tu primera casa <span className="gradient-text">está más cerca</span>
+            Comprar tu casa <span className="gradient-text">está más cerca</span>
           </h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
             Descubre cuánto necesitas, cuánto puedes ahorrar y cuál es tu plan personalizado para comprar tu primera vivienda en España.
