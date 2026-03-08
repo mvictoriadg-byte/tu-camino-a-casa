@@ -1,11 +1,67 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { motion } from "framer-motion";
+import InputForm from "@/components/InputForm";
+import Dashboard from "@/components/Dashboard";
+import { calculateAffordability, type AffordabilityResult } from "@/lib/housing-data";
+import { Home } from "lucide-react";
 
 const Index = () => {
+  const [result, setResult] = useState<AffordabilityResult | null>(null);
+
+  const handleCalculate = (city: string, income: number, savings: number, monthlySavings: number) => {
+    const r = calculateAffordability(city, income, savings, monthlySavings);
+    setResult(r);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen" style={{ background: "var(--gradient-dark)" }}>
+      <div className="container max-w-6xl py-8 px-4 sm:px-6">
+        {/* Header */}
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-10"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+            <Home className="h-4 w-4 text-primary" />
+            <span className="text-xs font-medium text-primary uppercase tracking-wider">
+              Home Affordability Analyzer
+            </span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-3">
+            Can you afford to <span className="gradient-text">buy a home?</span>
+          </h1>
+          <p className="text-muted-foreground max-w-lg mx-auto">
+            Enter your financial details to see a personalized breakdown of your home buying potential.
+          </p>
+        </motion.header>
+
+        {/* Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-4">
+            <InputForm onCalculate={handleCalculate} />
+          </div>
+          <div className="lg:col-span-8">
+            {result ? (
+              <Dashboard result={result} />
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center justify-center h-full min-h-[400px]"
+              >
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Home className="h-8 w-8 text-primary/50" />
+                  </div>
+                  <p className="text-muted-foreground text-sm">
+                    Fill in your details to see your<br />affordability dashboard
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
