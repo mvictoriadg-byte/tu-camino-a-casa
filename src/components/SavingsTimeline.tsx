@@ -171,15 +171,15 @@ const SavingsTimeline = ({ milestones, totalSavings, totalUpfront, savingsProgre
           <div className="mt-3 pt-3 border-t border-border text-center">
             <p className="text-sm text-muted-foreground">
               {savingsProgress >= 100 ? (
-                <span className="text-success font-bold">🎉 ¡Felicidades! Ya tienes todo listo para dar el gran paso.</span>
+                <span className="text-success font-bold">¡Felicidades! Ya tienes todo listo para dar el gran paso.</span>
               ) : savingsProgress >= 75 ? (
-                <span>🔑 <span className="font-bold">¡Ya casi lo tienes!</span> Solo faltan unos pasos más.</span>
+                <span><span className="font-bold">¡Ya casi lo tienes!</span> Solo faltan unos pasos más.</span>
               ) : savingsProgress >= 50 ? (
-                <span>🚀 <span className="font-bold">¡Vas por la mitad!</span> Sigues avanzando hacia tu casa.</span>
+                <span><span className="font-bold">¡Vas por la mitad!</span> Sigues avanzando hacia tu casa.</span>
               ) : savingsProgress >= 25 ? (
-                <span>💪 <span className="font-bold">¡Buen ritmo!</span> Cada mes estás más cerca.</span>
+                <span><span className="font-bold">¡Buen ritmo!</span> Cada mes estás más cerca.</span>
               ) : (
-                <span>🌱 <span className="font-bold">El viaje ha empezado.</span> Cada euro cuenta.</span>
+                <span><span className="font-bold">El viaje ha empezado.</span> Cada euro cuenta.</span>
               )}
             </p>
           </div>
