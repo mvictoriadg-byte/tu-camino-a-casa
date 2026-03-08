@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
-import { type AffordabilityResult, formatCurrency } from "@/lib/housing-data";
+import InputForm from "@/components/InputForm";
+import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency } from "@/lib/housing-data";
 import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,9 +21,11 @@ const Portal = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<{ display_name: string; email: string } | null>(null);
   const [result, setResult] = useState<AffordabilityResult | null>(null);
+  const [savedFormData, setSavedFormData] = useState<Partial<UserProfile> | null>(null);
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [newUrl, setNewUrl] = useState(""); const [newTitle, setNewTitle] = useState(""); const [newPrice, setNewPrice] = useState("");
   const [loadingData, setLoadingData] = useState(true);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
   useEffect(() => { if (user) loadData(); }, [user]);
@@ -36,6 +39,17 @@ const Portal = () => {
     ]);
     if (p.data) setProfile({ display_name: p.data.display_name || "", email: p.data.email || "" });
     if (f.data?.length && f.data[0].result_json) setResult(f.data[0].result_json as unknown as AffordabilityResult);
+    if (f.data?.length) {
+      const d = f.data[0];
+      setSavedFormData({
+        city: d.city, age: d.age, employmentStatus: d.employment_status,
+        monthlyIncome: Number(d.monthly_income), savings: Number(d.savings),
+        monthlySavings: Number(d.monthly_savings), monthlyDebts: Number(d.monthly_debts),
+        numBuyers: d.num_buyers, coBuyers: (d.co_buyers as any) || [],
+        mortgagePercent: d.mortgage_percent,
+        preferences: { propertyType: d.property_type, size: String(d.size_sqm), rooms: d.rooms, zone: d.zone, reformState: d.reform_state },
+      });
+    }
     if (w.data) setWishlist(w.data as WishlistItem[]);
     setLoadingData(false);
   };
