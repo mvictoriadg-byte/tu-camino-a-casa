@@ -2,14 +2,20 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import InputForm from "@/components/InputForm";
 import Dashboard from "@/components/Dashboard";
-import { calculateAffordability, type AffordabilityResult } from "@/lib/housing-data";
+import { calculateAffordability, type AffordabilityResult, type PropertyPreferences } from "@/lib/housing-data";
 import { Home } from "lucide-react";
 
 const Index = () => {
   const [result, setResult] = useState<AffordabilityResult | null>(null);
 
-  const handleCalculate = (city: string, income: number, savings: number, monthlySavings: number) => {
-    const r = calculateAffordability(city, income, savings, monthlySavings);
+  const handleCalculate = (
+    city: string,
+    income: number,
+    savings: number,
+    monthlySavings: number,
+    preferences: PropertyPreferences
+  ) => {
+    const r = calculateAffordability(city, income, savings, monthlySavings, preferences);
     setResult(r);
   };
 
@@ -25,14 +31,14 @@ const Index = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
             <Home className="h-4 w-4 text-primary" />
             <span className="text-xs font-medium text-primary uppercase tracking-wider">
-              Home Affordability Analyzer
+              Analizador de Vivienda · España
             </span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold mb-3">
-            Can you afford to <span className="gradient-text">buy a home?</span>
+            ¿Puedes permitirte <span className="gradient-text">comprar casa?</span>
           </h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            Enter your financial details to see a personalized breakdown of your home buying potential.
+            Introduce tus datos financieros y preferencias de vivienda para obtener un análisis personalizado del mercado español.
           </p>
         </motion.header>
 
@@ -55,7 +61,7 @@ const Index = () => {
                     <Home className="h-8 w-8 text-primary/50" />
                   </div>
                   <p className="text-muted-foreground text-sm">
-                    Fill in your details to see your<br />affordability dashboard
+                    Rellena tus datos para ver tu<br />panel de viabilidad
                   </p>
                 </div>
               </motion.div>
