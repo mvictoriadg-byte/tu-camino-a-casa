@@ -295,14 +295,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
                   </Select>
                   <FieldError field="zone" />
                 </div>
-                <div className="space-y-2">
-                  <FieldLabel icon={Wrench}>¿Necesita reforma?</FieldLabel>
-                  <Select value={reformState} onValueChange={setReformState}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("reformState")}`}><SelectValue placeholder="Estado de la vivienda" /></SelectTrigger>
-                    <SelectContent><SelectItem value="listo-para-entrar">Lista para entrar</SelectItem><SelectItem value="pequena-reforma">Pequeña reforma</SelectItem><SelectItem value="reforma-completa">Reforma completa</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="reformState" />
-                </div>
               </div>
             )}
 
