@@ -9,6 +9,26 @@ import {
 } from "lucide-react";
 import SavingsTimeline from "@/components/SavingsTimeline";
 
+import doodleCelebrate from "@/assets/doodle-celebrate.png";
+import doodleStrength from "@/assets/doodle-strength.png";
+import doodleChart from "@/assets/doodle-chart.png";
+import doodleGovernment from "@/assets/doodle-government.png";
+import doodleTarget from "@/assets/doodle-target.png";
+import doodleSearch from "@/assets/doodle-search.png";
+import doodleHouse from "@/assets/illustration-housing.png";
+import doodleBank from "@/assets/illustration-mortgage.png";
+
+const doodleIconMap: Record<string, string> = {
+  "🎉": doodleCelebrate,
+  "🏦": doodleBank,
+  "🔍": doodleSearch,
+  "💪": doodleStrength,
+  "📊": doodleChart,
+  "🏛️": doodleGovernment,
+  "🎯": doodleTarget,
+  "🏠": doodleHouse,
+};
+
 interface DashboardProps {
   result: AffordabilityResult;
 }
@@ -152,7 +172,7 @@ const Dashboard = ({ result }: DashboardProps) => {
             {actionPlan.map((step, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.65 + i * 0.08 }}
                 className="flex gap-3 p-4 rounded-xl bg-muted/60">
-                <span className="text-2xl shrink-0">{step.icon}</span>
+                <img src={doodleIconMap[step.icon] || doodleHouse} alt="" className="w-8 h-8 object-contain shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm font-bold">{step.title}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{step.description}</p>
