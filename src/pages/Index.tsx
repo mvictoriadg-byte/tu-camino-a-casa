@@ -18,7 +18,6 @@ const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
 
   const handleCalculate = async (profile: UserProfile) => {
     const r = calculateAffordability(profile);
