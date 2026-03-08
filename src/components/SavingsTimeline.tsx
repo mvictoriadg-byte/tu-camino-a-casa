@@ -27,7 +27,7 @@ const TIMELINE_DATA = [
   {
     illustration: milestoneStart,
     title: "Empiezas tu camino",
-    description: "Cada paso cuenta. ¡Ya estás en marcha!",
+    description: "¡Vámonos!",
     pct: 0,
   },
   {
@@ -39,7 +39,7 @@ const TIMELINE_DATA = [
   {
     illustration: milestoneFlag,
     title: "¡Mitad del camino!",
-    description: "Sigues avanzando hacia tu casa. ¡Vas genial!",
+    description: "¡Vas genial!",
     pct: 50,
   },
   {
