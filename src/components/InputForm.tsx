@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cityData, type UserProfile } from "@/lib/housing-data";
+import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
 import {
   Home,
   Euro,
@@ -26,6 +26,7 @@ import {
   User,
   Briefcase,
   CreditCard,
+  Users,
 } from "lucide-react";
 
 interface InputFormProps {
@@ -40,6 +41,8 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
   const [savings, setSavings] = useState("");
   const [monthlySavings, setMonthlySavings] = useState("");
   const [monthlyDebts, setMonthlyDebts] = useState("");
+  const [numBuyers, setNumBuyers] = useState("1");
+  const [coBuyers, setCoBuyers] = useState<{ income: string; savings: string; monthlySavings: string; monthlyDebts: string }[]>([]);
   const [propertyType, setPropertyType] = useState("");
   const [size, setSize] = useState("");
   const [rooms, setRooms] = useState("");
@@ -47,10 +50,34 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
   const [reformState, setReformState] = useState("");
   const [timeline, setTimeline] = useState("");
 
+  const handleNumBuyersChange = (val: string) => {
+    setNumBuyers(val);
+    const n = Number(val) - 1;
+    setCoBuyers(prev => {
+      if (n <= 0) return [];
+      if (n > prev.length) {
+        return [...prev, ...Array(n - prev.length).fill(null).map(() => ({ income: "", savings: "", monthlySavings: "", monthlyDebts: "" }))];
+      }
+      return prev.slice(0, n);
+    });
+  };
+
+  const updateCoBuyer = (index: number, field: string, value: string) => {
+    setCoBuyers(prev => prev.map((cb, i) => i === index ? { ...cb, [field]: value } : cb));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!city || !age || !employmentStatus || !income || !savings || !monthlySavings || !propertyType || !size || !rooms || !zone || !reformState || !timeline)
       return;
+
+    const parsedCoBuyers: CoBuyer[] = coBuyers.map(cb => ({
+      monthlyIncome: Number(cb.income) || 0,
+      savings: Number(cb.savings) || 0,
+      monthlySavings: Number(cb.monthlySavings) || 0,
+      monthlyDebts: Number(cb.monthlyDebts) || 0,
+    }));
+
     onCalculate({
       city,
       age: Number(age),
@@ -60,6 +87,8 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
       monthlySavings: Number(monthlySavings),
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size, rooms, zone, reformState, timeline },
+      numBuyers: Number(numBuyers),
+      coBuyers: parsedCoBuyers,
     });
   };
 
@@ -114,41 +143,82 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <FieldLabel icon={Briefcase}>Situación laboral</FieldLabel>
-              <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
-                <SelectTrigger><SelectValue placeholder="Selecciona" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="empleado">Empleado por cuenta ajena</SelectItem>
-                  <SelectItem value="autonomo">Autónomo / freelance</SelectItem>
-                  <SelectItem value="funcionario">Funcionario</SelectItem>
-                  <SelectItem value="temporal">Contrato temporal</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <FieldLabel icon={Briefcase}>Situación laboral</FieldLabel>
+                <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
+                  <SelectTrigger><SelectValue placeholder="Selecciona" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="empleado">Empleado por cuenta ajena</SelectItem>
+                    <SelectItem value="autonomo">Autónomo / freelance</SelectItem>
+                    <SelectItem value="funcionario">Funcionario</SelectItem>
+                    <SelectItem value="temporal">Contrato temporal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <FieldLabel icon={Users}>Nº compradores</FieldLabel>
+                <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 persona</SelectItem>
+                    <SelectItem value="2">2 personas</SelectItem>
+                    <SelectItem value="3">3 personas</SelectItem>
+                    <SelectItem value="4">4 personas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <SectionTitle icon={Euro}>Situación financiera</SectionTitle>
+            <SectionTitle icon={Euro}>Tu situación financiera</SectionTitle>
 
             <div className="space-y-2">
-              <FieldLabel icon={Euro}>Ingresos netos mensuales (€)</FieldLabel>
+              <FieldLabel icon={Euro}>Tus ingresos netos mensuales (€)</FieldLabel>
               <Input type="number" placeholder="p.ej. 2500" value={income} onChange={(e) => setIncome(e.target.value)} min={0} />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <FieldLabel icon={PiggyBank}>Ahorros (€)</FieldLabel>
+                <FieldLabel icon={PiggyBank}>Tus ahorros (€)</FieldLabel>
                 <Input type="number" placeholder="p.ej. 30000" value={savings} onChange={(e) => setSavings(e.target.value)} min={0} />
               </div>
               <div className="space-y-2">
-                <FieldLabel icon={TrendingUp}>Ahorro/mes (€)</FieldLabel>
+                <FieldLabel icon={TrendingUp}>Tu ahorro/mes (€)</FieldLabel>
                 <Input type="number" placeholder="p.ej. 800" value={monthlySavings} onChange={(e) => setMonthlySavings(e.target.value)} min={0} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <FieldLabel icon={CreditCard}>Deudas mensuales (€, opcional)</FieldLabel>
+              <FieldLabel icon={CreditCard}>Tus deudas mensuales (€, opcional)</FieldLabel>
               <Input type="number" placeholder="p.ej. 200" value={monthlyDebts} onChange={(e) => setMonthlyDebts(e.target.value)} min={0} />
             </div>
+
+            {/* Co-buyers */}
+            {coBuyers.map((cb, i) => (
+              <div key={i}>
+                <SectionTitle icon={Users}>{`Comprador ${i + 2}`}</SectionTitle>
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <FieldLabel icon={Euro}>Ingresos netos mensuales (€)</FieldLabel>
+                    <Input type="number" placeholder="p.ej. 2000" value={cb.income} onChange={(e) => updateCoBuyer(i, "income", e.target.value)} min={0} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <FieldLabel icon={PiggyBank}>Ahorros (€)</FieldLabel>
+                      <Input type="number" placeholder="p.ej. 15000" value={cb.savings} onChange={(e) => updateCoBuyer(i, "savings", e.target.value)} min={0} />
+                    </div>
+                    <div className="space-y-2">
+                      <FieldLabel icon={TrendingUp}>Ahorro/mes (€)</FieldLabel>
+                      <Input type="number" placeholder="p.ej. 500" value={cb.monthlySavings} onChange={(e) => updateCoBuyer(i, "monthlySavings", e.target.value)} min={0} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <FieldLabel icon={CreditCard}>Deudas mensuales (€, opcional)</FieldLabel>
+                    <Input type="number" placeholder="p.ej. 100" value={cb.monthlyDebts} onChange={(e) => updateCoBuyer(i, "monthlyDebts", e.target.value)} min={0} />
+                  </div>
+                </div>
+              </div>
+            ))}
 
             <SectionTitle icon={Building2}>Vivienda deseada</SectionTitle>
 

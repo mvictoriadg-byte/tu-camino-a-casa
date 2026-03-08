@@ -164,6 +164,13 @@ export interface PropertyPreferences {
   timeline: string;
 }
 
+export interface CoBuyer {
+  monthlyIncome: number;
+  savings: number;
+  monthlySavings: number;
+  monthlyDebts: number;
+}
+
 export interface UserProfile {
   city: string;
   age: number;
@@ -173,6 +180,8 @@ export interface UserProfile {
   monthlySavings: number;
   monthlyDebts: number;
   preferences: PropertyPreferences;
+  numBuyers: number;
+  coBuyers: CoBuyer[];
 }
 
 export interface ActionStep {
@@ -220,6 +229,12 @@ export interface AffordabilityResult {
   optimizationTips: OptimizationTip[];
   milestones: { label: string; date: string; reached: boolean }[];
   isYoungBuyer: boolean;
+  // Combined totals for co-buyers
+  totalMonthlyIncome: number;
+  totalSavings: number;
+  totalMonthlySavings: number;
+  totalMonthlyDebts: number;
+  numBuyers: number;
 }
 
 function generateBankOptions(rate: number): BankOption[] {
@@ -432,12 +447,18 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
   const taxesAndFees = Math.round(estimatedPrice * 0.10);
   const totalUpfront = requiredDownPayment + taxesAndFees + reformCostEstimate;
 
-  const savingsGap = Math.max(0, totalUpfront - profile.savings);
-  const monthsToSave = profile.monthlySavings > 0 ? Math.ceil(savingsGap / profile.monthlySavings) : savingsGap > 0 ? Infinity : 0;
+  // Combine financials across all buyers
+  const totalMonthlyIncome = profile.monthlyIncome + profile.coBuyers.reduce((s, c) => s + c.monthlyIncome, 0);
+  const totalSavings = profile.savings + profile.coBuyers.reduce((s, c) => s + c.savings, 0);
+  const totalMonthlySavings = profile.monthlySavings + profile.coBuyers.reduce((s, c) => s + c.monthlySavings, 0);
+  const totalMonthlyDebts = profile.monthlyDebts + profile.coBuyers.reduce((s, c) => s + c.monthlyDebts, 0);
+
+  const savingsGap = Math.max(0, totalUpfront - totalSavings);
+  const monthsToSave = totalMonthlySavings > 0 ? Math.ceil(savingsGap / totalMonthlySavings) : savingsGap > 0 ? Infinity : 0;
   const yearsToSave = monthsToSave === Infinity ? Infinity : Math.round((monthsToSave / 12) * 10) / 10;
 
-  // Mortgage capacity: 35% of income minus existing debts
-  const maxMonthlyPayment = Math.max(0, profile.monthlyIncome * 0.35 - profile.monthlyDebts);
+  // Mortgage capacity: 35% of combined income minus combined debts
+  const maxMonthlyPayment = Math.max(0, totalMonthlyIncome * 0.35 - totalMonthlyDebts);
   const monthlyRate = city.mortgageRate / 100 / 12;
   const numPayments = 30 * 12;
   const maxMortgage =
@@ -446,9 +467,9 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
         (monthlyRate * Math.pow(1 + monthlyRate, numPayments))
       : maxMonthlyPayment * numPayments;
 
-  const maxHomePrice = maxMortgage + profile.savings;
+  const maxHomePrice = maxMortgage + totalSavings;
   const affordabilityRatio = Math.min(100, (maxHomePrice / totalCost) * 100);
-  const canAfford = maxHomePrice >= totalCost && profile.savings >= totalUpfront;
+  const canAfford = maxHomePrice >= totalCost && totalSavings >= totalUpfront;
 
   const loanAmount = estimatedPrice * 0.8;
   const monthlyMortgagePayment =
@@ -457,22 +478,24 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
         (Math.pow(1 + monthlyRate, numPayments) - 1)
       : loanAmount / numPayments;
 
-  const debtToIncomeRatio = profile.monthlyIncome > 0
-    ? ((monthlyMortgagePayment + profile.monthlyDebts) / profile.monthlyIncome) * 100
+  const debtToIncomeRatio = totalMonthlyIncome > 0
+    ? ((monthlyMortgagePayment + totalMonthlyDebts) / totalMonthlyIncome) * 100
     : 0;
 
-  const savingsProgress = totalUpfront > 0 ? Math.min(100, (profile.savings / totalUpfront) * 100) : 100;
+  const savingsProgress = totalUpfront > 0 ? Math.min(100, (totalSavings / totalUpfront) * 100) : 100;
   const isYoungBuyer = profile.age <= 35;
+
+  const profileForPlan = { ...profile, monthlyIncome: totalMonthlyIncome, savings: totalSavings, monthlySavings: totalMonthlySavings, monthlyDebts: totalMonthlyDebts };
 
   const partialResult: Partial<AffordabilityResult> = {
     savingsGap,
     canAfford,
   };
 
-  const actionPlan = generateActionPlan(partialResult, profile);
+  const actionPlan = generateActionPlan(partialResult, profileForPlan);
   const bankOptions = generateBankOptions(city.mortgageRate);
-  const optimizationTips = generateOptimizationTips(partialResult, profile);
-  const milestones = generateMilestones(profile, totalUpfront, savingsGap);
+  const optimizationTips = generateOptimizationTips(partialResult, profileForPlan);
+  const milestones = generateMilestones(profileForPlan, totalUpfront, savingsGap);
 
   return {
     city,
@@ -499,5 +522,10 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
     optimizationTips,
     milestones,
     isYoungBuyer,
+    totalMonthlyIncome,
+    totalSavings,
+    totalMonthlySavings,
+    totalMonthlyDebts,
+    numBuyers: profile.numBuyers,
   };
 }
