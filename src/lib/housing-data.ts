@@ -148,20 +148,12 @@ export const reformCost: Record<string, number> = {
   "reforma-completa": 45000,
 };
 
-export const sizeOptions: Record<string, number> = {
-  "<60": 50,
-  "60-90": 75,
-  "90-120": 105,
-  "120+": 135,
-};
-
 export interface PropertyPreferences {
   propertyType: string;
   size: string;
   rooms: string;
   zone: string;
   reformState: string;
-  timeline: string;
 }
 
 export interface CoBuyer {
@@ -182,6 +174,7 @@ export interface UserProfile {
   preferences: PropertyPreferences;
   numBuyers: number;
   coBuyers: CoBuyer[];
+  mortgagePercent: number;
 }
 
 export interface ActionStep {
@@ -229,21 +222,24 @@ export interface AffordabilityResult {
   optimizationTips: OptimizationTip[];
   milestones: { label: string; date: string; reached: boolean }[];
   isYoungBuyer: boolean;
-  // Combined totals for co-buyers
   totalMonthlyIncome: number;
   totalSavings: number;
   totalMonthlySavings: number;
   totalMonthlyDebts: number;
   numBuyers: number;
+  mortgagePercent: number;
+  pricePerSqm: number;
+  sqm: number;
 }
 
-function generateBankOptions(rate: number): BankOption[] {
+function generateBankOptions(rate: number, mortgagePercent: number): BankOption[] {
+  const maxFin = `${mortgagePercent}%`;
   return [
-    { name: "Bankinter", rate: `${(rate - 0.3).toFixed(1)}% fijo`, maxFinancing: "80%", specialCondition: "Nómina domiciliada + seguros" },
-    { name: "ING", rate: `${(rate - 0.1).toFixed(1)}% fijo`, maxFinancing: "80%", specialCondition: "Sin comisiones, 100% online" },
-    { name: "CaixaBank", rate: `Euríbor + ${(rate - 2.0).toFixed(1)}%`, maxFinancing: "80%", specialCondition: "Hipoteca joven hasta 35 años" },
-    { name: "BBVA", rate: `${rate.toFixed(1)}% fijo`, maxFinancing: "80%", specialCondition: "Valoración gratuita online" },
-    { name: "Openbank", rate: `${(rate - 0.2).toFixed(1)}% fijo`, maxFinancing: "80%", specialCondition: "100% digital, sin vinculación" },
+    { name: "Bankinter", rate: `${(rate - 0.3).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Nómina domiciliada + seguros" },
+    { name: "ING", rate: `${(rate - 0.1).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Sin comisiones, 100% online" },
+    { name: "CaixaBank", rate: `Euríbor + ${(rate - 2.0).toFixed(1)}%`, maxFinancing: maxFin, specialCondition: "Hipoteca joven hasta 35 años" },
+    { name: "BBVA", rate: `${rate.toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Valoración gratuita online" },
+    { name: "Openbank", rate: `${(rate - 0.2).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "100% digital, sin vinculación" },
   ];
 }
 
@@ -277,7 +273,8 @@ function generateOptimizationTips(
     });
   }
 
-  if (profile.preferences.size !== "<60") {
+  const sqm = Number(profile.preferences.size) || 70;
+  if (sqm > 60) {
     tips.push({
       title: "Empieza más pequeño, crece después",
       description: "Un piso más pequeño como primera vivienda te permite entrar al mercado antes y luego mejorar.",
@@ -372,54 +369,30 @@ function generateActionPlan(
 function generateMilestones(
   profile: UserProfile,
   totalUpfront: number,
-  savingsGap: number
+  savingsGap: number,
+  totalSavings: number,
+  totalMonthlySavings: number
 ): { label: string; date: string; reached: boolean }[] {
   const milestones: { label: string; date: string; reached: boolean }[] = [];
   const now = new Date();
 
-  const progress = totalUpfront > 0 ? Math.min(profile.savings / totalUpfront, 1) : 0;
+  const thresholds = [
+    { pct: 0.25, label: "25% ahorrado" },
+    { pct: 0.5, label: "50% ahorrado" },
+    { pct: 0.75, label: "75% ahorrado" },
+    { pct: 1, label: "¡Meta alcanzada!" },
+  ];
 
-  // 25% milestone
-  const pct25 = totalUpfront * 0.25;
-  if (profile.savings >= pct25) {
-    milestones.push({ label: "25% ahorrado", date: "✓ Completado", reached: true });
-  } else {
-    const monthsTo25 = profile.monthlySavings > 0 ? Math.ceil((pct25 - profile.savings) / profile.monthlySavings) : 0;
-    const date25 = new Date(now);
-    date25.setMonth(date25.getMonth() + monthsTo25);
-    milestones.push({ label: "25% ahorrado", date: monthsTo25 > 0 ? formatDate(date25) : "—", reached: false });
-  }
-
-  // 50%
-  const pct50 = totalUpfront * 0.5;
-  if (profile.savings >= pct50) {
-    milestones.push({ label: "50% ahorrado", date: "✓ Completado", reached: true });
-  } else {
-    const monthsTo50 = profile.monthlySavings > 0 ? Math.ceil((pct50 - profile.savings) / profile.monthlySavings) : 0;
-    const date50 = new Date(now);
-    date50.setMonth(date50.getMonth() + monthsTo50);
-    milestones.push({ label: "50% ahorrado", date: monthsTo50 > 0 ? formatDate(date50) : "—", reached: false });
-  }
-
-  // 75%
-  const pct75 = totalUpfront * 0.75;
-  if (profile.savings >= pct75) {
-    milestones.push({ label: "75% ahorrado", date: "✓ Completado", reached: true });
-  } else {
-    const monthsTo75 = profile.monthlySavings > 0 ? Math.ceil((pct75 - profile.savings) / profile.monthlySavings) : 0;
-    const date75 = new Date(now);
-    date75.setMonth(date75.getMonth() + monthsTo75);
-    milestones.push({ label: "75% ahorrado", date: monthsTo75 > 0 ? formatDate(date75) : "—", reached: false });
-  }
-
-  // 100%
-  if (profile.savings >= totalUpfront) {
-    milestones.push({ label: "¡Meta alcanzada!", date: "✓ Completado", reached: true });
-  } else {
-    const monthsTo100 = profile.monthlySavings > 0 ? Math.ceil(savingsGap / profile.monthlySavings) : 0;
-    const date100 = new Date(now);
-    date100.setMonth(date100.getMonth() + monthsTo100);
-    milestones.push({ label: "¡Meta alcanzada!", date: monthsTo100 > 0 ? formatDate(date100) : "—", reached: false });
+  for (const t of thresholds) {
+    const target = totalUpfront * t.pct;
+    if (totalSavings >= target) {
+      milestones.push({ label: t.label, date: "✓ Completado", reached: true });
+    } else {
+      const months = totalMonthlySavings > 0 ? Math.ceil((target - totalSavings) / totalMonthlySavings) : 0;
+      const d = new Date(now);
+      d.setMonth(d.getMonth() + months);
+      milestones.push({ label: t.label, date: months > 0 ? formatDate(d) : "—", reached: false });
+    }
   }
 
   return milestones;
@@ -435,15 +408,19 @@ export function formatCurrency(n: number): string {
 
 export function calculateAffordability(profile: UserProfile): AffordabilityResult {
   const city = cityData[profile.city];
-  const sqm = sizeOptions[profile.preferences.size] || 75;
+  const sqm = Number(profile.preferences.size) || 70;
   const basePrice = city.avgPricePerSqm * sqm;
   const typeMulti = propertyTypeMultiplier[profile.preferences.propertyType] || 1;
   const zoneMulti = zoneMultiplier[profile.preferences.zone] || 1;
   const estimatedPrice = Math.round(basePrice * typeMulti * zoneMulti);
+  const pricePerSqm = Math.round(city.avgPricePerSqm * typeMulti * zoneMulti);
   const reformCostEstimate = reformCost[profile.preferences.reformState] || 0;
   const totalCost = estimatedPrice + reformCostEstimate;
 
-  const requiredDownPayment = Math.round(estimatedPrice * 0.20);
+  const mortgagePct = profile.mortgagePercent / 100;
+  const downPaymentPct = 1 - mortgagePct;
+
+  const requiredDownPayment = Math.round(estimatedPrice * downPaymentPct);
   const taxesAndFees = Math.round(estimatedPrice * 0.10);
   const totalUpfront = requiredDownPayment + taxesAndFees + reformCostEstimate;
 
@@ -467,11 +444,11 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
         (monthlyRate * Math.pow(1 + monthlyRate, numPayments))
       : maxMonthlyPayment * numPayments;
 
-  const maxHomePrice = maxMortgage + totalSavings;
+  const maxHomePrice = maxMortgage / mortgagePct;
   const affordabilityRatio = Math.min(100, (maxHomePrice / totalCost) * 100);
   const canAfford = maxHomePrice >= totalCost && totalSavings >= totalUpfront;
 
-  const loanAmount = estimatedPrice * 0.8;
+  const loanAmount = estimatedPrice * mortgagePct;
   const monthlyMortgagePayment =
     monthlyRate > 0
       ? (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
@@ -493,9 +470,9 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
   };
 
   const actionPlan = generateActionPlan(partialResult, profileForPlan);
-  const bankOptions = generateBankOptions(city.mortgageRate);
+  const bankOptions = generateBankOptions(city.mortgageRate, profile.mortgagePercent);
   const optimizationTips = generateOptimizationTips(partialResult, profileForPlan);
-  const milestones = generateMilestones(profileForPlan, totalUpfront, savingsGap);
+  const milestones = generateMilestones(profileForPlan, totalUpfront, savingsGap, totalSavings, totalMonthlySavings);
 
   return {
     city,
@@ -527,5 +504,8 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
     totalMonthlySavings,
     totalMonthlyDebts,
     numBuyers: profile.numBuyers,
+    mortgagePercent: profile.mortgagePercent,
+    pricePerSqm,
+    sqm,
   };
 }
