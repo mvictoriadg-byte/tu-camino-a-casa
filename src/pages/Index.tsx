@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import InputForm from "@/components/InputForm";
 import Dashboard from "@/components/Dashboard";
 import { calculateAffordability, type AffordabilityResult, type UserProfile } from "@/lib/housing-data";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, User, LogIn, ArrowRight } from "lucide-react";
+import { Home, User, LogIn, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 import illustrationPlan from "@/assets/illustration-plan.png";
 
 const Index = () => {
