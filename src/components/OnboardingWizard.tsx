@@ -44,7 +44,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
   const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
   const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
   const [zone, setZone] = useState(iv?.preferences?.zone || "");
-  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "");
+  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -76,7 +76,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
       if (!propertyType) e.propertyType = "Obligatorio";
       if (!rooms) e.rooms = "Obligatorio";
       if (!zone) e.zone = "Obligatorio";
-      if (!reformState) e.reformState = "Obligatorio";
+      
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -294,14 +294,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
                     <SelectContent><SelectItem value="centro">Centro</SelectItem><SelectItem value="metropolitana">Metropolitana</SelectItem><SelectItem value="periferia">Periferia</SelectItem></SelectContent>
                   </Select>
                   <FieldError field="zone" />
-                </div>
-                <div className="space-y-2">
-                  <FieldLabel icon={Wrench}>¿Necesita reforma?</FieldLabel>
-                  <Select value={reformState} onValueChange={setReformState}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("reformState")}`}><SelectValue placeholder="Estado de la vivienda" /></SelectTrigger>
-                    <SelectContent><SelectItem value="listo-para-entrar">Lista para entrar</SelectItem><SelectItem value="pequena-reforma">Pequeña reforma</SelectItem><SelectItem value="reforma-completa">Reforma completa</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="reformState" />
                 </div>
               </div>
             )}
