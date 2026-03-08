@@ -229,7 +229,10 @@ const Dashboard = ({ result }: DashboardProps) => {
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.25 + i * 0.06 }}
                 className="flex items-start gap-3 p-4 rounded-xl bg-muted/60">
                 <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                <span className="text-sm">{subsidy}</span>
+                <a href={subsidy.url} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline text-foreground">
+                  {subsidy.name}
+                  <ExternalLink className="h-3 w-3 inline ml-1.5 text-muted-foreground" />
+                </a>
               </motion.div>
             ))}
           </CardContent>
