@@ -155,13 +155,26 @@ const Portal = () => {
             )}
           </TabsContent>
           <TabsContent value="profile">
-            <Card className="glow-card"><CardHeader><CardTitle className="text-lg font-bold flex items-center gap-2"><User className="h-5 w-5 text-primary" /> Tu perfil</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
-                <div><Label className="text-sm font-semibold text-muted-foreground">Nombre</Label><p className="text-base font-bold">{profile?.display_name || "—"}</p></div>
-                <div><Label className="text-sm font-semibold text-muted-foreground">Email</Label><p className="text-base font-bold">{profile?.email || "—"}</p></div>
-                <Button variant="outline" className="rounded-full font-bold" onClick={() => navigate("/")}><RefreshCw className="h-4 w-4 mr-2" /> Actualizar mi plan</Button>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              <Card className="glow-card">
+                <CardHeader><CardTitle className="text-lg font-bold flex items-center gap-2"><User className="h-5 w-5 text-primary" /> Tu perfil</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                  <div><Label className="text-sm font-semibold text-muted-foreground">Nombre</Label><p className="text-base font-bold">{profile?.display_name || "—"}</p></div>
+                  <div><Label className="text-sm font-semibold text-muted-foreground">Email</Label><p className="text-base font-bold">{profile?.email || "—"}</p></div>
+                </CardContent>
+              </Card>
+              <div>
+                <h3 className="text-lg font-extrabold mb-1 flex items-center gap-2"><RefreshCw className="h-5 w-5 text-primary" /> Actualizar mis datos</h3>
+                <p className="text-sm text-muted-foreground mb-4">Modifica tus preferencias y recalcula tu plan sin salir de aquí.</p>
+                <InputForm
+                  onCalculate={handleRecalculate}
+                  isCalculating={isCalculating}
+                  initialValues={savedFormData || undefined}
+                  submitLabel="Actualizar mi plan"
+                  hideFooterNote
+                />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
