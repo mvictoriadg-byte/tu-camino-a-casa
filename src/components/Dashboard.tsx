@@ -4,9 +4,10 @@ import StatCard from "@/components/StatCard";
 import { type AffordabilityResult, formatCurrency } from "@/lib/housing-data";
 import {
   Home, TrendingUp, CheckCircle2, Landmark, Euro, Target,
-  Wrench, Sparkles, ArrowRight, Building, Lightbulb, Flag, Trophy, Shield,
+  Wrench, Sparkles, ArrowRight, Building, Lightbulb, Trophy, Shield,
   Users, Timer,
 } from "lucide-react";
+import SavingsTimeline from "@/components/SavingsTimeline";
 
 interface DashboardProps {
   result: AffordabilityResult;
@@ -136,30 +137,12 @@ const Dashboard = ({ result }: DashboardProps) => {
           variant={debtToIncomeRatio <= 35 ? "success" : "destructive"} delay={0.35} />
       </div>
 
-      {/* Milestones */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.4 }}>
-        <Card className="glow-card">
-          <CardHeader className="pb-3"><CardTitle className="text-lg font-bold flex items-center gap-2"><Flag className="h-5 w-5 text-primary" /> Roadmap de Ahorro</CardTitle></CardHeader>
-          <CardContent>
-            <div className="relative">
-              <div className="absolute left-4 top-0 bottom-0 w-px bg-border" />
-              <div className="space-y-3">
-                {milestones.map((m, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.45 + i * 0.06 }} className="flex items-center gap-4">
-                    <div className={`relative z-10 h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${m.reached ? "bg-success/20" : "bg-muted"}`}>
-                      {m.reached ? <CheckCircle2 className="h-4 w-4 text-success" /> : <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />}
-                    </div>
-                    <div className="flex-1 flex items-center justify-between">
-                      <span className={`text-sm font-bold ${m.reached ? "text-success" : "text-foreground"}`}>{m.label}</span>
-                      <span className={`text-xs font-mono font-bold ${m.reached ? "text-success" : "text-muted-foreground"}`}>{m.date}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+      <SavingsTimeline
+        milestones={milestones}
+        totalSavings={totalSavings}
+        totalUpfront={totalUpfront}
+        savingsProgress={savingsProgress}
+      />
 
       {/* Action Plan */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.6 }}>
