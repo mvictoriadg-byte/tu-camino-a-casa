@@ -193,7 +193,10 @@ const Dashboard = ({ result }: DashboardProps) => {
               {bankOptions.map((bank, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85 + i * 0.05 }}>
                   <div className="rounded-xl bg-muted/50 border border-border p-4 h-full flex flex-col">
-                    <p className="text-sm font-extrabold mb-2">{bank.name}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <img src={`https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${bank.website}&size=32`} alt={bank.name} className="w-5 h-5 rounded-sm shrink-0" />
+                      <p className="text-sm font-extrabold">{bank.name}</p>
+                    </div>
                     <p className="text-2xl font-mono font-extrabold text-foreground mb-1">{bank.rate}</p>
                     <p className="text-xs text-muted-foreground mb-1">Hasta {bank.maxFinancing}</p>
                     <p className="text-xs text-muted-foreground flex-1">{bank.specialCondition}</p>

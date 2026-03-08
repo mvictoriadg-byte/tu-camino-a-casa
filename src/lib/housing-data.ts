@@ -194,6 +194,7 @@ export interface BankOption {
   rate: string;
   maxFinancing: string;
   specialCondition: string;
+  website: string;
 }
 
 export interface OptimizationTip {
@@ -240,11 +241,11 @@ export interface AffordabilityResult {
 function generateBankOptions(rate: number, mortgagePercent: number): BankOption[] {
   const maxFin = `${mortgagePercent}%`;
   return [
-    { name: "Bankinter", rate: `${(rate - 0.3).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Nómina domiciliada + seguros" },
-    { name: "ING", rate: `${(rate - 0.1).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Sin comisiones, 100% online" },
-    { name: "CaixaBank", rate: `Euríbor + ${(rate - 2.0).toFixed(1)}%`, maxFinancing: maxFin, specialCondition: "Hipoteca joven hasta 35 años" },
-    { name: "BBVA", rate: `${rate.toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Valoración gratuita online" },
-    { name: "Openbank", rate: `${(rate - 0.2).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "100% digital, sin vinculación" },
+    { name: "Bankinter", rate: `${(rate - 0.3).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Nómina domiciliada + seguros", website: "bankinter.com" },
+    { name: "ING", rate: `${(rate - 0.1).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Sin comisiones, 100% online", website: "ing.es" },
+    { name: "CaixaBank", rate: `Euríbor + ${(rate - 2.0).toFixed(1)}%`, maxFinancing: maxFin, specialCondition: "Hipoteca joven hasta 35 años", website: "caixabank.es" },
+    { name: "BBVA", rate: `${rate.toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "Valoración gratuita online", website: "bbva.es" },
+    { name: "Openbank", rate: `${(rate - 0.2).toFixed(1)}% fijo`, maxFinancing: maxFin, specialCondition: "100% digital, sin vinculación", website: "openbank.es" },
   ];
 }
 
