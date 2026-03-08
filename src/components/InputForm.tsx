@@ -11,10 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cityData, type PropertyPreferences } from "@/lib/housing-data";
+import { cityData, type UserProfile } from "@/lib/housing-data";
 import {
   Home,
-  DollarSign,
+  Euro,
   PiggyBank,
   TrendingUp,
   Ruler,
@@ -23,23 +23,23 @@ import {
   Wrench,
   Calendar,
   Building2,
+  User,
+  Briefcase,
+  CreditCard,
 } from "lucide-react";
 
 interface InputFormProps {
-  onCalculate: (
-    city: string,
-    income: number,
-    savings: number,
-    monthlySavings: number,
-    preferences: PropertyPreferences
-  ) => void;
+  onCalculate: (profile: UserProfile) => void;
 }
 
 const InputForm = ({ onCalculate }: InputFormProps) => {
   const [city, setCity] = useState("");
+  const [age, setAge] = useState("");
+  const [employmentStatus, setEmploymentStatus] = useState("");
   const [income, setIncome] = useState("");
   const [savings, setSavings] = useState("");
   const [monthlySavings, setMonthlySavings] = useState("");
+  const [monthlyDebts, setMonthlyDebts] = useState("");
   const [propertyType, setPropertyType] = useState("");
   const [size, setSize] = useState("");
   const [rooms, setRooms] = useState("");
@@ -49,17 +49,35 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!city || !income || !savings || !monthlySavings || !propertyType || !size || !rooms || !zone || !reformState || !timeline)
+    if (!city || !age || !employmentStatus || !income || !savings || !monthlySavings || !propertyType || !size || !rooms || !zone || !reformState || !timeline)
       return;
-    onCalculate(city, Number(income), Number(savings), Number(monthlySavings), {
-      propertyType,
-      size,
-      rooms,
-      zone,
-      reformState,
-      timeline,
+    onCalculate({
+      city,
+      age: Number(age),
+      employmentStatus,
+      monthlyIncome: Number(income),
+      savings: Number(savings),
+      monthlySavings: Number(monthlySavings),
+      monthlyDebts: Number(monthlyDebts) || 0,
+      preferences: { propertyType, size, rooms, zone, reformState, timeline },
     });
   };
+
+  const SectionTitle = ({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) => (
+    <div className="border-t border-border pt-4 mt-4 first:border-0 first:pt-0 first:mt-0">
+      <p className="text-xs uppercase tracking-wider font-semibold text-primary mb-3 flex items-center gap-1.5">
+        <Icon className="h-3.5 w-3.5" />
+        {children}
+      </p>
+    </div>
+  );
+
+  const FieldLabel = ({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) => (
+    <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
+      <Icon className="h-3.5 w-3.5" />
+      {children}
+    </Label>
+  );
 
   return (
     <motion.div
@@ -71,56 +89,71 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Home className="h-5 w-5 text-primary" />
-            Tu Perfil Financiero
+            Tu Perfil
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Financiero */}
+            <SectionTitle icon={User}>Datos personales</SectionTitle>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <FieldLabel icon={MapPin}>Ciudad</FieldLabel>
+                <Select value={city} onValueChange={setCity}>
+                  <SelectTrigger><SelectValue placeholder="Ciudad" /></SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(cityData).map(([key, data]) => (
+                      <SelectItem key={key} value={key}>{data.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <FieldLabel icon={User}>Edad</FieldLabel>
+                <Input type="number" placeholder="p.ej. 28" value={age} onChange={(e) => setAge(e.target.value)} min={18} max={70} />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" /> Ciudad
-              </Label>
-              <Select value={city} onValueChange={setCity}>
-                <SelectTrigger><SelectValue placeholder="Selecciona una ciudad" /></SelectTrigger>
+              <FieldLabel icon={Briefcase}>Situación laboral</FieldLabel>
+              <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
+                <SelectTrigger><SelectValue placeholder="Selecciona" /></SelectTrigger>
                 <SelectContent>
-                  {Object.entries(cityData).map(([key, data]) => (
-                    <SelectItem key={key} value={key}>{data.name}</SelectItem>
-                  ))}
+                  <SelectItem value="empleado">Empleado por cuenta ajena</SelectItem>
+                  <SelectItem value="autonomo">Autónomo / freelance</SelectItem>
+                  <SelectItem value="funcionario">Funcionario</SelectItem>
+                  <SelectItem value="temporal">Contrato temporal</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
+            <SectionTitle icon={Euro}>Situación financiera</SectionTitle>
+
             <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <DollarSign className="h-3.5 w-3.5" /> Ingresos mensuales netos (€)
-              </Label>
-              <Input type="number" placeholder="p.ej. 2500" value={income} onChange={(e) => setIncome(e.target.value)} min={0} max={1000000} />
+              <FieldLabel icon={Euro}>Ingresos netos mensuales (€)</FieldLabel>
+              <Input type="number" placeholder="p.ej. 2500" value={income} onChange={(e) => setIncome(e.target.value)} min={0} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <FieldLabel icon={PiggyBank}>Ahorros (€)</FieldLabel>
+                <Input type="number" placeholder="p.ej. 30000" value={savings} onChange={(e) => setSavings(e.target.value)} min={0} />
+              </div>
+              <div className="space-y-2">
+                <FieldLabel icon={TrendingUp}>Ahorro/mes (€)</FieldLabel>
+                <Input type="number" placeholder="p.ej. 800" value={monthlySavings} onChange={(e) => setMonthlySavings(e.target.value)} min={0} />
+              </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <PiggyBank className="h-3.5 w-3.5" /> Ahorros actuales (€)
-              </Label>
-              <Input type="number" placeholder="p.ej. 30000" value={savings} onChange={(e) => setSavings(e.target.value)} min={0} max={100000000} />
+              <FieldLabel icon={CreditCard}>Deudas mensuales (€, opcional)</FieldLabel>
+              <Input type="number" placeholder="p.ej. 200" value={monthlyDebts} onChange={(e) => setMonthlyDebts(e.target.value)} min={0} />
             </div>
+
+            <SectionTitle icon={Building2}>Vivienda deseada</SectionTitle>
 
             <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <TrendingUp className="h-3.5 w-3.5" /> Ahorro mensual (€)
-              </Label>
-              <Input type="number" placeholder="p.ej. 800" value={monthlySavings} onChange={(e) => setMonthlySavings(e.target.value)} min={0} max={1000000} />
-            </div>
-
-            {/* Separador */}
-            <div className="border-t border-border pt-4 mt-4">
-              <p className="text-xs uppercase tracking-wider font-semibold text-primary mb-3">Tipo de vivienda deseada</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <Building2 className="h-3.5 w-3.5" /> Tipo de propiedad
-              </Label>
+              <FieldLabel icon={Building2}>Tipo de propiedad</FieldLabel>
               <Select value={propertyType} onValueChange={setPropertyType}>
                 <SelectTrigger><SelectValue placeholder="Selecciona tipo" /></SelectTrigger>
                 <SelectContent>
@@ -134,9 +167,7 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                  <Ruler className="h-3.5 w-3.5" /> Tamaño
-                </Label>
+                <FieldLabel icon={Ruler}>Tamaño</FieldLabel>
                 <Select value={size} onValueChange={setSize}>
                   <SelectTrigger><SelectValue placeholder="m²" /></SelectTrigger>
                   <SelectContent>
@@ -147,11 +178,8 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="space-y-2">
-                <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                  <BedDouble className="h-3.5 w-3.5" /> Habitaciones
-                </Label>
+                <FieldLabel icon={BedDouble}>Habitaciones</FieldLabel>
                 <Select value={rooms} onValueChange={setRooms}>
                   <SelectTrigger><SelectValue placeholder="Nº" /></SelectTrigger>
                   <SelectContent>
@@ -165,9 +193,7 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" /> Zona preferida
-              </Label>
+              <FieldLabel icon={MapPin}>Zona preferida</FieldLabel>
               <Select value={zone} onValueChange={setZone}>
                 <SelectTrigger><SelectValue placeholder="Selecciona zona" /></SelectTrigger>
                 <SelectContent>
@@ -179,9 +205,7 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <Wrench className="h-3.5 w-3.5" /> Estado de reforma
-              </Label>
+              <FieldLabel icon={Wrench}>Estado de reforma</FieldLabel>
               <Select value={reformState} onValueChange={setReformState}>
                 <SelectTrigger><SelectValue placeholder="Selecciona estado" /></SelectTrigger>
                 <SelectContent>
@@ -193,9 +217,7 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" /> Plazo de compra deseado
-              </Label>
+              <FieldLabel icon={Calendar}>Plazo de compra</FieldLabel>
               <Select value={timeline} onValueChange={setTimeline}>
                 <SelectTrigger><SelectValue placeholder="Selecciona plazo" /></SelectTrigger>
                 <SelectContent>
@@ -208,7 +230,7 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
             </div>
 
             <Button type="submit" size="lg" className="w-full font-semibold text-base mt-2">
-              Analizar Viabilidad
+              🏠 Calcular mi plan
             </Button>
           </form>
         </CardContent>
