@@ -9,6 +9,26 @@ import {
 } from "lucide-react";
 import SavingsTimeline from "@/components/SavingsTimeline";
 
+import doodleCelebrate from "@/assets/doodle-celebrate.png";
+import doodleStrength from "@/assets/doodle-strength.png";
+import doodleChart from "@/assets/doodle-chart.png";
+import doodleGovernment from "@/assets/doodle-government.png";
+import doodleTarget from "@/assets/doodle-target.png";
+import doodleSearch from "@/assets/doodle-search.png";
+import doodleHouse from "@/assets/illustration-housing.png";
+import doodleBank from "@/assets/illustration-mortgage.png";
+
+const doodleIconMap: Record<string, string> = {
+  "🎉": doodleCelebrate,
+  "🏦": doodleBank,
+  "🔍": doodleSearch,
+  "💪": doodleStrength,
+  "📊": doodleChart,
+  "🏛️": doodleGovernment,
+  "🎯": doodleTarget,
+  "🏠": doodleHouse,
+};
+
 interface DashboardProps {
   result: AffordabilityResult;
 }
