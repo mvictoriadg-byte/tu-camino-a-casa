@@ -6,7 +6,7 @@ import Dashboard from "@/components/Dashboard";
 import { calculateAffordability, type AffordabilityResult, type UserProfile } from "@/lib/housing-data";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, User, LogIn, ArrowRight, ArrowLeft } from "lucide-react";
+import { Home, User, LogIn, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -14,18 +14,30 @@ import illustrationPlan from "@/assets/illustration-plan.png";
 
 const Index = () => {
   const [result, setResult] = useState<AffordabilityResult | null>(null);
-  const [mobileStep, setMobileStep] = useState<"form" | "results">("form");
+  const [mobileStep, setMobileStep] = useState<"form" | "loading" | "results">("form");
+  const [isCalculating, setIsCalculating] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   const handleCalculate = async (profile: UserProfile) => {
+    setIsCalculating(true);
+    if (isMobile) {
+      setMobileStep("loading");
+    }
+
+    // Small delay for loading feel
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
     const r = calculateAffordability(profile);
     setResult(r);
+    setIsCalculating(false);
+
     if (isMobile) {
       setMobileStep("results");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
     if (user) {
       try {
         const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
@@ -52,6 +64,43 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const SaveCTA = () => (
+    !user ? (
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <div className="rounded-2xl bg-primary p-8 text-center">
+          <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guardar mi plan de ahorro</h3>
+          <p className="text-sm text-primary-foreground/70 mb-1 max-w-md mx-auto">
+            Crea una cuenta gratuita para guardar tu plan, hacer seguimiento y crear tu wishlist de propiedades.
+          </p>
+          <p className="text-xs text-primary-foreground/50 mb-5">Podrás revisarlo y ajustarlo cuando quieras.</p>
+          <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-bold text-base px-8" onClick={() => navigate("/auth")}>
+            Crear cuenta gratis <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
+      </motion.div>
+    ) : null
+  );
+
+  const LoadingState = () => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex flex-col items-center justify-center py-20 gap-5"
+    >
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+      >
+        <Loader2 className="h-10 w-10 text-primary" />
+      </motion.div>
+      <div className="text-center">
+        <p className="text-lg font-bold">Estamos creando tu plan personalizado…</p>
+        <p className="text-sm text-muted-foreground mt-1">Solo un momento</p>
+      </div>
+    </motion.div>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
@@ -63,29 +112,32 @@ const Index = () => {
             </div>
             <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
           </button>
-          {user ?
-          <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
+          {user ? (
+            <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
               <User className="h-4 w-4 mr-1.5" /> Mi Portal
-            </Button> :
-
-          <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
+            </Button>
+          ) : (
+            <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
               <LogIn className="h-4 w-4 mr-1.5" /> Acceder
             </Button>
-          }
+          )}
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="pt-16 pb-12 px-4 sm:px-6">
+      <section className="pt-12 sm:pt-16 pb-8 sm:pb-12 px-4 sm:px-6">
         <div className="container max-w-3xl text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-6 tracking-tight">Comprar tu casa 
-está más cerca
-              <br />
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-[1.05] mb-4 tracking-tight">
+              Comprar tu casa{" "}
+              <br className="hidden sm:block" />
               <span className="gradient-text">está más cerca</span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-              Descubre cuánto necesitas, crea tu plan personalizado y haz realidad tu primera vivienda.
+            <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-2">
+              Descubre cuánto necesitas ahorrar y crea tu plan paso a paso para comprar tu casa.
+            </p>
+            <p className="text-sm text-muted-foreground/70 flex items-center justify-center gap-1.5">
+              <span>⏱</span> Esto solo te llevará 1 minuto
             </p>
           </motion.div>
         </div>
@@ -94,63 +146,51 @@ está más cerca
       {/* Main */}
       <section className="pb-20 px-4 sm:px-6">
         <div className="container max-w-6xl">
-          {isMobile ?
-          <AnimatePresence mode="wait">
-              {mobileStep === "form" ?
-            <motion.div key="form" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
-                  <InputForm onCalculate={handleCalculate} />
-                </motion.div> :
-
-            <motion.div key="results" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.25 }}>
+          {isMobile ? (
+            <AnimatePresence mode="wait">
+              {mobileStep === "form" ? (
+                <motion.div key="form" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
+                  <InputForm onCalculate={handleCalculate} isCalculating={isCalculating} />
+                </motion.div>
+              ) : mobileStep === "loading" ? (
+                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <LoadingState />
+                </motion.div>
+              ) : (
+                <motion.div key="results" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.25 }}>
                   <Button variant="ghost" size="sm" className="mb-4 -ml-2 font-semibold" onClick={handleBackToForm}>
                     <ArrowLeft className="h-4 w-4 mr-1.5" /> Volver al formulario
                   </Button>
-                  {result &&
-              <div className="space-y-6">
+                  {result && (
+                    <div className="space-y-6">
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                        <p className="text-center text-sm font-bold text-primary mb-4">✨ Tu plan está listo</p>
+                      </motion.div>
                       <Dashboard result={result} />
-                      {!user &&
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                          <div className="rounded-2xl bg-primary p-8 text-center">
-                            <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guarda tu plan gratis</h3>
-                            <p className="text-sm text-primary-foreground/70 mb-5 max-w-md mx-auto">
-                              Crea una cuenta para guardar tu plan, hacer seguimiento y crear tu wishlist de propiedades.
-                            </p>
-                            <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-bold text-base px-8" onClick={() => navigate("/auth")}>
-                              Crear cuenta <ArrowRight className="h-4 w-4 ml-2" />
-                            </Button>
-                          </div>
-                        </motion.div>
-                }
+                      <SaveCTA />
                     </div>
-              }
+                  )}
                 </motion.div>
-            }
-            </AnimatePresence> :
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              )}
+            </AnimatePresence>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-4">
-                <InputForm onCalculate={handleCalculate} />
+                <InputForm onCalculate={handleCalculate} isCalculating={isCalculating} />
               </div>
               <div className="lg:col-span-8">
-                {result ?
-              <div className="space-y-6">
+                {isCalculating ? (
+                  <LoadingState />
+                ) : result ? (
+                  <div className="space-y-6">
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                      <p className="text-center text-sm font-bold text-primary mb-2">✨ Tu plan está listo</p>
+                    </motion.div>
                     <Dashboard result={result} />
-                    {!user &&
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                        <div className="rounded-2xl bg-primary p-8 text-center">
-                          <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guarda tu plan gratis</h3>
-                          <p className="text-sm text-primary-foreground/70 mb-5 max-w-md mx-auto">
-                            Crea una cuenta para guardar tu plan, hacer seguimiento y crear tu wishlist de propiedades.
-                          </p>
-                          <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-bold text-base px-8" onClick={() => navigate("/auth")}>
-                            Crear cuenta <ArrowRight className="h-4 w-4 ml-2" />
-                          </Button>
-                        </div>
-                      </motion.div>
-                }
-                  </div> :
-
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start justify-center h-full min-h-[600px] pt-8">
+                    <SaveCTA />
+                  </div>
+                ) : (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start justify-center h-full min-h-[600px] pt-8">
                     <div className="text-center">
                       <div className="w-32 h-32 flex items-center justify-center mx-auto mb-8">
                         <img src={illustrationPlan} alt="Tu plan" className="w-32 h-32 object-contain" />
@@ -159,10 +199,10 @@ está más cerca
                       <p className="text-muted-foreground text-base max-w-sm mx-auto">Rellena tus datos en el formulario para ver tu roadmap de compra</p>
                     </div>
                   </motion.div>
-              }
+                )}
               </div>
             </div>
-          }
+          )}
         </div>
       </section>
 
@@ -178,8 +218,8 @@ está más cerca
           <p className="text-xs text-muted-foreground">© 2026 Tu camino a casa · España</p>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 };
 
 export default Index;
