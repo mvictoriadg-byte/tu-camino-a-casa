@@ -170,7 +170,11 @@ const Index = () => {
             </div>
             <span className="font-bold text-sm">Tu camino a casa</span>
           </div>
-          <p className="text-xs text-muted-foreground">© 2026 Tu camino a casa · España</p>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span>© 2026 Tu camino a casa · España</span>
+            <span>·</span>
+            <a href="/terminos" className="underline hover:text-primary transition-colors">Términos y Condiciones</a>
+          </div>
         </div>
       </footer>
     </div>
