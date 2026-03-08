@@ -44,7 +44,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
   const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
   const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
   const [zone, setZone] = useState(iv?.preferences?.zone || "");
-  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "");
+  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
