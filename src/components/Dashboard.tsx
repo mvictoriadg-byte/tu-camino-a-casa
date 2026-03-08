@@ -100,7 +100,7 @@ const Dashboard = ({ result }: DashboardProps) => {
             {!canAfford && displayMonths && (
               <p className="text-lg text-muted-foreground font-mono">{displayMonths}</p>
             )}
-            <p className="text-sm text-muted-foreground mt-3">{propertyDesc} en {city.name}</p>
+            <p className="text-sm text-muted-foreground mt-3">{propertyDesc} en {city.name} · {formatCurrency(pricePerSqm)}/m²</p>
             {!canAfford && savingsGap > 0 && (
               <p className="text-xs text-muted-foreground mt-2">
                 Te faltan <span className="font-semibold text-primary">{formatCurrency(savingsGap)}</span> — ahorrando <span className="font-semibold text-primary">{formatCurrency(totalMonthlySavings)}/mes</span>
@@ -182,7 +182,7 @@ const Dashboard = ({ result }: DashboardProps) => {
           label="Precio estimado vivienda"
           value={formatCurrency(estimatedPrice)}
           icon={Home}
-          subtitle={`${city.avgPricePerSqm} €/m² en ${city.name}`}
+          subtitle={`${formatCurrency(pricePerSqm)}/m² · ${sqm} m² en ${city.name}`}
           delay={0.2}
         />
         <StatCard
@@ -194,10 +194,10 @@ const Dashboard = ({ result }: DashboardProps) => {
           delay={0.25}
         />
         <StatCard
-          label="Entrada necesaria (20%)"
+          label={`Entrada necesaria (${100 - mortgagePercent}%)`}
           value={formatCurrency(requiredDownPayment)}
           icon={Target}
-          subtitle="Aportación inicial para la hipoteca"
+          subtitle={`Hipotecando el ${mortgagePercent}% de la vivienda`}
           delay={0.3}
         />
         <StatCard
@@ -221,7 +221,7 @@ const Dashboard = ({ result }: DashboardProps) => {
           label="Cuota hipotecaria estimada"
           value={`${formatCurrency(monthlyMortgagePayment)}/mes`}
           icon={Euro}
-          subtitle={`A 30 años al ${city.mortgageRate}% · Endeudamiento: ${debtToIncomeRatio}%`}
+          subtitle={`A 30 años al ${city.mortgageRate}% · Hipoteca ${mortgagePercent}% · DTI: ${debtToIncomeRatio}%`}
           variant={debtToIncomeRatio <= 35 ? "success" : "destructive"}
           delay={0.4}
         />
