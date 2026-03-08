@@ -4,9 +4,10 @@ import StatCard from "@/components/StatCard";
 import { type AffordabilityResult, formatCurrency } from "@/lib/housing-data";
 import {
   Home, TrendingUp, CheckCircle2, Landmark, Euro, Target,
-  Wrench, Sparkles, ArrowRight, Building, Lightbulb, Flag, Trophy, Shield,
+  Wrench, Sparkles, ArrowRight, Building, Lightbulb, Trophy, Shield,
   Users, Timer,
 } from "lucide-react";
+import SavingsTimeline from "@/components/SavingsTimeline";
 
 interface DashboardProps {
   result: AffordabilityResult;
