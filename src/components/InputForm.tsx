@@ -11,7 +11,7 @@ import {
 import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
-  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight,
+  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, Loader2,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
 import illustrationFinance from "@/assets/illustration-finance.png";
@@ -20,9 +20,10 @@ import illustrationMortgage from "@/assets/illustration-mortgage.png";
 
 interface InputFormProps {
   onCalculate: (profile: UserProfile) => void;
+  isCalculating?: boolean;
 }
 
-const InputForm = ({ onCalculate }: InputFormProps) => {
+const InputForm = ({ onCalculate, isCalculating }: InputFormProps) => {
   const [city, setCity] = useState("");
   const [age, setAge] = useState("");
   const [employmentStatus, setEmploymentStatus] = useState("");
@@ -101,10 +102,11 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
     </Label>
   );
 
-  const SectionHeader = ({ title, subtitle, illustration }: { title: string; subtitle: string; illustration: string }) => (
-    <div className="flex items-center gap-3 mb-4">
+  const SectionHeader = ({ title, subtitle, illustration, step }: { title: string; subtitle: string; illustration: string; step: number }) => (
+    <div className="flex items-center gap-3 mb-5">
       <img src={illustration} alt="" className="h-12 w-12 object-contain" />
-      <div>
+      <div className="flex-1">
+        <p className="text-[10px] uppercase tracking-widest font-bold text-primary mb-0.5">Paso {step} de 4</p>
         <h3 className="text-base font-extrabold tracking-tight">{title}</h3>
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
@@ -113,47 +115,54 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="mb-5">
+        <p className="text-sm font-bold text-foreground flex items-center gap-1.5">
+          📋 Vamos paso a paso
+        </p>
+        <p className="text-xs text-muted-foreground mt-0.5">Rellena tu información para crear tu plan personalizado.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* SECTION 1: Personal */}
         <Card className="glow-card">
-          <CardContent className="p-5">
-            <SectionHeader title="Información personal" subtitle="Cuéntanos sobre ti y tu grupo" illustration={illustrationPersonal} />
-            <div className="space-y-3">
+          <CardContent className="p-5 sm:p-6">
+            <SectionHeader title="Sobre ti" subtitle="Cuéntanos un poco sobre ti" illustration={illustrationPersonal} step={1} />
+            <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <FieldLabel icon={MapPin}>Ciudad</FieldLabel>
+                  <FieldLabel icon={MapPin}>¿Dónde quieres comprar?</FieldLabel>
                   <Select value={city} onValueChange={v => { setCity(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("city")}`}><SelectValue placeholder="Ciudad" /></SelectTrigger>
+                    <SelectTrigger className={`rounded-xl ${fieldBorder("city")}`}><SelectValue placeholder="Elige tu ciudad" /></SelectTrigger>
                     <SelectContent>{Object.entries(cityData).map(([key, data]) => <SelectItem key={key} value={key}>{data.name}</SelectItem>)}</SelectContent>
                   </Select>
                   <FieldError field="city" />
                 </div>
                 <div className="space-y-1.5">
-                  <FieldLabel icon={User}>Edad</FieldLabel>
-                  <Input type="number" placeholder="p.ej. 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl ${fieldBorder("age")}`} />
+                  <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
+                  <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl ${fieldBorder("age")}`} />
                   <FieldError field="age" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <FieldLabel icon={Briefcase}>Situación laboral</FieldLabel>
+                  <FieldLabel icon={Briefcase}>¿En qué trabajas?</FieldLabel>
                   <Select value={employmentStatus} onValueChange={v => { setEmploymentStatus(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("employmentStatus")}`}><SelectValue placeholder="Selecciona" /></SelectTrigger>
+                    <SelectTrigger className={`rounded-xl ${fieldBorder("employmentStatus")}`}><SelectValue placeholder="Tu situación" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="empleado">Empleado</SelectItem>
-                      <SelectItem value="autonomo">Autónomo</SelectItem>
-                      <SelectItem value="funcionario">Funcionario</SelectItem>
-                      <SelectItem value="temporal">Temporal</SelectItem>
+                      <SelectItem value="empleado">Empleado/a</SelectItem>
+                      <SelectItem value="autonomo">Autónomo/a</SelectItem>
+                      <SelectItem value="funcionario">Funcionario/a</SelectItem>
+                      <SelectItem value="temporal">Contrato temporal</SelectItem>
                     </SelectContent>
                   </Select>
                   <FieldError field="employmentStatus" />
                 </div>
                 <div className="space-y-1.5">
-                  <FieldLabel icon={Users}>Nº compradores</FieldLabel>
+                  <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>
                   <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
                     <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1 persona</SelectItem>
+                      <SelectItem value="1">Solo yo</SelectItem>
                       <SelectItem value="2">2 personas</SelectItem>
                       <SelectItem value="3">3 personas</SelectItem>
                       <SelectItem value="4">4 personas</SelectItem>
@@ -167,41 +176,41 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
 
         {/* SECTION 2: Finances */}
         <Card className="glow-card">
-          <CardContent className="p-5">
-            <SectionHeader title="Situación financiera" subtitle="Tus ingresos, ahorros y deudas" illustration={illustrationFinance} />
-            <div className="space-y-3">
+          <CardContent className="p-5 sm:p-6">
+            <SectionHeader title="Tu economía" subtitle="Para calcular tu capacidad de compra" illustration={illustrationFinance} step={2} />
+            <div className="space-y-4">
               <div className="space-y-1.5">
-                <FieldLabel icon={Euro}>Ingresos netos mensuales (€)</FieldLabel>
-                <Input type="number" placeholder="p.ej. 2500" value={income} onChange={e => setIncome(e.target.value)} min={0} className={`rounded-xl ${fieldBorder("income")}`} />
+                <FieldLabel icon={Euro}>¿Cuánto ganas al mes? (neto)</FieldLabel>
+                <Input type="number" placeholder="Ej: 2.500 €" value={income} onChange={e => setIncome(e.target.value)} min={0} className={`rounded-xl ${fieldBorder("income")}`} />
                 <FieldError field="income" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <FieldLabel icon={PiggyBank}>Ahorros actuales (€)</FieldLabel>
-                  <Input type="number" placeholder="p.ej. 30000" value={savings} onChange={e => setSavings(e.target.value)} min={0} className={`rounded-xl ${fieldBorder("savings")}`} />
+                  <FieldLabel icon={PiggyBank}>¿Cuánto tienes ahorrado?</FieldLabel>
+                  <Input type="number" placeholder="Ej: 30.000 €" value={savings} onChange={e => setSavings(e.target.value)} min={0} className={`rounded-xl ${fieldBorder("savings")}`} />
                   <FieldError field="savings" />
                 </div>
                 <div className="space-y-1.5">
-                  <FieldLabel icon={TrendingUp}>Ahorro/mes (€)</FieldLabel>
-                  <Input type="number" placeholder="p.ej. 800" value={monthlySavings} onChange={e => setMonthlySavings(e.target.value)} min={0} className={`rounded-xl ${fieldBorder("monthlySavings")}`} />
+                  <FieldLabel icon={TrendingUp}>¿Cuánto ahorras al mes?</FieldLabel>
+                  <Input type="number" placeholder="Ej: 800 €" value={monthlySavings} onChange={e => setMonthlySavings(e.target.value)} min={0} className={`rounded-xl ${fieldBorder("monthlySavings")}`} />
                   <FieldError field="monthlySavings" />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <FieldLabel icon={CreditCard}>Deudas mensuales (€, opcional)</FieldLabel>
-                <Input type="number" placeholder="p.ej. 200" value={monthlyDebts} onChange={e => setMonthlyDebts(e.target.value)} min={0} className="rounded-xl" />
+                <FieldLabel icon={CreditCard}>¿Tienes deudas mensuales? (opcional)</FieldLabel>
+                <Input type="number" placeholder="Ej: 200 € (préstamos, tarjetas…)" value={monthlyDebts} onChange={e => setMonthlyDebts(e.target.value)} min={0} className="rounded-xl" />
               </div>
 
               {coBuyers.map((cb, i) => (
                 <div key={i} className="border-t border-border pt-4 mt-4">
                   <p className="text-sm font-bold flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5 text-muted-foreground" /> Comprador {i + 2}</p>
-                  <div className="space-y-3">
-                    <div className="space-y-1.5"><FieldLabel icon={Euro}>Ingresos mensuales (€)</FieldLabel><Input type="number" placeholder="p.ej. 2000" value={cb.income} onChange={e => updateCoBuyer(i, "income", e.target.value)} min={0} className="rounded-xl" /></div>
+                  <div className="space-y-4">
+                    <div className="space-y-1.5"><FieldLabel icon={Euro}>¿Cuánto gana al mes?</FieldLabel><Input type="number" placeholder="Ej: 2.000 €" value={cb.income} onChange={e => updateCoBuyer(i, "income", e.target.value)} min={0} className="rounded-xl" /></div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1.5"><FieldLabel icon={PiggyBank}>Ahorros (€)</FieldLabel><Input type="number" placeholder="p.ej. 15000" value={cb.savings} onChange={e => updateCoBuyer(i, "savings", e.target.value)} min={0} className="rounded-xl" /></div>
-                      <div className="space-y-1.5"><FieldLabel icon={TrendingUp}>Ahorro/mes (€)</FieldLabel><Input type="number" placeholder="p.ej. 500" value={cb.monthlySavings} onChange={e => updateCoBuyer(i, "monthlySavings", e.target.value)} min={0} className="rounded-xl" /></div>
+                      <div className="space-y-1.5"><FieldLabel icon={PiggyBank}>Ahorros</FieldLabel><Input type="number" placeholder="Ej: 15.000 €" value={cb.savings} onChange={e => updateCoBuyer(i, "savings", e.target.value)} min={0} className="rounded-xl" /></div>
+                      <div className="space-y-1.5"><FieldLabel icon={TrendingUp}>Ahorro/mes</FieldLabel><Input type="number" placeholder="Ej: 500 €" value={cb.monthlySavings} onChange={e => updateCoBuyer(i, "monthlySavings", e.target.value)} min={0} className="rounded-xl" /></div>
                     </div>
-                    <div className="space-y-1.5"><FieldLabel icon={CreditCard}>Deudas (€)</FieldLabel><Input type="number" placeholder="p.ej. 100" value={cb.monthlyDebts} onChange={e => updateCoBuyer(i, "monthlyDebts", e.target.value)} min={0} className="rounded-xl" /></div>
+                    <div className="space-y-1.5"><FieldLabel icon={CreditCard}>Deudas mensuales</FieldLabel><Input type="number" placeholder="Ej: 100 €" value={cb.monthlyDebts} onChange={e => updateCoBuyer(i, "monthlyDebts", e.target.value)} min={0} className="rounded-xl" /></div>
                   </div>
                 </div>
               ))}
@@ -211,13 +220,13 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
 
         {/* SECTION 3: Housing */}
         <Card className="glow-card">
-          <CardContent className="p-5">
-            <SectionHeader title="Preferencias de vivienda" subtitle="¿Cómo imaginas tu casa ideal?" illustration={illustrationHousing} />
-            <div className="space-y-3">
+          <CardContent className="p-5 sm:p-6">
+            <SectionHeader title="Tu casa ideal" subtitle="¿Cómo imaginas tu futuro hogar?" illustration={illustrationHousing} step={3} />
+            <div className="space-y-4">
               <div className="space-y-1.5">
-                <FieldLabel icon={Building2}>Tipo de propiedad</FieldLabel>
+                <FieldLabel icon={Building2}>¿Qué tipo de vivienda buscas?</FieldLabel>
                 <Select value={propertyType} onValueChange={v => { setPropertyType(v); if (submitted) validate(); }}>
-                  <SelectTrigger className={`rounded-xl ${fieldBorder("propertyType")}`}><SelectValue placeholder="Selecciona" /></SelectTrigger>
+                  <SelectTrigger className={`rounded-xl ${fieldBorder("propertyType")}`}><SelectValue placeholder="Elige un tipo" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="apartamento">Apartamento</SelectItem>
                     <SelectItem value="casa">Casa</SelectItem>
@@ -228,13 +237,13 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
                 <FieldError field="propertyType" />
               </div>
               <div className="space-y-1.5">
-                <FieldLabel icon={Ruler}>Tamaño: {size} m²</FieldLabel>
+                <FieldLabel icon={Ruler}>¿De qué tamaño? {size} m²</FieldLabel>
                 <Slider value={[size]} onValueChange={v => setSize(v[0])} min={30} max={200} step={10} className="mt-2" />
                 <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>30 m²</span><span>200 m²</span></div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <FieldLabel icon={BedDouble}>Habitaciones</FieldLabel>
+                  <FieldLabel icon={BedDouble}>¿Cuántas habitaciones?</FieldLabel>
                   <Select value={rooms} onValueChange={v => { setRooms(v); if (submitted) validate(); }}>
                     <SelectTrigger className={`rounded-xl ${fieldBorder("rooms")}`}><SelectValue placeholder="Nº" /></SelectTrigger>
                     <SelectContent><SelectItem value="1">1</SelectItem><SelectItem value="2">2</SelectItem><SelectItem value="3">3</SelectItem><SelectItem value="4+">4+</SelectItem></SelectContent>
@@ -242,7 +251,7 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
                   <FieldError field="rooms" />
                 </div>
                 <div className="space-y-1.5">
-                  <FieldLabel icon={MapPin}>Zona</FieldLabel>
+                  <FieldLabel icon={MapPin}>¿En qué zona?</FieldLabel>
                   <Select value={zone} onValueChange={v => { setZone(v); if (submitted) validate(); }}>
                     <SelectTrigger className={`rounded-xl ${fieldBorder("zone")}`}><SelectValue placeholder="Zona" /></SelectTrigger>
                     <SelectContent><SelectItem value="centro">Centro</SelectItem><SelectItem value="metropolitana">Metropolitana</SelectItem><SelectItem value="periferia">Periferia</SelectItem></SelectContent>
@@ -251,10 +260,10 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <FieldLabel icon={Wrench}>Estado de reforma</FieldLabel>
+                <FieldLabel icon={Wrench}>¿Necesita reforma?</FieldLabel>
                 <Select value={reformState} onValueChange={v => { setReformState(v); if (submitted) validate(); }}>
-                  <SelectTrigger className={`rounded-xl ${fieldBorder("reformState")}`}><SelectValue placeholder="Selecciona" /></SelectTrigger>
-                  <SelectContent><SelectItem value="listo-para-entrar">Listo para entrar</SelectItem><SelectItem value="pequena-reforma">Pequeña reforma</SelectItem><SelectItem value="reforma-completa">Reforma completa</SelectItem></SelectContent>
+                  <SelectTrigger className={`rounded-xl ${fieldBorder("reformState")}`}><SelectValue placeholder="Estado de la vivienda" /></SelectTrigger>
+                  <SelectContent><SelectItem value="listo-para-entrar">Lista para entrar</SelectItem><SelectItem value="pequena-reforma">Pequeña reforma</SelectItem><SelectItem value="reforma-completa">Reforma completa</SelectItem></SelectContent>
                 </Select>
                 <FieldError field="reformState" />
               </div>
@@ -264,20 +273,33 @@ const InputForm = ({ onCalculate }: InputFormProps) => {
 
         {/* SECTION 4: Financing */}
         <Card className="glow-card">
-          <CardContent className="p-5">
-            <SectionHeader title="Financiación" subtitle="Configura tu hipoteca ideal" illustration={illustrationMortgage} />
+          <CardContent className="p-5 sm:p-6">
+            <SectionHeader title="Tu hipoteca" subtitle="¿Cuánto quieres financiar?" illustration={illustrationMortgage} step={4} />
             <div className="space-y-1.5">
               <FieldLabel icon={Percent}>Porcentaje a hipotecar: {mortgagePercent}%</FieldLabel>
               <Slider value={[mortgagePercent]} onValueChange={v => setMortgagePercent(v[0])} min={50} max={90} step={5} className="mt-2" />
               <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>50%</span><span>90%</span></div>
-              <p className="text-xs text-muted-foreground">Entrada necesaria: {100 - mortgagePercent}% del valor</p>
+              <p className="text-xs text-muted-foreground">Tu entrada sería el {100 - mortgagePercent}% del precio de la vivienda</p>
             </div>
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" className="w-full rounded-full font-bold text-base h-12">
-          Calcular mi plan <ArrowRight className="h-4 w-4 ml-2" />
-        </Button>
+        <div className="space-y-2">
+          <Button type="submit" size="lg" className="w-full rounded-full font-bold text-base h-14 shadow-lg shadow-primary/20" disabled={isCalculating}>
+            {isCalculating ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creando tu plan…
+              </>
+            ) : (
+              <>
+                Calcular mi plan <ArrowRight className="h-4 w-4 ml-2" />
+              </>
+            )}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            Es gratis y no necesitas registrarte
+          </p>
+        </div>
       </form>
     </motion.div>
   );
