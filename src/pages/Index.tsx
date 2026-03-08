@@ -104,7 +104,7 @@ const Index = () => {
                   )}
                 </div>
               ) : (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center h-full min-h-[600px]">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start justify-center h-full min-h-[600px] pt-8">
                   <div className="text-center">
                     <div className="w-32 h-32 flex items-center justify-center mx-auto mb-8">
                       <img src={illustrationPlan} alt="Tu plan" className="w-32 h-32 object-contain" />
