@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
-import { type AffordabilityResult, formatCurrency } from "@/lib/housing-data";
+import InputForm from "@/components/InputForm";
+import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency } from "@/lib/housing-data";
 import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,9 +21,11 @@ const Portal = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<{ display_name: string; email: string } | null>(null);
   const [result, setResult] = useState<AffordabilityResult | null>(null);
+  const [savedFormData, setSavedFormData] = useState<Partial<UserProfile> | null>(null);
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [newUrl, setNewUrl] = useState(""); const [newTitle, setNewTitle] = useState(""); const [newPrice, setNewPrice] = useState("");
   const [loadingData, setLoadingData] = useState(true);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
   useEffect(() => { if (user) loadData(); }, [user]);
@@ -36,6 +39,17 @@ const Portal = () => {
     ]);
     if (p.data) setProfile({ display_name: p.data.display_name || "", email: p.data.email || "" });
     if (f.data?.length && f.data[0].result_json) setResult(f.data[0].result_json as unknown as AffordabilityResult);
+    if (f.data?.length) {
+      const d = f.data[0];
+      setSavedFormData({
+        city: d.city, age: d.age, employmentStatus: d.employment_status,
+        monthlyIncome: Number(d.monthly_income), savings: Number(d.savings),
+        monthlySavings: Number(d.monthly_savings), monthlyDebts: Number(d.monthly_debts),
+        numBuyers: d.num_buyers, coBuyers: (d.co_buyers as any) || [],
+        mortgagePercent: d.mortgage_percent,
+        preferences: { propertyType: d.property_type, size: String(d.size_sqm), rooms: d.rooms, zone: d.zone, reformState: d.reform_state },
+      });
+    }
     if (w.data) setWishlist(w.data as WishlistItem[]);
     setLoadingData(false);
   };
@@ -49,6 +63,33 @@ const Portal = () => {
   };
 
   const removeWishlistItem = async (id: string) => { await supabase.from("user_wishlist").delete().eq("id", id); setWishlist(prev => prev.filter(w => w.id !== id)); toast.success("Eliminada"); };
+
+  const handleRecalculate = async (profileData: UserProfile) => {
+    if (!user) return;
+    setIsCalculating(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    const r = calculateAffordability(profileData);
+    setResult(r);
+    setIsCalculating(false);
+    try {
+      const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
+      const payload = {
+        user_id: user.id, city: profileData.city, age: profileData.age, employment_status: profileData.employmentStatus,
+        monthly_income: profileData.monthlyIncome, savings: profileData.savings, monthly_savings: profileData.monthlySavings,
+        monthly_debts: profileData.monthlyDebts, num_buyers: profileData.numBuyers, co_buyers: profileData.coBuyers as any,
+        property_type: profileData.preferences.propertyType, size_sqm: Number(profileData.preferences.size),
+        rooms: profileData.preferences.rooms, zone: profileData.preferences.zone, reform_state: profileData.preferences.reformState,
+        mortgage_percent: profileData.mortgagePercent, result_json: r as any
+      };
+      if (existing && existing.length > 0) {
+        await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);
+      } else {
+        await supabase.from("user_financial_data").insert(payload);
+      }
+      setSavedFormData(profileData);
+      toast.success("Plan actualizado y guardado");
+    } catch { toast.error("Error al guardar"); }
+  };
 
   if (authLoading || loadingData) return (
     <div className="min-h-screen flex items-center justify-center bg-background"><div className="text-center"><RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" /><p className="text-muted-foreground">Cargando tu portal...</p></div></div>
@@ -114,13 +155,26 @@ const Portal = () => {
             )}
           </TabsContent>
           <TabsContent value="profile">
-            <Card className="glow-card"><CardHeader><CardTitle className="text-lg font-bold flex items-center gap-2"><User className="h-5 w-5 text-primary" /> Tu perfil</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
-                <div><Label className="text-sm font-semibold text-muted-foreground">Nombre</Label><p className="text-base font-bold">{profile?.display_name || "—"}</p></div>
-                <div><Label className="text-sm font-semibold text-muted-foreground">Email</Label><p className="text-base font-bold">{profile?.email || "—"}</p></div>
-                <Button variant="outline" className="rounded-full font-bold" onClick={() => navigate("/")}><RefreshCw className="h-4 w-4 mr-2" /> Actualizar mi plan</Button>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              <Card className="glow-card">
+                <CardHeader><CardTitle className="text-lg font-bold flex items-center gap-2"><User className="h-5 w-5 text-primary" /> Tu perfil</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                  <div><Label className="text-sm font-semibold text-muted-foreground">Nombre</Label><p className="text-base font-bold">{profile?.display_name || "—"}</p></div>
+                  <div><Label className="text-sm font-semibold text-muted-foreground">Email</Label><p className="text-base font-bold">{profile?.email || "—"}</p></div>
+                </CardContent>
+              </Card>
+              <div>
+                <h3 className="text-lg font-extrabold mb-1 flex items-center gap-2"><RefreshCw className="h-5 w-5 text-primary" /> Actualizar mis datos</h3>
+                <p className="text-sm text-muted-foreground mb-4">Modifica tus preferencias y recalcula tu plan sin salir de aquí.</p>
+                <InputForm
+                  onCalculate={handleRecalculate}
+                  isCalculating={isCalculating}
+                  initialValues={savedFormData || undefined}
+                  submitLabel="Actualizar mi plan"
+                  hideFooterNote
+                />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

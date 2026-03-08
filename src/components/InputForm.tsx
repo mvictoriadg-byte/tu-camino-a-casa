@@ -21,24 +21,30 @@ import illustrationMortgage from "@/assets/illustration-mortgage.png";
 interface InputFormProps {
   onCalculate: (profile: UserProfile) => void;
   isCalculating?: boolean;
+  initialValues?: Partial<UserProfile>;
+  submitLabel?: string;
+  hideFooterNote?: boolean;
 }
 
-const InputForm = ({ onCalculate, isCalculating }: InputFormProps) => {
-  const [city, setCity] = useState("");
-  const [age, setAge] = useState("");
-  const [employmentStatus, setEmploymentStatus] = useState("");
-  const [income, setIncome] = useState("");
-  const [savings, setSavings] = useState("");
-  const [monthlySavings, setMonthlySavings] = useState("");
-  const [monthlyDebts, setMonthlyDebts] = useState("");
-  const [numBuyers, setNumBuyers] = useState("1");
-  const [coBuyers, setCoBuyers] = useState<{ income: string; savings: string; monthlySavings: string; monthlyDebts: string }[]>([]);
-  const [propertyType, setPropertyType] = useState("");
-  const [size, setSize] = useState(70);
-  const [rooms, setRooms] = useState("");
-  const [zone, setZone] = useState("");
-  const [reformState, setReformState] = useState("");
-  const [mortgagePercent, setMortgagePercent] = useState(80);
+const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hideFooterNote }: InputFormProps) => {
+  const iv = initialValues;
+  const [city, setCity] = useState(iv?.city || "");
+  const [age, setAge] = useState(iv?.age ? String(iv.age) : "");
+  const [employmentStatus, setEmploymentStatus] = useState(iv?.employmentStatus || "");
+  const [income, setIncome] = useState(iv?.monthlyIncome ? String(iv.monthlyIncome) : "");
+  const [savings, setSavings] = useState(iv?.savings ? String(iv.savings) : "");
+  const [monthlySavings, setMonthlySavings] = useState(iv?.monthlySavings ? String(iv.monthlySavings) : "");
+  const [monthlyDebts, setMonthlyDebts] = useState(iv?.monthlyDebts ? String(iv.monthlyDebts) : "");
+  const [numBuyers, setNumBuyers] = useState(iv?.numBuyers ? String(iv.numBuyers) : "1");
+  const [coBuyers, setCoBuyers] = useState<{ income: string; savings: string; monthlySavings: string; monthlyDebts: string }[]>(
+    iv?.coBuyers?.map(cb => ({ income: String(cb.monthlyIncome || ""), savings: String(cb.savings || ""), monthlySavings: String(cb.monthlySavings || ""), monthlyDebts: String(cb.monthlyDebts || "") })) || []
+  );
+  const [propertyType, setPropertyType] = useState(iv?.preferences?.propertyType || "");
+  const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
+  const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
+  const [zone, setZone] = useState(iv?.preferences?.zone || "");
+  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "");
+  const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -292,13 +298,15 @@ const InputForm = ({ onCalculate, isCalculating }: InputFormProps) => {
               </>
             ) : (
               <>
-                Calcular mi plan <ArrowRight className="h-4 w-4 ml-2" />
+                {submitLabel || "Calcular mi plan"} <ArrowRight className="h-4 w-4 ml-2" />
               </>
             )}
           </Button>
-          <p className="text-center text-xs text-muted-foreground">
-            Es gratis y no necesitas registrarte
-          </p>
+          {!hideFooterNote && (
+            <p className="text-center text-xs text-muted-foreground">
+              Es gratis y no necesitas registrarte
+            </p>
+          )}
         </div>
       </form>
     </motion.div>
