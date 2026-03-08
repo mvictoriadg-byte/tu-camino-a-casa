@@ -1,8 +1,13 @@
+export interface Subsidy {
+  name: string;
+  url: string;
+}
+
 export interface CityData {
   name: string;
   avgPricePerSqm: number;
   mortgageRate: number;
-  subsidies: string[];
+  subsidies: Subsidy[];
   region: string;
 }
 
@@ -13,10 +18,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 4200,
     mortgageRate: 3.2,
     subsidies: [
-      "Plan Vive – Vivienda pública en alquiler con opción a compra",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Deducción IRPF por compra de vivienda habitual",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Plan Vive – Vivienda pública en alquiler con opción a compra", url: "https://www.comunidad.madrid/servicios/vivienda/plan-vive" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Deducción IRPF por compra de vivienda habitual", url: "https://sede.agenciatributaria.gob.es/Sede/vivienda.html" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   barcelona: {
@@ -25,10 +30,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 4500,
     mortgageRate: 3.2,
     subsidies: [
-      "Habitatge Jove – Programa de vivienda para jóvenes de la Generalitat",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Subvenciones de la Agència de l'Habitatge de Catalunya",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Habitatge Jove – Programa de vivienda para jóvenes de la Generalitat", url: "https://habitatge.gencat.cat/ca/ambits/joventut/" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Subvenciones de la Agència de l'Habitatge de Catalunya", url: "https://habitatge.gencat.cat/ca/ambits/ajuts/" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   valencia: {
@@ -37,10 +42,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 2200,
     mortgageRate: 3.2,
     subsidies: [
-      "Plan Estatal de Vivienda – Ayuda directa a la compra para jóvenes",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "GVA Jove – Programa autonómico de vivienda joven",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Plan Estatal de Vivienda – Ayuda directa a la compra para jóvenes", url: "https://www.mitma.gob.es/vivienda/plan-estatal-de-vivienda" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "GVA Jove – Programa autonómico de vivienda joven", url: "https://habitatge.gva.es/es/ayudas" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   sevilla: {
@@ -49,10 +54,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 2000,
     mortgageRate: 3.2,
     subsidies: [
-      "Plan Vive en Andalucía – Ayudas a la adquisición de primera vivienda",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Deducción autonómica IRPF por compra de vivienda habitual",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Plan Vive en Andalucía – Ayudas a la adquisición de primera vivienda", url: "https://www.juntadeandalucia.es/organismos/fomento-articulacion-del-territorio-y-vivienda/areas/vivienda-rehabilitacion/planes-702vivienda.html" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Deducción autonómica IRPF por compra de vivienda habitual", url: "https://www.juntadeandalucia.es/economia-y-hacienda/tributos/deducciones-autonomicas" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   malaga: {
@@ -61,10 +66,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 2800,
     mortgageRate: 3.2,
     subsidies: [
-      "Plan Vive en Andalucía – Ayudas a adquisición",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Ayuntamiento de Málaga – Programa de vivienda protegida",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Plan Vive en Andalucía – Ayudas a adquisición", url: "https://www.juntadeandalucia.es/organismos/fomento-articulacion-del-territorio-y-vivienda/areas/vivienda-rehabilitacion/planes-702vivienda.html" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Ayuntamiento de Málaga – Programa de vivienda protegida", url: "https://vivienda.malaga.eu/" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   bilbao: {
@@ -73,10 +78,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 3200,
     mortgageRate: 3.2,
     subsidies: [
-      "Etxebide – Servicio vasco de vivienda",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Gobierno Vasco – Ayudas para adquisición de vivienda",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Etxebide – Servicio vasco de vivienda", url: "https://www.etxebide.euskadi.eus/" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Gobierno Vasco – Ayudas para adquisición de vivienda", url: "https://www.euskadi.eus/ayudas-vivienda/" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   zaragoza: {
@@ -85,10 +90,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 1700,
     mortgageRate: 3.2,
     subsidies: [
-      "Gobierno de Aragón – Ayudas a la compra de vivienda habitual",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Deducción autonómica IRPF por adquisición de vivienda",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Gobierno de Aragón – Ayudas a la compra de vivienda habitual", url: "https://www.aragon.es/-/vivienda" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Deducción autonómica IRPF por adquisición de vivienda", url: "https://www.aragon.es/-/deducciones-autonomicas" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   "san-sebastian": {
@@ -97,10 +102,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 5000,
     mortgageRate: 3.2,
     subsidies: [
-      "Etxebide – Vivienda protegida del Gobierno Vasco",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Diputación Foral de Gipuzkoa – Ayudas a la compra",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Etxebide – Vivienda protegida del Gobierno Vasco", url: "https://www.etxebide.euskadi.eus/" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Diputación Foral de Gipuzkoa – Ayudas a la compra", url: "https://www.gipuzkoa.eus/es/web/vivienda" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   palma: {
@@ -109,10 +114,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 3600,
     mortgageRate: 3.2,
     subsidies: [
-      "IBAVI – Instituto Balear de la Vivienda",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "Govern de les Illes Balears – Ayudas a primera vivienda",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "IBAVI – Instituto Balear de la Vivienda", url: "https://www.ibavi.caib.es/" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "Govern de les Illes Balears – Ayudas a primera vivienda", url: "https://www.caib.es/govern/organigrama/area.do?coduo=3514&lang=es" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
   "las-palmas": {
@@ -121,10 +126,10 @@ export const cityData: Record<string, CityData> = {
     avgPricePerSqm: 2100,
     mortgageRate: 3.2,
     subsidies: [
-      "Gobierno de Canarias – Plan de vivienda",
-      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
-      "IGVS Canarias – Ayudas a adquisición de vivienda protegida",
-      "Bono Alquiler Joven (250€/mes)",
+      { name: "Gobierno de Canarias – Plan de vivienda", url: "https://www.gobiernodecanarias.org/vivienda/" },
+      { name: "Avales ICO para jóvenes – Aval del 20% para menores de 35 años", url: "https://www.ico.es/web/ico/avales-vivienda" },
+      { name: "IGVS Canarias – Ayudas a adquisición de vivienda protegida", url: "https://www.gobiernodecanarias.org/vivienda/temas/acceso_vivienda/" },
+      { name: "Bono Alquiler Joven (250€/mes)", url: "https://www.mitma.gob.es/vivienda/bono-alquiler-joven" },
     ],
   },
 };
