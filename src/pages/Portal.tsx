@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
-import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency } from "@/lib/housing-data";
+import { type AffordabilityResult, formatCurrency } from "@/lib/housing-data";
 import {
   Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw,
 } from "lucide-react";
@@ -47,61 +47,42 @@ const Portal = () => {
   const loadData = async () => {
     if (!user) return;
     setLoadingData(true);
-
     const [profileRes, financialRes, wishlistRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", user.id).single(),
       supabase.from("user_financial_data").select("*").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(1),
       supabase.from("user_wishlist").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     ]);
-
     if (profileRes.data) setProfile({ display_name: profileRes.data.display_name || "", email: profileRes.data.email || "" });
-
-    if (financialRes.data && financialRes.data.length > 0) {
-      const fd = financialRes.data[0];
-      if (fd.result_json) {
-        setResult(fd.result_json as unknown as AffordabilityResult);
-      }
+    if (financialRes.data && financialRes.data.length > 0 && financialRes.data[0].result_json) {
+      setResult(financialRes.data[0].result_json as unknown as AffordabilityResult);
     }
-
     if (wishlistRes.data) setWishlist(wishlistRes.data as WishlistItem[]);
-
     setLoadingData(false);
   };
 
   const addWishlistItem = async () => {
     if (!user || !newUrl.trim()) return;
     const { data, error } = await supabase.from("user_wishlist").insert({
-      user_id: user.id,
-      url: newUrl.trim(),
-      title: newTitle.trim() || "Sin título",
+      user_id: user.id, url: newUrl.trim(), title: newTitle.trim() || "Sin título",
       estimated_price: Number(newPrice) || 0,
     }).select().single();
-
-    if (error) {
-      toast.error("Error al guardar");
-      return;
-    }
+    if (error) { toast.error("Error al guardar"); return; }
     setWishlist(prev => [data as WishlistItem, ...prev]);
-    setNewUrl("");
-    setNewTitle("");
-    setNewPrice("");
-    toast.success("Propiedad guardada en tu wishlist");
+    setNewUrl(""); setNewTitle(""); setNewPrice("");
+    toast.success("Propiedad guardada");
   };
 
   const removeWishlistItem = async (id: string) => {
     await supabase.from("user_wishlist").delete().eq("id", id);
     setWishlist(prev => prev.filter(w => w.id !== id));
-    toast.success("Eliminada de tu wishlist");
+    toast.success("Eliminada");
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
+  const handleSignOut = async () => { await signOut(); navigate("/"); };
 
   if (authLoading || loadingData) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--gradient-dark)" }}>
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" />
           <p className="text-muted-foreground">Cargando tu portal...</p>
@@ -111,38 +92,51 @@ const Portal = () => {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--gradient-dark)" }}>
-      <div className="container max-w-6xl py-6 px-4 sm:px-6">
-        {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
-        >
+    <div className="min-h-screen bg-background">
+      {/* Nav */}
+      <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="rounded-full">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Hola, {profile?.display_name || "usuario"} 👋</h1>
-              <p className="text-sm text-muted-foreground">{profile?.email}</p>
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
+                <Home className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <span className="font-extrabold text-lg">CasaYa</span>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" /> Cerrar sesión
-          </Button>
-        </motion.header>
+          <div className="flex items-center gap-3">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold">{profile?.display_name || "Usuario"}</p>
+              <p className="text-xs text-muted-foreground">{profile?.email}</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={handleSignOut} className="rounded-full">
+              <LogOut className="h-4 w-4 mr-1.5" /> Salir
+            </Button>
+          </div>
+        </div>
+      </nav>
+
+      <div className="container max-w-6xl py-8 px-4 sm:px-6">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            Hola, {profile?.display_name || "usuario"} 👋
+          </h1>
+          <p className="text-muted-foreground mt-1">Tu centro de control para comprar casa</p>
+        </motion.div>
 
         <Tabs defaultValue="roadmap" className="space-y-6">
-          <TabsList className="bg-secondary">
-            <TabsTrigger value="roadmap" className="flex items-center gap-1.5">
-              <TrendingUp className="h-4 w-4" /> Mi Plan
+          <TabsList className="bg-muted rounded-full p-1 h-auto">
+            <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm">
+              <TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan
             </TabsTrigger>
-            <TabsTrigger value="wishlist" className="flex items-center gap-1.5">
-              <Heart className="h-4 w-4" /> Wishlist
+            <TabsTrigger value="wishlist" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm">
+              <Heart className="h-4 w-4 mr-1.5" /> Wishlist
             </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-1.5">
-              <User className="h-4 w-4" /> Perfil
+            <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm">
+              <User className="h-4 w-4 mr-1.5" /> Perfil
             </TabsTrigger>
           </TabsList>
 
@@ -152,10 +146,12 @@ const Portal = () => {
             ) : (
               <Card className="glow-card">
                 <CardContent className="p-12 text-center">
-                  <Home className="h-12 w-12 text-primary/30 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Aún no tienes un plan</h3>
-                  <p className="text-muted-foreground text-sm mb-6">Rellena el formulario en la página principal para generar tu plan personalizado</p>
-                  <Button onClick={() => navigate("/")}>
+                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
+                    <Home className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Aún no tienes un plan</h3>
+                  <p className="text-muted-foreground text-sm mb-6">Rellena el formulario para generar tu plan personalizado</p>
+                  <Button className="rounded-full font-bold" onClick={() => navigate("/")}>
                     <Home className="h-4 w-4 mr-2" /> Ir al calculador
                   </Button>
                 </CardContent>
@@ -166,27 +162,26 @@ const Portal = () => {
           <TabsContent value="wishlist">
             <Card className="glow-card mb-6">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-primary" />
-                  Añadir propiedad
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <Heart className="h-5 w-5 text-primary" /> Añadir propiedad
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">URL (Idealista, Fotocasa...)</Label>
-                    <Input placeholder="https://idealista.com/..." value={newUrl} onChange={e => setNewUrl(e.target.value)} />
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-semibold">URL</Label>
+                    <Input placeholder="https://idealista.com/..." value={newUrl} onChange={e => setNewUrl(e.target.value)} className="rounded-xl" />
                   </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Título</Label>
-                    <Input placeholder="Piso en Madrid centro" value={newTitle} onChange={e => setNewTitle(e.target.value)} />
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-semibold">Título</Label>
+                    <Input placeholder="Piso en Madrid" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="rounded-xl" />
                   </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Precio estimado (€)</Label>
-                    <Input type="number" placeholder="250000" value={newPrice} onChange={e => setNewPrice(e.target.value)} />
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-semibold">Precio (€)</Label>
+                    <Input type="number" placeholder="250000" value={newPrice} onChange={e => setNewPrice(e.target.value)} className="rounded-xl" />
                   </div>
                 </div>
-                <Button onClick={addWishlistItem} disabled={!newUrl.trim()} className="w-full sm:w-auto">
+                <Button onClick={addWishlistItem} disabled={!newUrl.trim()} className="rounded-full font-bold">
                   <Plus className="h-4 w-4 mr-2" /> Guardar propiedad
                 </Button>
               </CardContent>
@@ -195,9 +190,9 @@ const Portal = () => {
             {wishlist.length === 0 ? (
               <Card className="glow-card">
                 <CardContent className="p-12 text-center">
-                  <Heart className="h-12 w-12 text-primary/30 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Tu wishlist está vacía</h3>
-                  <p className="text-muted-foreground text-sm">Guarda propiedades que te interesen de Idealista, Fotocasa, etc.</p>
+                  <Heart className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold mb-2">Tu wishlist está vacía</h3>
+                  <p className="text-muted-foreground text-sm">Guarda propiedades de Idealista, Fotocasa, etc.</p>
                 </CardContent>
               </Card>
             ) : (
@@ -207,15 +202,15 @@ const Portal = () => {
                     <Card className="glow-card">
                       <CardContent className="p-4 flex items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm truncate">{item.title}</p>
-                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1 truncate">
+                          <p className="font-bold text-sm truncate">{item.title}</p>
+                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 truncate">
                             <ExternalLink className="h-3 w-3 shrink-0" /> {item.url}
                           </a>
                           {item.estimated_price > 0 && (
-                            <p className="text-xs text-muted-foreground mt-1">{formatCurrency(item.estimated_price)}</p>
+                            <p className="text-sm font-bold text-foreground mt-1">{formatCurrency(item.estimated_price)}</p>
                           )}
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => removeWishlistItem(item.id)} className="shrink-0 text-destructive hover:text-destructive">
+                        <Button variant="ghost" size="icon" onClick={() => removeWishlistItem(item.id)} className="shrink-0 text-destructive hover:text-destructive rounded-full">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </CardContent>
@@ -229,21 +224,13 @@ const Portal = () => {
           <TabsContent value="profile">
             <Card className="glow-card">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" /> Tu perfil
-                </CardTitle>
+                <CardTitle className="text-lg font-bold flex items-center gap-2"><User className="h-5 w-5 text-primary" /> Tu perfil</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Nombre</Label>
-                  <p className="text-sm font-medium">{profile?.display_name || "—"}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Email</Label>
-                  <p className="text-sm font-medium">{profile?.email || "—"}</p>
-                </div>
-                <Button variant="outline" onClick={() => navigate("/")}>
-                  <RefreshCw className="h-4 w-4 mr-2" /> Actualizar mi plan financiero
+                <div><Label className="text-sm font-semibold text-muted-foreground">Nombre</Label><p className="text-base font-bold">{profile?.display_name || "—"}</p></div>
+                <div><Label className="text-sm font-semibold text-muted-foreground">Email</Label><p className="text-base font-bold">{profile?.email || "—"}</p></div>
+                <Button variant="outline" className="rounded-full font-bold" onClick={() => navigate("/")}>
+                  <RefreshCw className="h-4 w-4 mr-2" /> Actualizar mi plan
                 </Button>
               </CardContent>
             </Card>

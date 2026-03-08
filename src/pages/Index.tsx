@@ -6,7 +6,7 @@ import Dashboard from "@/components/Dashboard";
 import { calculateAffordability, type AffordabilityResult, type UserProfile } from "@/lib/housing-data";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, User, LogIn } from "lucide-react";
+import { Home, User, LogIn, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -19,10 +19,8 @@ const Index = () => {
     const r = calculateAffordability(profile);
     setResult(r);
 
-    // If user is logged in, save their data
     if (user) {
       try {
-        // Check if they already have data
         const { data: existing } = await supabase
           .from("user_financial_data")
           .select("id")
@@ -56,78 +54,111 @@ const Index = () => {
         }
         toast.success("Plan guardado en tu cuenta");
       } catch {
-        // Silent fail for save
+        // Silent
       }
     }
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--gradient-dark)" }}>
-      <div className="container max-w-6xl py-8 px-4 sm:px-6">
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-10"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div />
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-              <Home className="h-4 w-4 text-primary" />
-              <span className="text-xs font-medium text-primary uppercase tracking-wider">Tu Camino a Casa · España</span>
+    <div className="min-h-screen bg-background">
+      {/* Nav */}
+      <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
+              <Home className="h-4 w-4 text-primary-foreground" />
             </div>
-            <div>
-              {user ? (
-                <Button variant="outline" size="sm" onClick={() => navigate("/portal")}>
-                  <User className="h-4 w-4 mr-1" /> Mi Portal
-                </Button>
+            <span className="font-extrabold text-lg tracking-tight">CasaYa</span>
+          </div>
+          {user ? (
+            <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
+              <User className="h-4 w-4 mr-1.5" /> Mi Portal
+            </Button>
+          ) : (
+            <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
+              <LogIn className="h-4 w-4 mr-1.5" /> Acceder
+            </Button>
+          )}
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="pt-16 pb-12 px-4 sm:px-6">
+        <div className="container max-w-3xl text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-sm font-semibold text-foreground mb-6">
+              🏠 Tu planificador de vivienda en España
+            </span>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-6 tracking-tight">
+              Comprar tu casa<br />
+              <span className="gradient-text">está más cerca</span>
+            </h1>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Descubre cuánto necesitas, crea tu plan personalizado y haz realidad tu primera vivienda.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="pb-20 px-4 sm:px-6">
+        <div className="container max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-4">
+              <InputForm onCalculate={handleCalculate} />
+            </div>
+            <div className="lg:col-span-8">
+              {result ? (
+                <div className="space-y-6">
+                  <Dashboard result={result} />
+                  {!user && (
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                      <div className="rounded-2xl bg-primary p-8 text-center">
+                        <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guarda tu plan gratis</h3>
+                        <p className="text-sm text-primary-foreground/70 mb-5 max-w-md mx-auto">
+                          Crea una cuenta para guardar tu plan, hacer seguimiento y crear tu wishlist de propiedades.
+                        </p>
+                        <Button
+                          size="lg"
+                          className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-bold text-base px-8"
+                          onClick={() => navigate("/auth")}
+                        >
+                          Crear cuenta <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
               ) : (
-                <Button variant="outline" size="sm" onClick={() => navigate("/auth")}>
-                  <LogIn className="h-4 w-4 mr-1" /> Acceder
-                </Button>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center h-full min-h-[400px]">
+                  <div className="text-center">
+                    <div className="w-20 h-20 rounded-3xl bg-primary/20 flex items-center justify-center mx-auto mb-6">
+                      <Home className="h-10 w-10 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">Tu plan personalizado</h3>
+                    <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+                      Rellena tus datos en el formulario para ver tu roadmap de compra
+                    </p>
+                  </div>
+                </motion.div>
               )}
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-3">
-            Comprar tu casa <span className="gradient-text">está más cerca</span>
-          </h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            Descubre cuánto necesitas, cuánto puedes ahorrar y cuál es tu plan personalizado para comprar tu primera vivienda en España.
-          </p>
-        </motion.header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4">
-            <InputForm onCalculate={handleCalculate} />
-          </div>
-          <div className="lg:col-span-8">
-            {result ? (
-              <div className="space-y-6">
-                <Dashboard result={result} />
-                {!user && (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                    <div className="rounded-xl border border-primary/30 bg-primary/5 p-6 text-center">
-                      <h3 className="text-lg font-bold mb-2">💾 Guarda tu plan</h3>
-                      <p className="text-sm text-muted-foreground mb-4">Crea una cuenta gratuita para guardar tu plan, hacer seguimiento de tu progreso y crear tu wishlist de propiedades.</p>
-                      <Button onClick={() => navigate("/auth")}>
-                        <LogIn className="h-4 w-4 mr-2" /> Crear cuenta gratuita
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center h-full min-h-[400px]">
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <Home className="h-8 w-8 text-primary/50" />
-                  </div>
-                  <p className="text-muted-foreground text-sm">Rellena tus datos para ver tu<br />plan personalizado de compra</p>
-                </div>
-              </motion.div>
-            )}
-          </div>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-8 px-4">
+        <div className="container max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 rounded-lg bg-primary flex items-center justify-center">
+              <Home className="h-3 w-3 text-primary-foreground" />
+            </div>
+            <span className="font-bold text-sm">CasaYa</span>
+          </div>
+          <p className="text-xs text-muted-foreground">© 2026 CasaYa. Tu camino a casa en España.</p>
+        </div>
+      </footer>
     </div>
   );
 };
