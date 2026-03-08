@@ -1,131 +1,208 @@
 export interface CityData {
   name: string;
-  avgHomePrice: number;
-  downPaymentPercent: number;
+  avgPricePerSqm: number; // €/m² average
   mortgageRate: number;
   subsidies: string[];
 }
 
+// Precios medios por m² aproximados en España (2024-2025)
 export const cityData: Record<string, CityData> = {
-  "new-york": {
-    name: "New York",
-    avgHomePrice: 750000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  madrid: {
+    name: "Madrid",
+    avgPricePerSqm: 4200,
+    mortgageRate: 3.2,
     subsidies: [
-      "SONYMA – Low-interest mortgages for first-time buyers",
-      "HomeFirst Down Payment Assistance – Up to $100K",
-      "FHA Loans – 3.5% down payment option",
+      "Plan Vive – Vivienda pública en alquiler con opción a compra (Comunidad de Madrid)",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Deducción IRPF por compra de vivienda habitual (según condiciones)",
+      "Ayudas al alquiler joven – Bono Alquiler Joven (250€/mes)",
     ],
   },
-  "los-angeles": {
-    name: "Los Angeles",
-    avgHomePrice: 950000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  barcelona: {
+    name: "Barcelona",
+    avgPricePerSqm: 4500,
+    mortgageRate: 3.2,
     subsidies: [
-      "CalHFA – Down payment & closing cost assistance",
-      "LA County Mortgage Credit Certificate",
-      "FHA Loans – 3.5% down payment option",
+      "Habitatge Jove – Programa de vivienda para jóvenes de la Generalitat",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Subvenciones de la Agència de l'Habitatge de Catalunya",
+      "Bono Alquiler Joven (250€/mes) – Plan Estatal de Vivienda",
     ],
   },
-  chicago: {
-    name: "Chicago",
-    avgHomePrice: 350000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  valencia: {
+    name: "Valencia",
+    avgPricePerSqm: 2200,
+    mortgageRate: 3.2,
     subsidies: [
-      "IHDA – Illinois first-time buyer programs",
-      "Chicago Home Buyer Assistance – Up to $60K",
-      "FHA Loans – 3.5% down payment option",
+      "Plan Estatal de Vivienda – Ayuda directa a la compra para jóvenes",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "GVA Jove – Programa autonómico de vivienda joven",
+      "Bono Alquiler Joven (250€/mes)",
     ],
   },
-  houston: {
-    name: "Houston",
-    avgHomePrice: 320000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  sevilla: {
+    name: "Sevilla",
+    avgPricePerSqm: 2000,
+    mortgageRate: 3.2,
     subsidies: [
-      "TSAHC – Texas down payment assistance",
-      "Houston Homebuyer Assistance Program",
-      "FHA Loans – 3.5% down payment option",
+      "Plan Vive en Andalucía – Ayudas a la adquisición de primera vivienda",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Deducción autonómica IRPF por compra de vivienda habitual",
+      "Bono Alquiler Joven (250€/mes)",
     ],
   },
-  miami: {
-    name: "Miami",
-    avgHomePrice: 600000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  malaga: {
+    name: "Málaga",
+    avgPricePerSqm: 2800,
+    mortgageRate: 3.2,
     subsidies: [
-      "Florida Housing – First-time buyer programs",
-      "Miami-Dade Homebuyer Assistance",
-      "FHA Loans – 3.5% down payment option",
+      "Plan Vive en Andalucía – Ayudas a adquisición",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Ayuntamiento de Málaga – Programa de vivienda protegida",
+      "Bono Alquiler Joven (250€/mes)",
     ],
   },
-  seattle: {
-    name: "Seattle",
-    avgHomePrice: 850000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  bilbao: {
+    name: "Bilbao",
+    avgPricePerSqm: 3200,
+    mortgageRate: 3.2,
     subsidies: [
-      "WSHFC – Washington down payment assistance",
-      "Seattle Office of Housing – Homebuyer programs",
-      "FHA Loans – 3.5% down payment option",
+      "Etxebide – Servicio vasco de vivienda (alquiler y compra protegida)",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Gobierno Vasco – Ayudas para adquisición de vivienda",
+      "Bono Alquiler Joven (250€/mes)",
     ],
   },
-  denver: {
-    name: "Denver",
-    avgHomePrice: 550000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  zaragoza: {
+    name: "Zaragoza",
+    avgPricePerSqm: 1700,
+    mortgageRate: 3.2,
     subsidies: [
-      "CHFA – Colorado first-time buyer assistance",
-      "Metro Mortgage Assistance Plus",
-      "FHA Loans – 3.5% down payment option",
+      "Gobierno de Aragón – Ayudas a la compra de vivienda habitual",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Deducción autonómica IRPF por adquisición de vivienda",
+      "Bono Alquiler Joven (250€/mes)",
     ],
   },
-  austin: {
-    name: "Austin",
-    avgHomePrice: 480000,
-    downPaymentPercent: 20,
-    mortgageRate: 6.8,
+  "san-sebastian": {
+    name: "San Sebastián",
+    avgPricePerSqm: 5000,
+    mortgageRate: 3.2,
     subsidies: [
-      "TSAHC – Texas down payment assistance",
-      "Austin Housing Finance Corporation",
-      "FHA Loans – 3.5% down payment option",
+      "Etxebide – Vivienda protegida del Gobierno Vasco",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Diputación Foral de Gipuzkoa – Ayudas a la compra",
+      "Bono Alquiler Joven (250€/mes)",
+    ],
+  },
+  palma: {
+    name: "Palma de Mallorca",
+    avgPricePerSqm: 3600,
+    mortgageRate: 3.2,
+    subsidies: [
+      "IBAVI – Instituto Balear de la Vivienda",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "Govern de les Illes Balears – Ayudas a primera vivienda",
+      "Bono Alquiler Joven (250€/mes)",
+    ],
+  },
+  "las-palmas": {
+    name: "Las Palmas de Gran Canaria",
+    avgPricePerSqm: 2100,
+    mortgageRate: 3.2,
+    subsidies: [
+      "Gobierno de Canarias – Plan de vivienda",
+      "Avales ICO para jóvenes – Aval del 20% para menores de 35 años",
+      "IGVS Canarias – Ayudas a adquisición de vivienda protegida",
+      "Bono Alquiler Joven (250€/mes)",
     ],
   },
 };
 
+// Multiplicadores de precio según preferencias
+export const propertyTypeMultiplier: Record<string, number> = {
+  apartamento: 1.0,
+  casa: 1.25,
+  "obra-nueva": 1.3,
+  "segunda-mano": 0.85,
+};
+
+export const zoneMultiplier: Record<string, number> = {
+  centro: 1.4,
+  metropolitana: 1.0,
+  periferia: 0.7,
+};
+
+export const reformCost: Record<string, number> = {
+  "listo-para-entrar": 0,
+  "pequena-reforma": 15000,
+  "reforma-completa": 45000,
+};
+
+export const sizeOptions: Record<string, number> = {
+  "<60": 50,
+  "60-90": 75,
+  "90-120": 105,
+  "120+": 135,
+};
+
+export interface PropertyPreferences {
+  propertyType: string;
+  size: string;
+  rooms: string;
+  zone: string;
+  reformState: string;
+  timeline: string;
+}
+
 export interface AffordabilityResult {
   city: CityData;
+  preferences: PropertyPreferences;
   monthlyIncome: number;
   savings: number;
   monthlySavings: number;
-  avgHomePrice: number;
+  estimatedPrice: number;
+  reformCostEstimate: number;
+  totalCost: number;
   requiredDownPayment: number;
+  taxesAndFees: number;
+  totalUpfront: number;
   savingsGap: number;
   yearsToSave: number;
   maxMortgage: number;
   maxHomePrice: number;
-  affordabilityRatio: number; // 0-100
+  affordabilityRatio: number;
   canAfford: boolean;
+  monthlyMortgagePayment: number;
 }
 
 export function calculateAffordability(
   cityKey: string,
   monthlyIncome: number,
   savings: number,
-  monthlySavings: number
+  monthlySavings: number,
+  preferences: PropertyPreferences
 ): AffordabilityResult {
   const city = cityData[cityKey];
-  const avgHomePrice = city.avgHomePrice;
-  const requiredDownPayment = avgHomePrice * (city.downPaymentPercent / 100);
-  const savingsGap = Math.max(0, requiredDownPayment - savings);
-  const yearsToSave = monthlySavings > 0 ? savingsGap / (monthlySavings * 12) : Infinity;
+  const sqm = sizeOptions[preferences.size] || 75;
+  const basePrice = city.avgPricePerSqm * sqm;
+  const typeMulti = propertyTypeMultiplier[preferences.propertyType] || 1;
+  const zoneMulti = zoneMultiplier[preferences.zone] || 1;
+  const estimatedPrice = Math.round(basePrice * typeMulti * zoneMulti);
+  const reformCostEstimate = reformCost[preferences.reformState] || 0;
+  const totalCost = estimatedPrice + reformCostEstimate;
 
-  // Max mortgage: 28% of gross monthly income for housing
-  const maxMonthlyPayment = monthlyIncome * 0.28;
+  // En España: entrada del 20% + ~10% impuestos y gastos
+  const downPaymentPercent = 20;
+  const requiredDownPayment = Math.round(estimatedPrice * (downPaymentPercent / 100));
+  const taxesAndFees = Math.round(estimatedPrice * 0.10); // ITP/IVA + notaría + registro + gestoría
+  const totalUpfront = requiredDownPayment + taxesAndFees + reformCostEstimate;
+
+  const savingsGap = Math.max(0, totalUpfront - savings);
+  const yearsToSave = monthlySavings > 0 ? savingsGap / (monthlySavings * 12) : savingsGap > 0 ? Infinity : 0;
+
+  // Hipoteca máxima: 35% de ingresos brutos mensuales (criterio bancario español)
+  const maxMonthlyPayment = monthlyIncome * 0.35;
   const monthlyRate = city.mortgageRate / 100 / 12;
   const numPayments = 30 * 12;
   const maxMortgage =
@@ -135,21 +212,35 @@ export function calculateAffordability(
       : maxMonthlyPayment * numPayments;
 
   const maxHomePrice = maxMortgage + savings;
-  const affordabilityRatio = Math.min(100, (maxHomePrice / avgHomePrice) * 100);
-  const canAfford = maxHomePrice >= avgHomePrice;
+  const affordabilityRatio = Math.min(100, (maxHomePrice / totalCost) * 100);
+  const canAfford = maxHomePrice >= totalCost && savings >= totalUpfront;
+
+  // Cuota mensual real de la hipoteca necesaria
+  const loanAmount = estimatedPrice * 0.8; // 80% financiado
+  const monthlyMortgagePayment =
+    monthlyRate > 0
+      ? (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
+        (Math.pow(1 + monthlyRate, numPayments) - 1)
+      : loanAmount / numPayments;
 
   return {
     city,
+    preferences,
     monthlyIncome,
     savings,
     monthlySavings,
-    avgHomePrice,
+    estimatedPrice,
+    reformCostEstimate,
+    totalCost,
     requiredDownPayment,
+    taxesAndFees,
+    totalUpfront,
     savingsGap,
     yearsToSave: Math.round(yearsToSave * 10) / 10,
     maxMortgage: Math.round(maxMortgage),
     maxHomePrice: Math.round(maxHomePrice),
     affordabilityRatio: Math.round(affordabilityRatio),
     canAfford,
+    monthlyMortgagePayment: Math.round(monthlyMortgagePayment),
   };
 }
