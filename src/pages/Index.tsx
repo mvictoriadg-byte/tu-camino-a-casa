@@ -27,7 +27,7 @@ const Index = () => {
     }
 
     // Small delay for loading feel
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
 
     const r = calculateAffordability(profile);
     setResult(r);
@@ -64,9 +64,9 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const SaveCTA = () => (
-    !user ? (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+  const SaveCTA = () =>
+  !user ?
+  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="rounded-2xl bg-primary p-8 text-center">
           <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guardar mi plan de ahorro</h3>
           <p className="text-sm text-primary-foreground/70 mb-1 max-w-md mx-auto">
@@ -77,29 +77,29 @@ const Index = () => {
             Crear cuenta gratis <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
-      </motion.div>
-    ) : null
-  );
+      </motion.div> :
+  null;
 
-  const LoadingState = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center py-20 gap-5"
-    >
+
+  const LoadingState = () =>
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="flex flex-col items-center justify-center py-20 gap-5">
+    
       <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-      >
+      animate={{ rotate: 360 }}
+      transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}>
+      
         <Loader2 className="h-10 w-10 text-primary" />
       </motion.div>
       <div className="text-center">
         <p className="text-lg font-bold">Estamos creando tu plan personalizado…</p>
         <p className="text-sm text-muted-foreground mt-1">Solo un momento</p>
       </div>
-    </motion.div>
-  );
+    </motion.div>;
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,15 +112,15 @@ const Index = () => {
             </div>
             <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
           </button>
-          {user ? (
-            <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
+          {user ?
+          <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
               <User className="h-4 w-4 mr-1.5" /> Mi Portal
-            </Button>
-          ) : (
-            <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
+            </Button> :
+
+          <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
               <LogIn className="h-4 w-4 mr-1.5" /> Acceder
             </Button>
-          )}
+          }
         </div>
       </nav>
 
@@ -136,9 +136,9 @@ const Index = () => {
             <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-2">
               Descubre cuánto necesitas ahorrar y crea tu plan paso a paso para comprar tu casa.
             </p>
-            <p className="text-sm text-muted-foreground/70 flex items-center justify-center gap-1.5">
-              <span>⏱</span> Esto solo te llevará 1 minuto
-            </p>
+            
+
+            
           </motion.div>
         </div>
       </section>
@@ -146,51 +146,51 @@ const Index = () => {
       {/* Main */}
       <section className="pb-20 px-4 sm:px-6">
         <div className="container max-w-6xl">
-          {isMobile ? (
-            <AnimatePresence mode="wait">
-              {mobileStep === "form" ? (
-                <motion.div key="form" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
+          {isMobile ?
+          <AnimatePresence mode="wait">
+              {mobileStep === "form" ?
+            <motion.div key="form" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
                   <InputForm onCalculate={handleCalculate} isCalculating={isCalculating} />
-                </motion.div>
-              ) : mobileStep === "loading" ? (
-                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                </motion.div> :
+            mobileStep === "loading" ?
+            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <LoadingState />
-                </motion.div>
-              ) : (
-                <motion.div key="results" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.25 }}>
+                </motion.div> :
+
+            <motion.div key="results" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.25 }}>
                   <Button variant="ghost" size="sm" className="mb-4 -ml-2 font-semibold" onClick={handleBackToForm}>
                     <ArrowLeft className="h-4 w-4 mr-1.5" /> Volver al formulario
                   </Button>
-                  {result && (
-                    <div className="space-y-6">
+                  {result &&
+              <div className="space-y-6">
                       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                         <p className="text-center text-sm font-bold text-primary mb-4">✨ Tu plan está listo</p>
                       </motion.div>
                       <Dashboard result={result} />
                       <SaveCTA />
                     </div>
-                  )}
+              }
                 </motion.div>
-              )}
-            </AnimatePresence>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            }
+            </AnimatePresence> :
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-4">
                 <InputForm onCalculate={handleCalculate} isCalculating={isCalculating} />
               </div>
               <div className="lg:col-span-8">
-                {isCalculating ? (
-                  <LoadingState />
-                ) : result ? (
-                  <div className="space-y-6">
+                {isCalculating ?
+              <LoadingState /> :
+              result ?
+              <div className="space-y-6">
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                       <p className="text-center text-sm font-bold text-primary mb-2">✨ Tu plan está listo</p>
                     </motion.div>
                     <Dashboard result={result} />
                     <SaveCTA />
-                  </div>
-                ) : (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start justify-center h-full min-h-[600px] pt-8">
+                  </div> :
+
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start justify-center h-full min-h-[600px] pt-8">
                     <div className="text-center">
                       <div className="w-32 h-32 flex items-center justify-center mx-auto mb-8">
                         <img src={illustrationPlan} alt="Tu plan" className="w-32 h-32 object-contain" />
@@ -199,10 +199,10 @@ const Index = () => {
                       <p className="text-muted-foreground text-base max-w-sm mx-auto">Rellena tus datos en el formulario para ver tu roadmap de compra</p>
                     </div>
                   </motion.div>
-                )}
+              }
               </div>
             </div>
-          )}
+          }
         </div>
       </section>
 
@@ -218,8 +218,8 @@ const Index = () => {
           <p className="text-xs text-muted-foreground">© 2026 Tu camino a casa · España</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
