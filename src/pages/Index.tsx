@@ -104,13 +104,13 @@ const Index = () => {
                   )}
                 </div>
               ) : (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center h-full min-h-[400px]">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center h-full min-h-[600px]">
                   <div className="text-center">
-                    <div className="w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                      <img src={illustrationPlan} alt="Tu plan" className="w-20 h-20 object-contain" />
+                    <div className="w-32 h-32 flex items-center justify-center mx-auto mb-8">
+                      <img src={illustrationPlan} alt="Tu plan" className="w-32 h-32 object-contain" />
                     </div>
-                    <h3 className="text-xl font-bold mb-2">Tu plan personalizado</h3>
-                    <p className="text-muted-foreground text-sm max-w-xs mx-auto">Rellena tus datos en el formulario para ver tu roadmap de compra</p>
+                    <h3 className="text-3xl font-bold mb-3">Tu plan personalizado</h3>
+                    <p className="text-muted-foreground text-base max-w-sm mx-auto">Rellena tus datos en el formulario para ver tu roadmap de compra</p>
                   </div>
                 </motion.div>
               )}
