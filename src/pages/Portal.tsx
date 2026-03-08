@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
 import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency } from "@/lib/housing-data";
-import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw } from "lucide-react";
+import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, MapPin, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -146,12 +146,58 @@ const Portal = () => {
             {wishlist.length === 0 ? (
               <Card className="glow-card"><CardContent className="p-12 text-center"><Heart className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" /><h3 className="text-xl font-bold mb-2">Tu wishlist está vacía</h3><p className="text-muted-foreground text-sm">Guarda propiedades de Idealista, Fotocasa, etc.</p></CardContent></Card>
             ) : (
-              <div className="space-y-3">{wishlist.map(item => (
-                <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><Card className="glow-card"><CardContent className="p-4 flex items-center justify-between gap-4">
-                  <div className="flex-1 min-w-0"><p className="font-bold text-sm truncate">{item.title}</p><a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 truncate"><ExternalLink className="h-3 w-3 shrink-0" /> {item.url}</a>{item.estimated_price > 0 && <p className="text-sm font-bold mt-1">{formatCurrency(item.estimated_price)}</p>}</div>
-                  <Button variant="ghost" size="icon" onClick={() => removeWishlistItem(item.id)} className="shrink-0 text-destructive hover:text-destructive rounded-full"><Trash2 className="h-4 w-4" /></Button>
-                </CardContent></Card></motion.div>
-              ))}</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{wishlist.map((item, i) => {
+                const domain = (() => { try { return new URL(item.url).hostname; } catch { return ""; } })();
+                const thumbnailUrl = `https://image.thum.io/get/width/600/crop/400/${item.url}`;
+                const faviconUrl = domain ? `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=32&url=https://${domain}` : "";
+                const gradientColors = [
+                  "from-primary/20 to-accent/20",
+                  "from-blue-500/20 to-purple-500/20",
+                  "from-emerald-500/20 to-teal-500/20",
+                  "from-orange-500/20 to-rose-500/20",
+                ];
+                return (
+                <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                  <Card className="glow-card overflow-hidden group hover:shadow-lg transition-all duration-300">
+                    <div className="relative h-40 overflow-hidden">
+                      <img
+                        src={thumbnailUrl}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                          target.nextElementSibling?.classList.remove("hidden");
+                        }}
+                      />
+                      <div className={`hidden w-full h-full bg-gradient-to-br ${gradientColors[i % gradientColors.length]} items-center justify-center absolute inset-0`}>
+                        <Building2 className="h-12 w-12 text-muted-foreground/40" />
+                      </div>
+                      {item.estimated_price > 0 && (
+                        <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-md">
+                          <span className="text-sm font-extrabold">{formatCurrency(item.estimated_price)}</span>
+                        </div>
+                      )}
+                    </div>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            {faviconUrl && <img src={faviconUrl} alt="" className="h-4 w-4 rounded-sm shrink-0" />}
+                            <p className="font-bold text-sm truncate">{item.title}</p>
+                          </div>
+                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 truncate transition-colors">
+                            <ExternalLink className="h-3 w-3 shrink-0" /> {domain || item.url}
+                          </a>
+                        </div>
+                        <Button variant="ghost" size="icon" onClick={() => removeWishlistItem(item.id)} className="shrink-0 text-muted-foreground hover:text-destructive rounded-full h-8 w-8">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );})}</div>
             )}
           </TabsContent>
           <TabsContent value="profile">
