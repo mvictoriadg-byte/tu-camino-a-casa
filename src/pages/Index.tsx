@@ -28,7 +28,7 @@ const Index = () => {
           monthly_debts: profile.monthlyDebts, num_buyers: profile.numBuyers, co_buyers: profile.coBuyers as any,
           property_type: profile.preferences.propertyType, size_sqm: Number(profile.preferences.size),
           rooms: profile.preferences.rooms, zone: profile.preferences.zone, reform_state: profile.preferences.reformState,
-          mortgage_percent: profile.mortgagePercent, result_json: r as any,
+          mortgage_percent: profile.mortgagePercent, result_json: r as any
         };
         if (existing && existing.length > 0) {
           await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);
@@ -36,7 +36,7 @@ const Index = () => {
           await supabase.from("user_financial_data").insert(payload);
         }
         toast.success("Plan guardado en tu cuenta");
-      } catch { /* silent */ }
+      } catch {/* silent */}
     }
   };
 
@@ -51,15 +51,15 @@ const Index = () => {
             </div>
             <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
           </button>
-          {user ? (
-            <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
+          {user ?
+          <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
               <User className="h-4 w-4 mr-1.5" /> Mi Portal
-            </Button>
-          ) : (
-            <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
+            </Button> :
+
+          <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
               <LogIn className="h-4 w-4 mr-1.5" /> Acceder
             </Button>
-          )}
+          }
         </div>
       </nav>
 
@@ -67,8 +67,9 @@ const Index = () => {
       <section className="pt-16 pb-12 px-4 sm:px-6">
         <div className="container max-w-3xl text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-6 tracking-tight">
-              Tu camino a casa<br />
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-6 tracking-tight">Comprar tu casa
+está más cerca
+              <br />
               <span className="gradient-text">está más cerca</span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
@@ -86,11 +87,10 @@ const Index = () => {
               <InputForm onCalculate={handleCalculate} />
             </div>
             <div className="lg:col-span-8">
-              {result ? (
-                <div className="space-y-6">
+              {result ? <div className="space-y-6">
                   <Dashboard result={result} />
-                  {!user && (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                  {!user &&
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                       <div className="rounded-2xl bg-primary p-8 text-center">
                         <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guarda tu plan gratis</h3>
                         <p className="text-sm text-primary-foreground/70 mb-5 max-w-md mx-auto">
@@ -101,10 +101,10 @@ const Index = () => {
                         </Button>
                       </div>
                     </motion.div>
-                  )}
-                </div>
-              ) : (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start justify-center h-full min-h-[600px] pt-8">
+                }
+                </div> :
+
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start justify-center h-full min-h-[600px] pt-8">
                   <div className="text-center">
                     <div className="w-32 h-32 flex items-center justify-center mx-auto mb-8">
                       <img src={illustrationPlan} alt="Tu plan" className="w-32 h-32 object-contain" />
@@ -113,7 +113,7 @@ const Index = () => {
                     <p className="text-muted-foreground text-base max-w-sm mx-auto">Rellena tus datos en el formulario para ver tu roadmap de compra</p>
                   </div>
                 </motion.div>
-              )}
+              }
             </div>
           </div>
         </div>
@@ -131,8 +131,8 @@ const Index = () => {
           <p className="text-xs text-muted-foreground">© 2026 Tu camino a casa · España</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
