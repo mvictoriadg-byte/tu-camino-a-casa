@@ -5,7 +5,7 @@ import { type AffordabilityResult, formatCurrency } from "@/lib/housing-data";
 import {
   Home, TrendingUp, CheckCircle2, Landmark, Euro, Target,
   Wrench, Sparkles, ArrowRight, Building, Lightbulb, Trophy, Shield,
-  Users, Timer,
+  Users, Timer, ExternalLink,
 } from "lucide-react";
 import SavingsTimeline from "@/components/SavingsTimeline";
 
