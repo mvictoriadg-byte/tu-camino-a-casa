@@ -22,6 +22,10 @@ const Index = () => {
   const handleCalculate = async (profile: UserProfile) => {
     const r = calculateAffordability(profile);
     setResult(r);
+    if (isMobile) {
+      setMobileStep("results");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     if (user) {
       try {
         const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
@@ -41,6 +45,11 @@ const Index = () => {
         toast.success("Plan guardado en tu cuenta");
       } catch {/* silent */}
     }
+  };
+
+  const handleBackToForm = () => {
+    setMobileStep("form");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
