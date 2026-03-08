@@ -76,7 +76,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
       if (!propertyType) e.propertyType = "Obligatorio";
       if (!rooms) e.rooms = "Obligatorio";
       if (!zone) e.zone = "Obligatorio";
-      if (!reformState) e.reformState = "Obligatorio";
+      
     }
     setErrors(e);
     return Object.keys(e).length === 0;
