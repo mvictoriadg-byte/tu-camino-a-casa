@@ -298,13 +298,15 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
               </>
             ) : (
               <>
-                Calcular mi plan <ArrowRight className="h-4 w-4 ml-2" />
+                {submitLabel || "Calcular mi plan"} <ArrowRight className="h-4 w-4 ml-2" />
               </>
             )}
           </Button>
-          <p className="text-center text-xs text-muted-foreground">
-            Es gratis y no necesitas registrarte
-          </p>
+          {!hideFooterNote && (
+            <p className="text-center text-xs text-muted-foreground">
+              Es gratis y no necesitas registrarte
+            </p>
+          )}
         </div>
       </form>
     </motion.div>
