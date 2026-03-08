@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Home, User, LogIn, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import illustrationPlan from "@/assets/illustration-plan.png";
 
 const Index = () => {
   const [result, setResult] = useState<AffordabilityResult | null>(null);
