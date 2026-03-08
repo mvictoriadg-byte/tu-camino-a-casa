@@ -105,8 +105,8 @@ const Index = () => {
               ) : (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center h-full min-h-[400px]">
                   <div className="text-center">
-                    <div className="w-20 h-20 rounded-3xl bg-primary/20 flex items-center justify-center mx-auto mb-6">
-                      <Home className="h-10 w-10 text-primary" />
+                    <div className="w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                      <img src={illustrationPlan} alt="Tu plan" className="w-20 h-20 object-contain" />
                     </div>
                     <h3 className="text-xl font-bold mb-2">Tu plan personalizado</h3>
                     <p className="text-muted-foreground text-sm max-w-xs mx-auto">Rellena tus datos en el formulario para ver tu roadmap de compra</p>
