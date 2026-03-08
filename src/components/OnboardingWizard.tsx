@@ -164,7 +164,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
         className="text-center py-6 sm:py-10"
       >
         <img src={current.illustration} alt="" className="w-20 h-20 sm:w-24 sm:h-24 object-contain mx-auto mb-4" />
-        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1">{current.emoji} {current.title}</h2>
+        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1">{current.title}</h2>
         <p className="text-sm text-muted-foreground">{current.subtitle}</p>
       </motion.div>
 
