@@ -66,9 +66,6 @@ const Index = () => {
       <section className="pt-16 pb-12 px-4 sm:px-6">
         <div className="container max-w-3xl text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-sm font-semibold text-foreground mb-6">
-              🏠 Tu planificador de vivienda en España
-            </span>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-6 tracking-tight">
               Tu camino a casa<br />
               <span className="gradient-text">está más cerca</span>
