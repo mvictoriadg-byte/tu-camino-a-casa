@@ -14,7 +14,10 @@ import illustrationPlan from "@/assets/illustration-plan.png";
 
 const Index = () => {
   const [result, setResult] = useState<AffordabilityResult | null>(null);
+  const [mobileStep, setMobileStep] = useState<"form" | "results">("form");
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
 
   const handleCalculate = async (profile: UserProfile) => {
