@@ -76,7 +76,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     if (!propertyType) e.propertyType = "Campo obligatorio";
     if (!rooms) e.rooms = "Campo obligatorio";
     if (!zone) e.zone = "Campo obligatorio";
-    if (!reformState) e.reformState = "Campo obligatorio";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
