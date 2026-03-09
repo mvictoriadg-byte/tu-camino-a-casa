@@ -224,6 +224,19 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-2">
+                  <FieldLabel icon={Users}>¿Tienes hijos?</FieldLabel>
+                  <Select value={numberOfChildren} onValueChange={setNumberOfChildren}>
+                    <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">No tengo hijos</SelectItem>
+                      <SelectItem value="1">1 hijo</SelectItem>
+                      <SelectItem value="2">2 hijos</SelectItem>
+                      <SelectItem value="3">3 hijos</SelectItem>
+                      <SelectItem value="4">4 o más hijos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             )}
 

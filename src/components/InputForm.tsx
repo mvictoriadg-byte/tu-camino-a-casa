@@ -180,6 +180,27 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                   </Select>
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <FieldLabel icon={Users}>¿Tienes hijos?</FieldLabel>
+                  <Select value={numberOfChildren} onValueChange={setNumberOfChildren}>
+                    <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">No tengo hijos</SelectItem>
+                      <SelectItem value="1">1 hijo</SelectItem>
+                      <SelectItem value="2">2 hijos</SelectItem>
+                      <SelectItem value="3">3 hijos</SelectItem>
+                      <SelectItem value="4">4 o más hijos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border h-full">
+                  <div>
+                    <FieldLabel icon={Home}>¿Primera vivienda?</FieldLabel>
+                  </div>
+                  <Switch checked={firstHome} onCheckedChange={setFirstHome} />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
