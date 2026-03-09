@@ -301,8 +301,8 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
             <SectionHeader title="Tu hipoteca" subtitle="¿Cuánto quieres financiar?" illustration={illustrationMortgage} step={4} />
             <div className="space-y-1.5">
               <FieldLabel icon={Percent}>Porcentaje a hipotecar: {mortgagePercent}%</FieldLabel>
-              <Slider value={[mortgagePercent]} onValueChange={v => setMortgagePercent(v[0])} min={50} max={90} step={5} className="mt-2" />
-              <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>50%</span><span>90%</span></div>
+              <Slider value={[mortgagePercent]} onValueChange={v => setMortgagePercent(v[0])} min={50} max={100} step={5} className="mt-2" />
+              <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>50%</span><span>100%</span></div>
               <p className="text-xs text-muted-foreground">Tu entrada sería el {100 - mortgagePercent}% del precio de la vivienda</p>
             </div>
           </CardContent>
