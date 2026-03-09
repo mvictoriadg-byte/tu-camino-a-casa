@@ -290,14 +290,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                   <FieldError field="zone" />
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <FieldLabel icon={Wrench}>¿Necesita reforma?</FieldLabel>
-                <Select value={reformState} onValueChange={v => { setReformState(v); if (submitted) validate(); }}>
-                  <SelectTrigger className={`rounded-xl ${fieldBorder("reformState")}`}><SelectValue placeholder="Estado de la vivienda" /></SelectTrigger>
-                  <SelectContent><SelectItem value="listo-para-entrar">Lista para entrar</SelectItem><SelectItem value="pequena-reforma">Pequeña reforma</SelectItem><SelectItem value="reforma-completa">Reforma completa</SelectItem></SelectContent>
-                </Select>
-                <FieldError field="reformState" />
-              </div>
+{/* Reform state hidden - default value used */}
             </div>
           </CardContent>
         </Card>
