@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import Dashboard from "@/components/Dashboard";
 import LockedTrackerCTA from "@/components/LockedTrackerCTA";
+import ScenarioComparison from "@/components/ScenarioComparison";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
