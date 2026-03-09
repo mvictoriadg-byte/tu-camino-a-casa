@@ -44,7 +44,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
   const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
   const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
   const [zone, setZone] = useState(iv?.preferences?.zone || "");
-  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "");
+  const [reformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
   const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
