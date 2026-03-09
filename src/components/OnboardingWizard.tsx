@@ -359,7 +359,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
             {isCalculating ? (
               <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creando tu plan…</>
             ) : step === TOTAL_STEPS ? (
-              <>Ver mi plan <ArrowRight className="h-4 w-4 ml-2" /></>
+              <>{submitLabel || "Ver mi plan"} <ArrowRight className="h-4 w-4 ml-2" /></>
             ) : (
               <>Siguiente <ArrowRight className="h-4 w-4 ml-2" /></>
             )}
