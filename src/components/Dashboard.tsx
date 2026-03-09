@@ -46,7 +46,7 @@ const zoneLabels: Record<string, string> = {
   centro: "Centro", metropolitana: "Área metropolitana", periferia: "Periferia",
 };
 
-const Dashboard = ({ result }: DashboardProps) => {
+const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids }: DashboardProps) => {
   const {
     city, preferences, estimatedPrice, totalUpfront, requiredDownPayment, taxesAndFees,
     reformCostEstimate, savingsGap, yearsToSave, monthsToSave, maxHomePrice, canAfford,
@@ -54,6 +54,14 @@ const Dashboard = ({ result }: DashboardProps) => {
     milestones, isYoungBuyer, debtToIncomeRatio, totalMonthlyIncome, totalSavings,
     totalMonthlySavings, totalMonthlyDebts, numBuyers, mortgagePercent, pricePerSqm, sqm,
   } = result;
+
+  // When aids are enabled, use adjusted values for display
+  const displayTotalUpfront = aidsEnabled && aidsImpact ? aidsImpact.adjustedTotalUpfront : totalUpfront;
+  const displaySavingsGap = Math.max(0, displayTotalUpfront - totalSavings);
+  const displaySavingsProgress = displayTotalUpfront > 0 ? Math.min(100, Math.round((totalSavings / displayTotalUpfront) * 100)) : 100;
+  const displayCanAfford = maxHomePrice >= (estimatedPrice + reformCostEstimate) && totalSavings >= displayTotalUpfront;
+  const displayYearsToSave = aidsEnabled && aidsImpact ? aidsImpact.adjustedYearsToSave : yearsToSave;
+  const displayMonthsToSave = aidsEnabled && aidsImpact ? aidsImpact.adjustedMonthsToSave : monthsToSave;
 
   const propertyDesc = `${propertyTypeLabels[preferences.propertyType] || preferences.propertyType} · ${sqm} m² · ${preferences.rooms} hab · ${zoneLabels[preferences.zone] || preferences.zone}`;
   const displayYears = yearsToSave === 0 ? "¡Ya!" : yearsToSave === Infinity ? "—" : `~${yearsToSave} años`;
