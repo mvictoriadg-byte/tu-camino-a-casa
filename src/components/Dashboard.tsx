@@ -73,28 +73,31 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
       <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
         <Card className={`glow-card overflow-hidden ${displayCanAfford ? "border-success border-2" : "border-2 border-primary"}`}>
           <CardContent className="p-0">
-            <div className={`px-6 py-5 ${canAfford ? "bg-success/10" : "bg-primary/10"}`}>
+            <div className={`px-6 py-5 ${displayCanAfford ? "bg-success/10" : "bg-primary/10"}`}>
               <div className="flex items-center gap-4">
-                <div className={`flex items-center justify-center h-14 w-14 rounded-2xl shrink-0 ${canAfford ? "bg-success/20" : "bg-primary/30"}`}>
-                  {canAfford ? <Trophy className="h-7 w-7 text-success" /> : <Timer className="h-7 w-7 text-foreground" />}
+                <div className={`flex items-center justify-center h-14 w-14 rounded-2xl shrink-0 ${displayCanAfford ? "bg-success/20" : "bg-primary/30"}`}>
+                  {displayCanAfford ? <Trophy className="h-7 w-7 text-success" /> : <Timer className="h-7 w-7 text-foreground" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-0.5">
-                    {canAfford ? "¡Puedes comprar ya!" : "Tiempo estimado"}
+                    {displayCanAfford ? "¡Puedes comprar ya!" : "Tiempo estimado"}
                   </p>
                   <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className={`text-4xl sm:text-5xl font-extrabold tracking-tight ${canAfford ? "text-success" : "text-foreground"}`}>
+                    <span className={`text-4xl sm:text-5xl font-extrabold tracking-tight ${displayCanAfford ? "text-success" : "text-foreground"}`}>
                       {displayYears}
                     </span>
-                    {!canAfford && displayMonths && (
+                    {!displayCanAfford && displayMonths && (
                       <span className="text-base text-muted-foreground font-mono">({displayMonths})</span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 truncate">{propertyDesc} en {city.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1 truncate">
+                    {propertyDesc} en {city.name}
+                    {aidsEnabled && aidsImpact ? " · con ayudas" : ""}
+                  </p>
                 </div>
                 <div className="text-right shrink-0 hidden sm:block">
                   <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Progreso</p>
-                  <p className="text-3xl font-extrabold text-foreground font-mono">{savingsProgress}%</p>
+                  <p className="text-3xl font-extrabold text-foreground font-mono">{displaySavingsProgress}%</p>
                 </div>
               </div>
             </div>
