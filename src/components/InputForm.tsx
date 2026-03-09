@@ -11,7 +11,7 @@ import {
 import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
 import { Switch } from "@/components/ui/switch";
 import {
-  Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
+  Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
   Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
