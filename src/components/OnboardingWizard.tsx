@@ -25,6 +25,7 @@ interface OnboardingWizardProps {
   onCalculate: (profile: UserProfile) => void;
   isCalculating?: boolean;
   initialValues?: Partial<UserProfile>;
+  submitLabel?: string;
 }
 
 const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: OnboardingWizardProps) => {
