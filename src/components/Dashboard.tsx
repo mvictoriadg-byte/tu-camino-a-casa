@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 import { type AffordabilityResult, formatCurrency } from "@/lib/housing-data";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Home, TrendingUp, CheckCircle2, Landmark, Euro, Target,
   Wrench, Sparkles, ArrowRight, Building, Lightbulb, Trophy, Shield,
