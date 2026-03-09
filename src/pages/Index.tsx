@@ -226,6 +226,26 @@ const Index = () => {
                     result={result} eligibleAids={eligibleAids} aidsImpact={aidsImpact}
                     aidsEnabled={aidsEnabled} onToggleAids={setAidsEnabled}
                   />
+                  {/* Scenario comparison */}
+                  {(() => {
+                    const extraMonthlySavings = result.totalMonthlySavings + 200;
+                    const gap = Math.max(0, result.totalUpfront - result.totalSavings);
+                    const extraMonths = extraMonthlySavings > 0 ? Math.ceil(gap / extraMonthlySavings) : 0;
+                    const extraYears = Math.round((extraMonths / 12) * 10) / 10;
+                    return (
+                      <ScenarioComparison
+                        currentYears={result.yearsToSave}
+                        currentMonths={result.monthsToSave}
+                        aidsYears={aidsImpact ? aidsImpact.adjustedYearsToSave : null}
+                        aidsMonths={aidsImpact ? aidsImpact.adjustedMonthsToSave : null}
+                        extraSavingsYears={extraYears}
+                        extraSavingsMonths={extraMonths}
+                        totalUpfront={result.totalUpfront}
+                        totalSavings={result.totalSavings}
+                        monthlySavings={result.totalMonthlySavings}
+                      />
+                    );
+                  })()}
                   {/* Tracker: locked for non-logged, active for logged-in */}
                   {user ? (
                     <SavingsProgressTracker
@@ -238,6 +258,7 @@ const Index = () => {
                     <LockedTrackerCTA />
                   )}
                   <SaveCTA />
+                </div>
                 </div>
               </div>
             </section>
