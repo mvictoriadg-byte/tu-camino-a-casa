@@ -216,12 +216,16 @@ const Portal = () => {
               }
 
                 {/* Housing aids section */}
-                {eligibleAids.length > 0 && aidsImpact
-
-
-
-
-
+                {eligibleAids.length > 0 && aidsImpact && (
+                  <HousingAidsSection
+                    eligibleAids={eligibleAids}
+                    impact={aidsImpact}
+                    isYoungBuyer={result.isYoungBuyer}
+                    originalYearsToSave={result.yearsToSave}
+                    onToggleAids={setAidsEnabled}
+                    aidsEnabled={aidsEnabled}
+                  />
+                )
 
 
 
