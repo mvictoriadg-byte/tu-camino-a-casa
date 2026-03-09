@@ -8,6 +8,8 @@ import {
   Users, Timer, ExternalLink,
 } from "lucide-react";
 import SavingsTimeline from "@/components/SavingsTimeline";
+import HousingAidsSection from "@/components/HousingAidsSection";
+import { type EligibleAid, type AidsImpactSummary } from "@/lib/housing-aids";
 
 import doodleCelebrate from "@/assets/doodle-celebrate.png";
 import doodleStrength from "@/assets/doodle-strength.png";
@@ -31,6 +33,10 @@ const doodleIconMap: Record<string, string> = {
 
 interface DashboardProps {
   result: AffordabilityResult;
+  eligibleAids: EligibleAid[];
+  aidsImpact: AidsImpactSummary | null;
+  aidsEnabled: boolean;
+  onToggleAids: (enabled: boolean) => void;
 }
 
 const propertyTypeLabels: Record<string, string> = {
@@ -40,7 +46,7 @@ const zoneLabels: Record<string, string> = {
   centro: "Centro", metropolitana: "Área metropolitana", periferia: "Periferia",
 };
 
-const Dashboard = ({ result }: DashboardProps) => {
+const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids }: DashboardProps) => {
   const {
     city, preferences, estimatedPrice, totalUpfront, requiredDownPayment, taxesAndFees,
     reformCostEstimate, savingsGap, yearsToSave, monthsToSave, maxHomePrice, canAfford,
@@ -49,51 +55,62 @@ const Dashboard = ({ result }: DashboardProps) => {
     totalMonthlySavings, totalMonthlyDebts, numBuyers, mortgagePercent, pricePerSqm, sqm,
   } = result;
 
+  // When aids are enabled, use adjusted values for display
+  const displayTotalUpfront = aidsEnabled && aidsImpact ? aidsImpact.adjustedTotalUpfront : totalUpfront;
+  const displaySavingsGap = Math.max(0, displayTotalUpfront - totalSavings);
+  const displaySavingsProgress = displayTotalUpfront > 0 ? Math.min(100, Math.round((totalSavings / displayTotalUpfront) * 100)) : 100;
+  const displayCanAfford = maxHomePrice >= (estimatedPrice + reformCostEstimate) && totalSavings >= displayTotalUpfront;
+  const displayYearsToSave = aidsEnabled && aidsImpact ? aidsImpact.adjustedYearsToSave : yearsToSave;
+  const displayMonthsToSave = aidsEnabled && aidsImpact ? aidsImpact.adjustedMonthsToSave : monthsToSave;
+
   const propertyDesc = `${propertyTypeLabels[preferences.propertyType] || preferences.propertyType} · ${sqm} m² · ${preferences.rooms} hab · ${zoneLabels[preferences.zone] || preferences.zone}`;
-  const displayYears = yearsToSave === 0 ? "¡Ya!" : yearsToSave === Infinity ? "—" : `~${yearsToSave} años`;
-  const displayMonths = monthsToSave <= 0 ? "" : `${monthsToSave} meses`;
+  const displayYears = displayYearsToSave === 0 ? "¡Ya!" : displayYearsToSave === Infinity ? "—" : `~${displayYearsToSave} años`;
+  const displayMonths = displayMonthsToSave <= 0 ? "" : `${displayMonthsToSave} meses`;
 
   return (
     <div className="space-y-5">
       {/* HERO: Time to Buy */}
       <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-        <Card className={`glow-card overflow-hidden ${canAfford ? "border-success border-2" : "border-2 border-primary"}`}>
+        <Card className={`glow-card overflow-hidden ${displayCanAfford ? "border-success border-2" : "border-2 border-primary"}`}>
           <CardContent className="p-0">
-            <div className={`px-6 py-5 ${canAfford ? "bg-success/10" : "bg-primary/10"}`}>
+            <div className={`px-6 py-5 ${displayCanAfford ? "bg-success/10" : "bg-primary/10"}`}>
               <div className="flex items-center gap-4">
-                <div className={`flex items-center justify-center h-14 w-14 rounded-2xl shrink-0 ${canAfford ? "bg-success/20" : "bg-primary/30"}`}>
-                  {canAfford ? <Trophy className="h-7 w-7 text-success" /> : <Timer className="h-7 w-7 text-foreground" />}
+                <div className={`flex items-center justify-center h-14 w-14 rounded-2xl shrink-0 ${displayCanAfford ? "bg-success/20" : "bg-primary/30"}`}>
+                  {displayCanAfford ? <Trophy className="h-7 w-7 text-success" /> : <Timer className="h-7 w-7 text-foreground" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-0.5">
-                    {canAfford ? "¡Puedes comprar ya!" : "Tiempo estimado"}
+                    {displayCanAfford ? "¡Puedes comprar ya!" : "Tiempo estimado"}
                   </p>
                   <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className={`text-4xl sm:text-5xl font-extrabold tracking-tight ${canAfford ? "text-success" : "text-foreground"}`}>
+                    <span className={`text-4xl sm:text-5xl font-extrabold tracking-tight ${displayCanAfford ? "text-success" : "text-foreground"}`}>
                       {displayYears}
                     </span>
-                    {!canAfford && displayMonths && (
+                    {!displayCanAfford && displayMonths && (
                       <span className="text-base text-muted-foreground font-mono">({displayMonths})</span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 truncate">{propertyDesc} en {city.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1 truncate">
+                    {propertyDesc} en {city.name}
+                    {aidsEnabled && aidsImpact ? " · con ayudas" : ""}
+                  </p>
                 </div>
                 <div className="text-right shrink-0 hidden sm:block">
                   <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Progreso</p>
-                  <p className="text-3xl font-extrabold text-foreground font-mono">{savingsProgress}%</p>
+                  <p className="text-3xl font-extrabold text-foreground font-mono">{displaySavingsProgress}%</p>
                 </div>
               </div>
             </div>
             <div className="px-6 py-3 border-t border-border">
               <div className="progress-bar">
-                <motion.div className="progress-bar-fill" initial={{ width: 0 }} animate={{ width: `${Math.min(savingsProgress, 100)}%` }} transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }} />
+                <motion.div className="progress-bar-fill" initial={{ width: 0 }} animate={{ width: `${Math.min(displaySavingsProgress, 100)}%` }} transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }} />
               </div>
               <div className="flex justify-between text-xs text-muted-foreground mt-2 font-medium">
                 <span>Ahorros: {formatCurrency(totalSavings)}</span>
-                {!canAfford && savingsGap > 0 && (
-                  <span>Faltan: <span className="font-bold text-foreground">{formatCurrency(savingsGap)}</span></span>
+                {!displayCanAfford && displaySavingsGap > 0 && (
+                  <span>Faltan: <span className="font-bold text-foreground">{formatCurrency(displaySavingsGap)}</span></span>
                 )}
-                <span>Meta: {formatCurrency(totalUpfront)}</span>
+                <span>Meta: {formatCurrency(displayTotalUpfront)}</span>
               </div>
             </div>
           </CardContent>
@@ -164,7 +181,18 @@ const Dashboard = ({ result }: DashboardProps) => {
         savingsProgress={savingsProgress}
       />
 
-      {/* Tips */}
+      {/* Housing Aids */}
+      {eligibleAids.length > 0 && aidsImpact && (
+        <HousingAidsSection
+          eligibleAids={eligibleAids}
+          impact={aidsImpact}
+          isYoungBuyer={isYoungBuyer}
+          originalYearsToSave={yearsToSave}
+          onToggleAids={onToggleAids}
+          aidsEnabled={aidsEnabled}
+        />
+      )}
+
       {optimizationTips.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.6 }}>
           <Card className="glow-card">
@@ -214,34 +242,6 @@ const Dashboard = ({ result }: DashboardProps) => {
         </Card>
       </motion.div>
 
-
-      {/* Subsidies */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 1.2 }}>
-        <Card className="glow-card">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-bold flex items-center gap-2">
-              <Landmark className="h-5 w-5 text-primary" /> Ayudas Públicas
-              {isYoungBuyer && (
-                <span className="ml-2 text-xs px-2.5 py-1 rounded-full bg-success/10 text-success font-bold">
-                  <Shield className="h-3 w-3 inline mr-1" />Joven &lt;35
-                </span>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {city.subsidies.map((subsidy, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.25 + i * 0.06 }}
-                className="flex items-start gap-3 p-4 rounded-xl bg-muted/60">
-                <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                <a href={subsidy.url} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline text-foreground">
-                  {subsidy.name}
-                  <ExternalLink className="h-3 w-3 inline ml-1.5 text-muted-foreground" />
-                </a>
-              </motion.div>
-            ))}
-          </CardContent>
-        </Card>
-      </motion.div>
     </div>
   );
 };

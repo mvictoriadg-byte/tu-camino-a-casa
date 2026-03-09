@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      housing_aids: {
+        Row: {
+          age_limit: number | null
+          aid_type: string
+          benefit_amount_estimate: number | null
+          benefit_description: string
+          created_at: string
+          family_conditions: string | null
+          first_home_required: boolean | null
+          id: string
+          impact_type: Database["public"]["Enums"]["aid_impact_type"]
+          income_limit: number | null
+          max_financing_percent: number | null
+          name: string
+          notes: string | null
+          property_price_limit: number | null
+          region: string
+          residency_years_required: number | null
+        }
+        Insert: {
+          age_limit?: number | null
+          aid_type: string
+          benefit_amount_estimate?: number | null
+          benefit_description: string
+          created_at?: string
+          family_conditions?: string | null
+          first_home_required?: boolean | null
+          id?: string
+          impact_type: Database["public"]["Enums"]["aid_impact_type"]
+          income_limit?: number | null
+          max_financing_percent?: number | null
+          name: string
+          notes?: string | null
+          property_price_limit?: number | null
+          region: string
+          residency_years_required?: number | null
+        }
+        Update: {
+          age_limit?: number | null
+          aid_type?: string
+          benefit_amount_estimate?: number | null
+          benefit_description?: string
+          created_at?: string
+          family_conditions?: string | null
+          first_home_required?: boolean | null
+          id?: string
+          impact_type?: Database["public"]["Enums"]["aid_impact_type"]
+          income_limit?: number | null
+          max_financing_percent?: number | null
+          name?: string
+          notes?: string | null
+          property_price_limit?: number | null
+          region?: string
+          residency_years_required?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -175,6 +232,11 @@ export type Database = {
       }
     }
     Enums: {
+      aid_impact_type:
+        | "financing_increase"
+        | "downpayment_reduction"
+        | "grant"
+        | "tax_reduction"
       app_role: "admin" | "user"
     }
     CompositeTypes: {
@@ -303,6 +365,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      aid_impact_type: [
+        "financing_increase",
+        "downpayment_reduction",
+        "grant",
+        "tax_reduction",
+      ],
       app_role: ["admin", "user"],
     },
   },

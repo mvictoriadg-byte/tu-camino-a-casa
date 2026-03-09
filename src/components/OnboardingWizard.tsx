@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -46,6 +47,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
   const [zone, setZone] = useState(iv?.preferences?.zone || "");
   const [reformState, setReformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
+  const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleNumBuyersChange = (val: string) => {
@@ -110,6 +112,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers), coBuyers: parsedCoBuyers, mortgagePercent,
+      firstHome,
     });
   };
 
@@ -294,6 +297,13 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
                     <SelectContent><SelectItem value="centro">Centro</SelectItem><SelectItem value="metropolitana">Metropolitana</SelectItem><SelectItem value="periferia">Periferia</SelectItem></SelectContent>
                   </Select>
                   <FieldError field="zone" />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-xl bg-muted/60 border border-border">
+                  <div>
+                    <FieldLabel icon={Home}>¿Es tu primera vivienda?</FieldLabel>
+                    <p className="text-xs text-muted-foreground mt-0.5">Necesario para acceder a ayudas públicas</p>
+                  </div>
+                  <Switch checked={firstHome} onCheckedChange={setFirstHome} />
                 </div>
               </div>
             )}
