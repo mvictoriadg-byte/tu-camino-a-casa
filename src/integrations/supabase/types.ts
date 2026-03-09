@@ -108,6 +108,7 @@ export type Database = {
           id: string
           month_label: string
           month_number: number
+          saved_amount: number
           target_amount: number
           total_upfront: number
           updated_at: string
@@ -119,6 +120,7 @@ export type Database = {
           id?: string
           month_label: string
           month_number: number
+          saved_amount?: number
           target_amount?: number
           total_upfront?: number
           updated_at?: string
@@ -130,6 +132,7 @@ export type Database = {
           id?: string
           month_label?: string
           month_number?: number
+          saved_amount?: number
           target_amount?: number
           total_upfront?: number
           updated_at?: string
@@ -144,12 +147,14 @@ export type Database = {
           co_buyers: Json | null
           created_at: string
           employment_status: string
+          first_home: boolean
           id: string
           monthly_debts: number
           monthly_income: number
           monthly_savings: number
           mortgage_percent: number
           num_buyers: number
+          number_of_children: number
           property_type: string
           reform_state: string
           result_json: Json | null
@@ -166,12 +171,14 @@ export type Database = {
           co_buyers?: Json | null
           created_at?: string
           employment_status: string
+          first_home?: boolean
           id?: string
           monthly_debts?: number
           monthly_income?: number
           monthly_savings?: number
           mortgage_percent?: number
           num_buyers?: number
+          number_of_children?: number
           property_type: string
           reform_state: string
           result_json?: Json | null
@@ -188,12 +195,14 @@ export type Database = {
           co_buyers?: Json | null
           created_at?: string
           employment_status?: string
+          first_home?: boolean
           id?: string
           monthly_debts?: number
           monthly_income?: number
           monthly_savings?: number
           mortgage_percent?: number
           num_buyers?: number
+          number_of_children?: number
           property_type?: string
           reform_state?: string
           result_json?: Json | null
