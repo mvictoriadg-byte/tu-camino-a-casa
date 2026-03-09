@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
-import HousingAidsSection from "@/components/HousingAidsSection";
+import ScenarioComparison from "@/components/ScenarioComparison";
 import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
@@ -18,19 +18,21 @@ import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from
-"@/components/ui/alert-dialog";
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-interface WishlistItem {id: string;url: string;title: string;estimated_price: number;notes: string;created_at: string;}
+interface WishlistItem { id: string; url: string; title: string; estimated_price: number; notes: string; created_at: string; }
 
 const Portal = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<{display_name: string;email: string;} | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; email: string } | null>(null);
   const [result, setResult] = useState<AffordabilityResult | null>(null);
   const [savedFormData, setSavedFormData] = useState<Partial<UserProfile> | null>(null);
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const [newUrl, setNewUrl] = useState("");const [newTitle, setNewTitle] = useState("");const [newPrice, setNewPrice] = useState("");
+  const [newUrl, setNewUrl] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [newPrice, setNewPrice] = useState("");
   const [loadingData, setLoadingData] = useState(true);
   const [isCalculating, setIsCalculating] = useState(false);
   const [allAids, setAllAids] = useState<HousingAid[]>([]);
@@ -40,9 +42,9 @@ const Portal = () => {
   const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
   const [pendingProfile, setPendingProfile] = useState<UserProfile | null>(null);
 
-  useEffect(() => {if (!authLoading && !user) navigate("/auth");}, [user, authLoading, navigate]);
-  useEffect(() => {if (user) loadData();}, [user]);
-  useEffect(() => {fetchHousingAids().then(setAllAids);}, []);
+  useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
+  useEffect(() => { if (user) loadData(); }, [user]);
+  useEffect(() => { fetchHousingAids().then(setAllAids); }, []);
 
   const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
     const city = cityData[profile.city];
@@ -50,7 +52,7 @@ const Portal = () => {
     const eligible = filterEligibleAids(aids, {
       region: city.region, age: profile.age,
       annualIncome: profile.monthlyIncome * 12, estimatedPrice: r.estimatedPrice,
-      firstHome: profile.firstHome
+      firstHome: profile.firstHome,
     });
     setEligibleAids(eligible);
     if (eligible.length > 0) {
@@ -58,7 +60,7 @@ const Portal = () => {
         estimatedPrice: r.estimatedPrice, currentMortgagePercent: profile.mortgagePercent,
         totalUpfront: r.totalUpfront, totalSavings: r.totalSavings,
         totalMonthlySavings: r.totalMonthlySavings, taxesAndFees: r.taxesAndFees,
-        reformCostEstimate: r.reformCostEstimate
+        reformCostEstimate: r.reformCostEstimate,
       });
       setAidsImpact(impact);
     } else {
@@ -67,12 +69,13 @@ const Portal = () => {
   };
 
   const loadData = async () => {
-    if (!user) return;setLoadingData(true);
+    if (!user) return;
+    setLoadingData(true);
     const [p, f, w] = await Promise.all([
-    supabase.from("profiles").select("*").eq("user_id", user.id).single(),
-    supabase.from("user_financial_data").select("*").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(1),
-    supabase.from("user_wishlist").select("*").eq("user_id", user.id).order("created_at", { ascending: false })]
-    );
+      supabase.from("profiles").select("*").eq("user_id", user.id).single(),
+      supabase.from("user_financial_data").select("*").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(1),
+      supabase.from("user_wishlist").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+    ]);
     if (p.data) setProfile({ display_name: p.data.display_name || "", email: p.data.email || "" });
     if (f.data?.length && f.data[0].result_json) {
       const r = f.data[0].result_json as unknown as AffordabilityResult;
@@ -86,19 +89,15 @@ const Portal = () => {
         mortgagePercent: d.mortgage_percent,
         firstHome: (d as any).first_home !== undefined ? (d as any).first_home : true,
         numberOfChildren: (d as any).number_of_children || 0,
-        preferences: { propertyType: d.property_type, size: String(d.size_sqm), rooms: d.rooms, zone: d.zone, reformState: d.reform_state }
+        preferences: { propertyType: d.property_type, size: String(d.size_sqm), rooms: d.rooms, zone: d.zone, reformState: d.reform_state },
       };
       setSavedFormData(formData);
-      // Compute aids with saved data
-      if (allAids.length > 0) {
-        computeAids(formData as UserProfile, r, allAids);
-      }
+      if (allAids.length > 0) computeAids(formData as UserProfile, r, allAids);
     }
     if (w.data) setWishlist(w.data as WishlistItem[]);
     setLoadingData(false);
   };
 
-  // Recompute aids when allAids loads after data
   useEffect(() => {
     if (allAids.length > 0 && result && savedFormData?.city) {
       computeAids(savedFormData as UserProfile, result, allAids);
@@ -108,12 +107,17 @@ const Portal = () => {
   const addWishlistItem = async () => {
     if (!user || !newUrl.trim()) return;
     const { data, error } = await supabase.from("user_wishlist").insert({ user_id: user.id, url: newUrl.trim(), title: newTitle.trim() || "Sin título", estimated_price: Number(newPrice) || 0 }).select().single();
-    if (error) {toast.error("Error al guardar");return;}
-    setWishlist((prev) => [data as WishlistItem, ...prev]);setNewUrl("");setNewTitle("");setNewPrice("");
+    if (error) { toast.error("Error al guardar"); return; }
+    setWishlist(prev => [data as WishlistItem, ...prev]);
+    setNewUrl(""); setNewTitle(""); setNewPrice("");
     toast.success("Propiedad guardada");
   };
 
-  const removeWishlistItem = async (id: string) => {await supabase.from("user_wishlist").delete().eq("id", id);setWishlist((prev) => prev.filter((w) => w.id !== id));toast.success("Eliminada");};
+  const removeWishlistItem = async (id: string) => {
+    await supabase.from("user_wishlist").delete().eq("id", id);
+    setWishlist(prev => prev.filter(w => w.id !== id));
+    toast.success("Eliminada");
+  };
 
   const resetTrackerProgress = async () => {
     if (!user) return;
@@ -122,7 +126,6 @@ const Portal = () => {
 
   const handleRecalculate = async (profileData: UserProfile) => {
     if (!user) return;
-    // Show confirmation if there's existing data
     if (result) {
       setPendingProfile(profileData);
       setShowUpdateConfirm(true);
@@ -133,7 +136,7 @@ const Portal = () => {
 
   const executeRecalculate = async (profileData: UserProfile) => {
     setIsCalculating(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 800));
     const r = calculateAffordability(profileData);
     setResult(r);
     computeAids(profileData, r, allAids);
@@ -147,7 +150,7 @@ const Portal = () => {
         property_type: profileData.preferences.propertyType, size_sqm: Number(profileData.preferences.size),
         rooms: profileData.preferences.rooms, zone: profileData.preferences.zone, reform_state: profileData.preferences.reformState,
         mortgage_percent: profileData.mortgagePercent, result_json: r as any,
-        number_of_children: profileData.numberOfChildren, first_home: profileData.firstHome
+        number_of_children: profileData.numberOfChildren, first_home: profileData.firstHome,
       };
       if (existing && existing.length > 0) {
         await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);
@@ -156,7 +159,7 @@ const Portal = () => {
       }
       setSavedFormData(profileData);
       toast.success("Plan actualizado y guardado");
-    } catch {toast.error("Error al guardar");}
+    } catch { toast.error("Error al guardar"); }
   };
 
   const handleConfirmUpdate = async () => {
@@ -167,9 +170,33 @@ const Portal = () => {
     setPendingProfile(null);
   };
 
-  if (authLoading || loadingData) return (
-    <div className="min-h-screen flex items-center justify-center bg-background"><div className="text-center"><RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" /><p className="text-muted-foreground">Cargando tu portal...</p></div></div>);
+  // Compute scenario comparison data
+  const getScenarioData = () => {
+    if (!result || !savedFormData) return null;
+    const currentYears = result.yearsToSave;
+    const currentMonths = result.monthsToSave;
+    const aidsYears = aidsImpact ? aidsImpact.adjustedYearsToSave : null;
+    const aidsMonths = aidsImpact ? aidsImpact.adjustedMonthsToSave : null;
 
+    // +200€/month scenario
+    const extraMonthlySavings = result.totalMonthlySavings + 200;
+    const gap = Math.max(0, result.totalUpfront - result.totalSavings);
+    const extraMonths = extraMonthlySavings > 0 ? Math.ceil(gap / extraMonthlySavings) : 0;
+    const extraYears = Math.round((extraMonths / 12) * 10) / 10;
+
+    return { currentYears, currentMonths, aidsYears, aidsMonths, extraSavingsYears: extraYears, extraSavingsMonths: extraMonths };
+  };
+
+  if (authLoading || loadingData) return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center">
+        <RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" />
+        <p className="text-muted-foreground">Cargando tu portal...</p>
+      </div>
+    </div>
+  );
+
+  const scenarioData = getScenarioData();
 
   return (
     <div className="min-h-screen bg-background">
@@ -183,127 +210,133 @@ const Portal = () => {
             </button>
           </div>
           <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block"><p className="text-sm font-bold">{profile?.display_name || "Usuario"}</p><p className="text-xs text-muted-foreground">{profile?.email}</p></div>
-            <Button variant="outline" size="sm" onClick={async () => {await signOut();navigate("/");}} className="rounded-full"><LogOut className="h-4 w-4 mr-1.5" /> Salir</Button>
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold">{profile?.display_name || "Usuario"}</p>
+              <p className="text-xs text-muted-foreground">{profile?.email}</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={async () => { await signOut(); navigate("/"); }} className="rounded-full">
+              <LogOut className="h-4 w-4 mr-1.5" /> Salir
+            </Button>
           </div>
         </div>
       </nav>
+
       <div className="container max-w-6xl py-8 px-4 sm:px-6">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Hola, {profile?.display_name || "usuario"} 👋</h1>
           <p className="text-muted-foreground mt-1">Tu centro de control para comprar casa</p>
         </motion.div>
+
         <Tabs defaultValue="roadmap" className="space-y-6">
           <TabsList className="bg-muted rounded-full p-1 h-auto">
             <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan</TabsTrigger>
             <TabsTrigger value="wishlist" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Heart className="h-4 w-4 mr-1.5" /> Wishlist</TabsTrigger>
             <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><User className="h-4 w-4 mr-1.5" /> Perfil</TabsTrigger>
           </TabsList>
+
           <TabsContent value="roadmap">
-            {result ?
-            <div className="space-y-6">
-                {/* Plan summary + estimated time + costs */}
+            {result ? (
+              <div className="space-y-6">
+                {/* 1. Dashboard: hero + plan summary + estimated time + costs + housing aids + banks */}
                 <Dashboard result={result} eligibleAids={eligibleAids} aidsImpact={aidsImpact} aidsEnabled={aidsEnabled} onToggleAids={setAidsEnabled} />
 
-                {/* Savings tracker */}
-                {user &&
-              <SavingsProgressTracker
-                userId={user.id}
-                totalUpfront={result.totalUpfront}
-                monthlySavingsTarget={result.totalMonthlySavings}
-                currentSavings={result.totalSavings} />
-
-              }
-
-                {/* Housing aids section */}
-                {eligibleAids.length > 0 && aidsImpact && (
-                  <HousingAidsSection
-                    eligibleAids={eligibleAids}
-                    impact={aidsImpact}
-                    isYoungBuyer={result.isYoungBuyer}
-                    originalYearsToSave={result.yearsToSave}
-                    onToggleAids={setAidsEnabled}
-                    aidsEnabled={aidsEnabled}
+                {/* 2. Savings progress tracker */}
+                {user && (
+                  <SavingsProgressTracker
+                    userId={user.id}
+                    totalUpfront={aidsEnabled && aidsImpact ? aidsImpact.adjustedTotalUpfront : result.totalUpfront}
+                    monthlySavingsTarget={result.totalMonthlySavings}
+                    currentSavings={result.totalSavings}
                   />
-                )
+                )}
 
-
-
-
-
-
-
-
-              }
-              </div> :
-
-            <Card className="glow-card"><CardContent className="p-12 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4"><Home className="h-8 w-8 text-primary" /></div>
-                <h3 className="text-xl font-bold mb-2">Aún no tienes un plan</h3><p className="text-muted-foreground text-sm mb-6">Rellena el formulario para generar tu plan</p>
-                <Button className="rounded-full font-bold" onClick={() => navigate("/")}><Home className="h-4 w-4 mr-2" /> Ir al calculador</Button>
-              </CardContent></Card>
-            }
+                {/* 3. Scenario comparison */}
+                {scenarioData && (
+                  <ScenarioComparison
+                    currentYears={scenarioData.currentYears}
+                    currentMonths={scenarioData.currentMonths}
+                    aidsYears={scenarioData.aidsYears}
+                    aidsMonths={scenarioData.aidsMonths}
+                    extraSavingsYears={scenarioData.extraSavingsYears}
+                    extraSavingsMonths={scenarioData.extraSavingsMonths}
+                    totalUpfront={result.totalUpfront}
+                    totalSavings={result.totalSavings}
+                    monthlySavings={result.totalMonthlySavings}
+                  />
+                )}
+              </div>
+            ) : (
+              <Card className="glow-card">
+                <CardContent className="p-12 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4"><Home className="h-8 w-8 text-primary" /></div>
+                  <h3 className="text-xl font-bold mb-2">Aún no tienes un plan</h3>
+                  <p className="text-muted-foreground text-sm mb-6">Rellena el formulario para generar tu plan</p>
+                  <Button className="rounded-full font-bold" onClick={() => navigate("/")}><Home className="h-4 w-4 mr-2" /> Ir al calculador</Button>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
+
           <TabsContent value="wishlist">
-            <Card className="glow-card mb-6"><CardHeader className="pb-3"><CardTitle className="text-lg font-bold flex items-center gap-2"><Heart className="h-5 w-5 text-primary" /> Añadir propiedad</CardTitle></CardHeader>
+            <Card className="glow-card mb-6">
+              <CardHeader className="pb-3"><CardTitle className="text-lg font-bold flex items-center gap-2"><Heart className="h-5 w-5 text-primary" /> Añadir propiedad</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="space-y-1.5"><Label className="text-sm font-semibold">URL</Label><Input placeholder="https://idealista.com/..." value={newUrl} onChange={(e) => setNewUrl(e.target.value)} className="rounded-xl" /></div>
-                  <div className="space-y-1.5"><Label className="text-sm font-semibold">Título</Label><Input placeholder="Piso en Madrid" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="rounded-xl" /></div>
-                  <div className="space-y-1.5"><Label className="text-sm font-semibold">Precio (€)</Label><Input type="number" placeholder="250000" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="rounded-xl" /></div>
+                  <div className="space-y-1.5"><Label className="text-sm font-semibold">URL</Label><Input placeholder="https://idealista.com/..." value={newUrl} onChange={e => setNewUrl(e.target.value)} className="rounded-xl" /></div>
+                  <div className="space-y-1.5"><Label className="text-sm font-semibold">Título</Label><Input placeholder="Piso en Madrid" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="rounded-xl" /></div>
+                  <div className="space-y-1.5"><Label className="text-sm font-semibold">Precio (€)</Label><Input type="number" placeholder="250000" value={newPrice} onChange={e => setNewPrice(e.target.value)} className="rounded-xl" /></div>
                 </div>
                 <Button onClick={addWishlistItem} disabled={!newUrl.trim()} className="rounded-full font-bold"><Plus className="h-4 w-4 mr-2" /> Guardar</Button>
               </CardContent>
             </Card>
-            {wishlist.length === 0 ?
-            <Card className="glow-card"><CardContent className="p-12 text-center"><Heart className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" /><h3 className="text-xl font-bold mb-2">Tu wishlist está vacía</h3><p className="text-muted-foreground text-sm">Guarda propiedades de Idealista, Fotocasa, etc.</p></CardContent></Card> :
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{wishlist.map((item, i) => {
-                const domain = (() => {try {return new URL(item.url).hostname;} catch {return "";}})();
-                const thumbnailUrl = `https://image.thum.io/get/width/600/crop/400/${item.url}`;
-                const faviconUrl = domain ? `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=32&url=https://${domain}` : "";
-                const gradientColors = [
-                "from-primary/20 to-accent/20",
-                "from-blue-500/20 to-purple-500/20",
-                "from-emerald-500/20 to-teal-500/20",
-                "from-orange-500/20 to-rose-500/20"];
-
-                return (
-                  <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                  <Card className="glow-card overflow-hidden group hover:shadow-lg transition-all duration-300">
-                    <div className="relative h-40 overflow-hidden">
-                      <img src={thumbnailUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        onError={(e) => {const target = e.target as HTMLImageElement;target.style.display = "none";target.nextElementSibling?.classList.remove("hidden");}} />
-                      <div className={`hidden w-full h-full bg-gradient-to-br ${gradientColors[i % gradientColors.length]} items-center justify-center absolute inset-0`}>
-                        <Building2 className="h-12 w-12 text-muted-foreground/40" />
-                      </div>
-                      {item.estimated_price > 0 &&
-                        <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-md">
-                          <span className="text-sm font-extrabold">{formatCurrency(item.estimated_price)}</span>
-                        </div>
-                        }
-                    </div>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            {faviconUrl && <img src={faviconUrl} alt="" className="h-4 w-4 rounded-sm shrink-0" />}
-                            <p className="font-bold text-sm truncate">{item.title}</p>
+            {wishlist.length === 0 ? (
+              <Card className="glow-card"><CardContent className="p-12 text-center"><Heart className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" /><h3 className="text-xl font-bold mb-2">Tu wishlist está vacía</h3><p className="text-muted-foreground text-sm">Guarda propiedades de Idealista, Fotocasa, etc.</p></CardContent></Card>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {wishlist.map((item, i) => {
+                  const domain = (() => { try { return new URL(item.url).hostname; } catch { return ""; } })();
+                  const thumbnailUrl = `https://image.thum.io/get/width/600/crop/400/${item.url}`;
+                  const faviconUrl = domain ? `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=32&url=https://${domain}` : "";
+                  const gradientColors = ["from-primary/20 to-accent/20", "from-blue-500/20 to-purple-500/20", "from-emerald-500/20 to-teal-500/20", "from-orange-500/20 to-rose-500/20"];
+                  return (
+                    <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                      <Card className="glow-card overflow-hidden group hover:shadow-lg transition-all duration-300">
+                        <div className="relative h-40 overflow-hidden">
+                          <img src={thumbnailUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            onError={e => { const target = e.target as HTMLImageElement; target.style.display = "none"; target.nextElementSibling?.classList.remove("hidden"); }} />
+                          <div className={`hidden w-full h-full bg-gradient-to-br ${gradientColors[i % gradientColors.length]} items-center justify-center absolute inset-0`}>
+                            <Building2 className="h-12 w-12 text-muted-foreground/40" />
                           </div>
-                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 truncate transition-colors">
-                            <ExternalLink className="h-3 w-3 shrink-0" /> {domain || item.url}
-                          </a>
+                          {item.estimated_price > 0 && (
+                            <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-md">
+                              <span className="text-sm font-extrabold">{formatCurrency(item.estimated_price)}</span>
+                            </div>
+                          )}
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => removeWishlistItem(item.id)} className="shrink-0 text-muted-foreground hover:text-destructive rounded-full h-8 w-8">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>);
-              })}</div>
-            }
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                {faviconUrl && <img src={faviconUrl} alt="" className="h-4 w-4 rounded-sm shrink-0" />}
+                                <p className="font-bold text-sm truncate">{item.title}</p>
+                              </div>
+                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 truncate transition-colors">
+                                <ExternalLink className="h-3 w-3 shrink-0" /> {domain || item.url}
+                              </a>
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => removeWishlistItem(item.id)} className="shrink-0 text-muted-foreground hover:text-destructive rounded-full h-8 w-8">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
+
           <TabsContent value="profile">
             <div className="space-y-6">
               <Card className="glow-card">
@@ -321,8 +354,8 @@ const Portal = () => {
                   isCalculating={isCalculating}
                   initialValues={savedFormData || undefined}
                   submitLabel="Actualizar mi plan"
-                  hideFooterNote />
-                
+                  hideFooterNote
+                />
               </div>
             </div>
           </TabsContent>
@@ -344,8 +377,8 @@ const Portal = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>);
-
+    </div>
+  );
 };
 
 export default Portal;

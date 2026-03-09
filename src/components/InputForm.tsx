@@ -11,7 +11,7 @@ import {
 import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
 import { Switch } from "@/components/ui/switch";
 import {
-  Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
+  Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
   Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
@@ -44,7 +44,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
   const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
   const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
   const [zone, setZone] = useState(iv?.preferences?.zone || "");
-  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "");
+  const [reformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
   const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
@@ -76,7 +76,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     if (!propertyType) e.propertyType = "Campo obligatorio";
     if (!rooms) e.rooms = "Campo obligatorio";
     if (!zone) e.zone = "Campo obligatorio";
-    if (!reformState) e.reformState = "Campo obligatorio";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -290,14 +289,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                   <FieldError field="zone" />
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <FieldLabel icon={Wrench}>¿Necesita reforma?</FieldLabel>
-                <Select value={reformState} onValueChange={v => { setReformState(v); if (submitted) validate(); }}>
-                  <SelectTrigger className={`rounded-xl ${fieldBorder("reformState")}`}><SelectValue placeholder="Estado de la vivienda" /></SelectTrigger>
-                  <SelectContent><SelectItem value="listo-para-entrar">Lista para entrar</SelectItem><SelectItem value="pequena-reforma">Pequeña reforma</SelectItem><SelectItem value="reforma-completa">Reforma completa</SelectItem></SelectContent>
-                </Select>
-                <FieldError field="reformState" />
-              </div>
+{/* Reform state hidden - default value used */}
             </div>
           </CardContent>
         </Card>
@@ -308,8 +300,8 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
             <SectionHeader title="Tu hipoteca" subtitle="¿Cuánto quieres financiar?" illustration={illustrationMortgage} step={4} />
             <div className="space-y-1.5">
               <FieldLabel icon={Percent}>Porcentaje a hipotecar: {mortgagePercent}%</FieldLabel>
-              <Slider value={[mortgagePercent]} onValueChange={v => setMortgagePercent(v[0])} min={50} max={90} step={5} className="mt-2" />
-              <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>50%</span><span>90%</span></div>
+              <Slider value={[mortgagePercent]} onValueChange={v => setMortgagePercent(v[0])} min={50} max={100} step={5} className="mt-2" />
+              <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>50%</span><span>100%</span></div>
               <p className="text-xs text-muted-foreground">Tu entrada sería el {100 - mortgagePercent}% del precio de la vivienda</p>
             </div>
           </CardContent>

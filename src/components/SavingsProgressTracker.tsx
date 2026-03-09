@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from "@/lib/housing-data";
-import { CheckCircle2, Circle, Target, TrendingUp, Sparkles, Euro } from "lucide-react";
+import { CheckCircle2, Target, TrendingUp, Sparkles, Euro, Save } from "lucide-react";
 import { toast } from "sonner";
 
 interface MonthEntry {
@@ -24,11 +23,20 @@ interface SavingsProgressTrackerProps {
   currentSavings: number;
 }
 
+const MILESTONES = [
+  { threshold: 0, count: 1, message: "🎉 ¡Primer mes registrado! Has dado el primer paso." },
+  { threshold: 0, count: 3, message: "🔥 ¡3 meses ahorrando! La constancia es clave." },
+  { threshold: 10, count: 0, message: "🏆 ¡Has alcanzado el 10% de tu entrada!" },
+  { threshold: 25, count: 0, message: "🚀 ¡25% completado! Un cuarto del camino recorrido." },
+  { threshold: 50, count: 0, message: "⭐ ¡Mitad del camino! El 50% de tu entrada está ahorrado." },
+  { threshold: 75, count: 0, message: "🏠 ¡75%! Tu casa está muy cerca." },
+];
+
 const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, currentSavings }: SavingsProgressTrackerProps) => {
   const [months, setMonths] = useState<MonthEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingMonth, setEditingMonth] = useState<number | null>(null);
-  const [inputAmount, setInputAmount] = useState("");
+  const [inputValues, setInputValues] = useState<Record<number, string>>({});
+  const [triggeredMilestones, setTriggeredMilestones] = useState<Set<string>>(new Set());
 
   const totalMonthsNeeded = monthlySavingsTarget > 0 ? Math.ceil(Math.max(0, totalUpfront - currentSavings) / monthlySavingsTarget) : 12;
   const displayMonths = Math.min(Math.max(totalMonthsNeeded, 6), 36);
@@ -46,6 +54,23 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
     return d.toLocaleDateString("es-ES", { month: "short", year: "numeric" });
   };
 
+  const checkMilestones = useCallback((newProgressPercent: number, newCompletedCount: number) => {
+    for (const m of MILESTONES) {
+      const key = m.count > 0 ? `count-${m.count}` : `pct-${m.threshold}`;
+      if (triggeredMilestones.has(key)) continue;
+      if (m.count > 0 && newCompletedCount >= m.count) {
+        toast.success(m.message, { duration: 4000 });
+        setTriggeredMilestones(prev => new Set(prev).add(key));
+        break;
+      }
+      if (m.threshold > 0 && newProgressPercent >= m.threshold) {
+        toast.success(m.message, { duration: 4000 });
+        setTriggeredMilestones(prev => new Set(prev).add(key));
+        break;
+      }
+    }
+  }, [triggeredMilestones]);
+
   const loadProgress = useCallback(async () => {
     const { data } = await supabase
       .from("savings_progress")
@@ -54,13 +79,30 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
       .order("month_number", { ascending: true });
 
     if (data && data.length > 0) {
-      setMonths(data.map(d => ({
+      const loaded = data.map(d => ({
         id: d.id,
         month_number: d.month_number,
         month_label: d.month_label,
         completed: d.completed,
         saved_amount: Number(d.saved_amount) || 0,
-      })));
+      }));
+      setMonths(loaded);
+      // Pre-fill input values for completed months
+      const vals: Record<number, string> = {};
+      loaded.forEach(m => {
+        if (m.completed && m.saved_amount > 0) vals[m.month_number] = String(m.saved_amount);
+      });
+      setInputValues(vals);
+      // Track already-achieved milestones
+      const alreadyCompleted = loaded.filter(m => m.completed).length;
+      const alreadySaved = currentSavings + loaded.reduce((s, m) => s + (m.saved_amount || 0), 0);
+      const alreadyPct = totalUpfront > 0 ? Math.round((alreadySaved / totalUpfront) * 100) : 0;
+      const existing = new Set<string>();
+      for (const ml of MILESTONES) {
+        if (ml.count > 0 && alreadyCompleted >= ml.count) existing.add(`count-${ml.count}`);
+        if (ml.threshold > 0 && alreadyPct >= ml.threshold) existing.add(`pct-${ml.threshold}`);
+      }
+      setTriggeredMilestones(existing);
     } else {
       const initial: MonthEntry[] = Array.from({ length: displayMonths }, (_, i) => ({
         month_number: i + 1,
@@ -71,20 +113,25 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
       setMonths(initial);
     }
     setLoading(false);
-  }, [userId, displayMonths]);
+  }, [userId, displayMonths, currentSavings, totalUpfront]);
 
   useEffect(() => { loadProgress(); }, [loadProgress]);
 
-  const saveMonth = async (monthNumber: number, completed: boolean, savedAmount: number) => {
+  const saveMonth = async (monthNumber: number, savedAmount: number) => {
     const month = months.find(m => m.month_number === monthNumber);
-    if (!month) return;
+    if (!month || savedAmount <= 0) return;
 
+    const completed = true;
     // Optimistic update
     setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed, saved_amount: savedAmount } : m));
 
-    if (completed) {
-      toast.success("¡Buen trabajo! Tu progreso se ha actualizado. 🎉");
-    }
+    toast.success("¡Buen trabajo! Tu progreso se ha actualizado. 🎉");
+
+    // Check milestones
+    const newCompleted = months.filter(m => m.month_number !== monthNumber && m.completed).length + 1;
+    const newManualSaved = months.reduce((s, m) => s + (m.month_number === monthNumber ? savedAmount : (m.saved_amount || 0)), 0);
+    const newPct = totalUpfront > 0 ? Math.round(((currentSavings + newManualSaved) / totalUpfront) * 100) : 0;
+    checkMilestones(newPct, newCompleted);
 
     try {
       if (month.id) {
@@ -108,33 +155,29 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
         }
       }
     } catch {
-      // Revert
-      setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed: !completed, saved_amount: month.saved_amount } : m));
+      setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed: false, saved_amount: 0 } : m));
       toast.error("Error al guardar el progreso");
     }
   };
 
-  const handleMonthClick = (monthNumber: number) => {
-    const month = months.find(m => m.month_number === monthNumber);
-    if (!month) return;
-
-    if (month.completed) {
-      // Toggle off
-      saveMonth(monthNumber, false, 0);
-      setEditingMonth(null);
-    } else {
-      // Open input
-      setEditingMonth(monthNumber);
-      setInputAmount(String(monthlySavingsTarget));
+  const handleSaveClick = (monthNumber: number) => {
+    const amount = Number(inputValues[monthNumber]) || 0;
+    if (amount <= 0) {
+      toast.error("Introduce una cantidad válida");
+      return;
     }
+    saveMonth(monthNumber, amount);
   };
 
-  const handleSaveAmount = (monthNumber: number) => {
-    const amount = Number(inputAmount) || 0;
-    if (amount <= 0) return;
-    saveMonth(monthNumber, true, amount);
-    setEditingMonth(null);
-    setInputAmount("");
+  const handleClearMonth = async (monthNumber: number) => {
+    const month = months.find(m => m.month_number === monthNumber);
+    if (!month || !month.completed) return;
+    setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed: false, saved_amount: 0 } : m));
+    setInputValues(prev => { const n = { ...prev }; delete n[monthNumber]; return n; });
+    if (month.id) {
+      await supabase.from("savings_progress").update({ completed: false, saved_amount: 0 }).eq("id", month.id);
+    }
+    toast.success("Mes reiniciado");
   };
 
   if (loading) return null;
@@ -184,77 +227,64 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
             )}
           </div>
 
-          {/* Monthly tracker */}
+          {/* Monthly tracker - always show input */}
           <div>
             <p className="text-sm font-bold mb-3 flex items-center gap-1.5">
               <Sparkles className="h-4 w-4 text-primary" />
               Registro mensual
             </p>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {months.slice(0, displayMonths).map((month, i) => (
-                <div key={month.month_number}>
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: i * 0.02 }}
-                    onClick={() => handleMonthClick(month.month_number)}
-                    className={`
-                      w-full flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all duration-200 cursor-pointer
-                      ${month.completed
-                        ? "bg-success/10 border-success/30 hover:bg-success/20"
-                        : "bg-muted/30 border-border hover:bg-muted/60"
-                      }
-                    `}
-                  >
-                    {month.completed ? (
-                      <CheckCircle2 className="h-5 w-5 text-success" />
-                    ) : (
-                      <Circle className="h-5 w-5 text-muted-foreground/40" />
-                    )}
-                    <span className="text-[10px] font-semibold text-muted-foreground capitalize leading-tight">
+                <motion.div
+                  key={month.month_number}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.015 }}
+                  className={`rounded-xl border p-3 transition-all duration-200 ${
+                    month.completed
+                      ? "bg-success/5 border-success/30"
+                      : "bg-muted/30 border-border"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-semibold text-muted-foreground capitalize">
                       {month.month_label}
                     </span>
-                    {month.completed && month.saved_amount > 0 && (
-                      <span className="text-[9px] font-bold text-success">
-                        {formatCurrency(month.saved_amount)}
-                      </span>
+                    {month.completed && (
+                      <button onClick={() => handleClearMonth(month.month_number)} title="Reiniciar mes">
+                        <CheckCircle2 className="h-4 w-4 text-success" />
+                      </button>
                     )}
-                  </motion.button>
-
-                  {/* Inline input for saving amount */}
-                  <AnimatePresence>
-                    {editingMonth === month.month_number && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="mt-1 overflow-hidden"
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="relative flex-1">
+                      <Euro className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                      <Input
+                        type="number"
+                        placeholder={String(monthlySavingsTarget)}
+                        value={inputValues[month.month_number] || ""}
+                        onChange={e => setInputValues(prev => ({ ...prev, [month.month_number]: e.target.value }))}
+                        className="h-8 text-xs pl-6 rounded-lg"
+                        disabled={month.completed}
+                        onKeyDown={e => e.key === "Enter" && !month.completed && handleSaveClick(month.month_number)}
+                      />
+                    </div>
+                    {!month.completed && (
+                      <button
+                        onClick={() => handleSaveClick(month.month_number)}
+                        className="h-8 w-8 rounded-lg bg-primary/10 hover:bg-primary/20 flex items-center justify-center shrink-0 transition-colors"
+                        title="Guardar"
                       >
-                        <div className="flex flex-col gap-1">
-                          <div className="relative">
-                            <Euro className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                            <Input
-                              type="number"
-                              placeholder="€"
-                              value={inputAmount}
-                              onChange={e => setInputAmount(e.target.value)}
-                              className="h-7 text-xs pl-6 rounded-lg"
-                              autoFocus
-                              onKeyDown={e => e.key === "Enter" && handleSaveAmount(month.month_number)}
-                            />
-                          </div>
-                          <Button
-                            size="sm"
-                            className="h-6 text-[10px] rounded-lg"
-                            onClick={() => handleSaveAmount(month.month_number)}
-                          >
-                            Guardar
-                          </Button>
-                        </div>
-                      </motion.div>
+                        <Save className="h-3.5 w-3.5 text-primary" />
+                      </button>
                     )}
-                  </AnimatePresence>
-                </div>
+                  </div>
+                  {month.completed && month.saved_amount > 0 && (
+                    <p className="text-[10px] font-bold text-success mt-1.5">
+                      ✅ {formatCurrency(month.saved_amount)}
+                    </p>
+                  )}
+                </motion.div>
               ))}
             </div>
           </div>
