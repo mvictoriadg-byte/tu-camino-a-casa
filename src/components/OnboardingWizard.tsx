@@ -111,6 +111,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers), coBuyers: parsedCoBuyers, mortgagePercent,
+      firstHome,
     });
   };
 
