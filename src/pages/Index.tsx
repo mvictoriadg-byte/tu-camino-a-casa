@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import Dashboard from "@/components/Dashboard";
-import { calculateAffordability, type AffordabilityResult, type UserProfile } from "@/lib/housing-data";
+import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData } from "@/lib/housing-data";
+import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Home, User, LogIn, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
@@ -14,18 +15,58 @@ const Index = () => {
   const [result, setResult] = useState<AffordabilityResult | null>(null);
   const [phase, setPhase] = useState<"onboarding" | "loading" | "results">("onboarding");
   const [isCalculating, setIsCalculating] = useState(false);
+  const [allAids, setAllAids] = useState<HousingAid[]>([]);
+  const [eligibleAids, setEligibleAids] = useState<EligibleAid[]>([]);
+  const [aidsImpact, setAidsImpact] = useState<AidsImpactSummary | null>(null);
+  const [aidsEnabled, setAidsEnabled] = useState(true);
+  const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Fetch housing aids on mount
+  useEffect(() => {
+    fetchHousingAids().then(setAllAids);
+  }, []);
+
+  const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
+    const city = cityData[profile.city];
+    const eligible = filterEligibleAids(aids, {
+      region: city.region,
+      age: profile.age,
+      annualIncome: profile.monthlyIncome * 12,
+      estimatedPrice: r.estimatedPrice,
+      firstHome: profile.firstHome,
+    });
+    setEligibleAids(eligible);
+
+    if (eligible.length > 0) {
+      const impact = calculateAidsImpact(eligible, {
+        estimatedPrice: r.estimatedPrice,
+        currentMortgagePercent: profile.mortgagePercent,
+        totalUpfront: r.totalUpfront,
+        totalSavings: r.totalSavings,
+        totalMonthlySavings: r.totalMonthlySavings,
+        taxesAndFees: r.taxesAndFees,
+        reformCostEstimate: r.reformCostEstimate,
+      });
+      setAidsImpact(impact);
+    } else {
+      setAidsImpact(null);
+    }
+  };
 
   const handleCalculate = async (profile: UserProfile) => {
     setIsCalculating(true);
     setPhase("loading");
+    setCurrentProfile(profile);
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     await new Promise((resolve) => setTimeout(resolve, 1400));
 
     const r = calculateAffordability(profile);
     setResult(r);
+    computeAids(profile, r, allAids);
+    setAidsEnabled(true);
     setIsCalculating(false);
     setPhase("results");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -152,7 +193,13 @@ const Index = () => {
                   <p className="text-sm font-bold text-primary">✨ Tu plan está listo</p>
                 </div>
                 <div className="space-y-6">
-                  <Dashboard result={result} />
+                  <Dashboard
+                    result={result}
+                    eligibleAids={eligibleAids}
+                    aidsImpact={aidsImpact}
+                    aidsEnabled={aidsEnabled}
+                    onToggleAids={setAidsEnabled}
+                  />
                   <SaveCTA />
                 </div>
               </div>

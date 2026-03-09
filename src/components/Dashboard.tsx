@@ -181,7 +181,18 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
         savingsProgress={savingsProgress}
       />
 
-      {/* Tips */}
+      {/* Housing Aids */}
+      {eligibleAids.length > 0 && aidsImpact && (
+        <HousingAidsSection
+          eligibleAids={eligibleAids}
+          impact={aidsImpact}
+          isYoungBuyer={isYoungBuyer}
+          originalYearsToSave={yearsToSave}
+          onToggleAids={onToggleAids}
+          aidsEnabled={aidsEnabled}
+        />
+      )}
+
       {optimizationTips.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.6 }}>
           <Card className="glow-card">
