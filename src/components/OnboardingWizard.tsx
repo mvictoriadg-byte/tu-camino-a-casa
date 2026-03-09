@@ -302,8 +302,8 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
               <div className="space-y-6">
                 <div className="space-y-3">
                   <FieldLabel icon={Percent}>Porcentaje a hipotecar: <span className="font-mono text-foreground ml-1">{mortgagePercent}%</span></FieldLabel>
-                  <Slider value={[mortgagePercent]} onValueChange={v => setMortgagePercent(v[0])} min={50} max={90} step={5} className="mt-3" />
-                  <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>50%</span><span>90%</span></div>
+                  <Slider value={[mortgagePercent]} onValueChange={v => setMortgagePercent(v[0])} min={50} max={100} step={5} className="mt-3" />
+                  <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>50%</span><span>100%</span></div>
                 </div>
                 <div className="rounded-2xl bg-muted/60 p-5 text-center">
                   <p className="text-sm text-muted-foreground">Tu entrada sería el</p>
