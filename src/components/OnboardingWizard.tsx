@@ -28,7 +28,7 @@ interface OnboardingWizardProps {
   submitLabel?: string;
 }
 
-const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: OnboardingWizardProps) => {
+const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLabel }: OnboardingWizardProps) => {
   const iv = initialValues;
   const [step, setStep] = useState(1);
   const [city, setCity] = useState(iv?.city || "");
