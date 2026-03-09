@@ -298,6 +298,13 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
                   </Select>
                   <FieldError field="zone" />
                 </div>
+                <div className="flex items-center justify-between p-4 rounded-xl bg-muted/60 border border-border">
+                  <div>
+                    <FieldLabel icon={Home}>¿Es tu primera vivienda?</FieldLabel>
+                    <p className="text-xs text-muted-foreground mt-0.5">Necesario para acceder a ayudas públicas</p>
+                  </div>
+                  <Switch checked={firstHome} onCheckedChange={setFirstHome} />
+                </div>
               </div>
             )}
 
