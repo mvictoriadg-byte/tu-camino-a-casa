@@ -45,6 +45,8 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
   const [zone, setZone] = useState(iv?.preferences?.zone || "");
   const [reformState, setReformState] = useState(iv?.preferences?.reformState || "");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
+  const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
+  const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
