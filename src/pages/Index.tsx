@@ -57,8 +57,8 @@ const Index = () => {
   };
 
   const SaveCTA = () =>
-    !user ? (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+  !user ?
+  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="rounded-2xl bg-primary p-8 text-center">
           <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guardar mi plan de ahorro</h3>
           <p className="text-sm text-primary-foreground/70 mb-1 max-w-md mx-auto">
@@ -69,35 +69,35 @@ const Index = () => {
             Crear cuenta gratis <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
-      </motion.div>
-    ) : null;
+      </motion.div> :
+  null;
 
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
-          <button onClick={() => { setPhase("onboarding"); setResult(null); }} className="flex items-center gap-2">
+          <button onClick={() => {setPhase("onboarding");setResult(null);}} className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
               <Home className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
           </button>
-          {user ? (
-            <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
+          {user ?
+          <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
               <User className="h-4 w-4 mr-1.5" /> Mi Portal
-            </Button>
-          ) : (
-            <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
+            </Button> :
+
+          <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
               <LogIn className="h-4 w-4 mr-1.5" /> Acceder
             </Button>
-          )}
+          }
         </div>
       </nav>
 
       <AnimatePresence mode="wait">
-        {phase === "onboarding" && (
-          <motion.div key="onboarding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+        {phase === "onboarding" &&
+        <motion.div key="onboarding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             {/* Hero */}
             <section className="pt-10 sm:pt-14 pb-4 sm:pb-6 px-4 sm:px-6">
               <div className="container max-w-3xl text-center">
@@ -107,9 +107,9 @@ const Index = () => {
                     <br className="hidden sm:block" />
                     <span className="gradient-text">está más cerca</span>
                   </h1>
-                  <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
-                    Responde unas preguntas y te crearemos un plan paso a paso para comprar tu casa.
-                  </p>
+                  <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">Responde unas preguntas y te mostraremos en qué situación te encuentras.
+
+                </p>
                 </motion.div>
               </div>
             </section>
@@ -121,16 +121,16 @@ const Index = () => {
               </div>
             </section>
           </motion.div>
-        )}
+        }
 
-        {phase === "loading" && (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center py-32 gap-5"
-          >
+        {phase === "loading" &&
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="flex flex-col items-center justify-center py-32 gap-5">
+          
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}>
               <Loader2 className="h-10 w-10 text-primary" />
             </motion.div>
@@ -139,10 +139,10 @@ const Index = () => {
               <p className="text-sm text-muted-foreground mt-1">Solo un momento</p>
             </div>
           </motion.div>
-        )}
+        }
 
-        {phase === "results" && result && (
-          <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+        {phase === "results" && result &&
+        <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             <section className="py-8 px-4 sm:px-6">
               <div className="container max-w-4xl">
                 <div className="flex items-center justify-between mb-6">
@@ -158,7 +158,7 @@ const Index = () => {
               </div>
             </section>
           </motion.div>
-        )}
+        }
       </AnimatePresence>
 
       {/* Footer */}
@@ -177,8 +177,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
