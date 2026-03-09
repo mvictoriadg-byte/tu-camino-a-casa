@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/housing-data";
 import {
   type EligibleAid,
@@ -117,15 +115,6 @@ const HousingAidsSection = ({
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Toggle */}
-            <div className="px-6 py-4 border-t border-border flex items-center justify-between">
-              <div>
-                <Label className="text-sm font-bold cursor-pointer">Incluir ayudas públicas en el cálculo</Label>
-                <p className="text-xs text-muted-foreground">Recalcula el tiempo estimado con las ayudas aplicables</p>
-              </div>
-              <Switch checked={aidsEnabled} onCheckedChange={onToggleAids} />
             </div>
           </CardContent>
         </Card>
