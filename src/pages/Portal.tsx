@@ -9,11 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
+import HousingAidsSection from "@/components/HousingAidsSection";
 import InputForm from "@/components/InputForm";
-import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency } from "@/lib/housing-data";
-import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, MapPin, Building2 } from "lucide-react";
+import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency, cityData } from "@/lib/housing-data";
+import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
+import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface WishlistItem { id: string; url: string; title: string; estimated_price: number; notes: string; created_at: string; }
 
@@ -27,9 +33,38 @@ const Portal = () => {
   const [newUrl, setNewUrl] = useState(""); const [newTitle, setNewTitle] = useState(""); const [newPrice, setNewPrice] = useState("");
   const [loadingData, setLoadingData] = useState(true);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [allAids, setAllAids] = useState<HousingAid[]>([]);
+  const [eligibleAids, setEligibleAids] = useState<EligibleAid[]>([]);
+  const [aidsImpact, setAidsImpact] = useState<AidsImpactSummary | null>(null);
+  const [aidsEnabled, setAidsEnabled] = useState(true);
+  const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
+  const [pendingProfile, setPendingProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
   useEffect(() => { if (user) loadData(); }, [user]);
+  useEffect(() => { fetchHousingAids().then(setAllAids); }, []);
+
+  const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
+    const city = cityData[profile.city];
+    if (!city) return;
+    const eligible = filterEligibleAids(aids, {
+      region: city.region, age: profile.age,
+      annualIncome: profile.monthlyIncome * 12, estimatedPrice: r.estimatedPrice,
+      firstHome: profile.firstHome,
+    });
+    setEligibleAids(eligible);
+    if (eligible.length > 0) {
+      const impact = calculateAidsImpact(eligible, {
+        estimatedPrice: r.estimatedPrice, currentMortgagePercent: profile.mortgagePercent,
+        totalUpfront: r.totalUpfront, totalSavings: r.totalSavings,
+        totalMonthlySavings: r.totalMonthlySavings, taxesAndFees: r.taxesAndFees,
+        reformCostEstimate: r.reformCostEstimate,
+      });
+      setAidsImpact(impact);
+    } else {
+      setAidsImpact(null);
+    }
+  };
 
   const loadData = async () => {
     if (!user) return; setLoadingData(true);
@@ -39,21 +74,36 @@ const Portal = () => {
       supabase.from("user_wishlist").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     ]);
     if (p.data) setProfile({ display_name: p.data.display_name || "", email: p.data.email || "" });
-    if (f.data?.length && f.data[0].result_json) setResult(f.data[0].result_json as unknown as AffordabilityResult);
-    if (f.data?.length) {
+    if (f.data?.length && f.data[0].result_json) {
+      const r = f.data[0].result_json as unknown as AffordabilityResult;
+      setResult(r);
       const d = f.data[0];
-      setSavedFormData({
+      const formData: Partial<UserProfile> = {
         city: d.city, age: d.age, employmentStatus: d.employment_status,
         monthlyIncome: Number(d.monthly_income), savings: Number(d.savings),
         monthlySavings: Number(d.monthly_savings), monthlyDebts: Number(d.monthly_debts),
         numBuyers: d.num_buyers, coBuyers: (d.co_buyers as any) || [],
         mortgagePercent: d.mortgage_percent,
+        firstHome: (d as any).first_home !== undefined ? (d as any).first_home : true,
+        numberOfChildren: (d as any).number_of_children || 0,
         preferences: { propertyType: d.property_type, size: String(d.size_sqm), rooms: d.rooms, zone: d.zone, reformState: d.reform_state },
-      });
+      };
+      setSavedFormData(formData);
+      // Compute aids with saved data
+      if (allAids.length > 0) {
+        computeAids(formData as UserProfile, r, allAids);
+      }
     }
     if (w.data) setWishlist(w.data as WishlistItem[]);
     setLoadingData(false);
   };
+
+  // Recompute aids when allAids loads after data
+  useEffect(() => {
+    if (allAids.length > 0 && result && savedFormData?.city) {
+      computeAids(savedFormData as UserProfile, result, allAids);
+    }
+  }, [allAids]);
 
   const addWishlistItem = async () => {
     if (!user || !newUrl.trim()) return;
@@ -65,22 +115,39 @@ const Portal = () => {
 
   const removeWishlistItem = async (id: string) => { await supabase.from("user_wishlist").delete().eq("id", id); setWishlist(prev => prev.filter(w => w.id !== id)); toast.success("Eliminada"); };
 
+  const resetTrackerProgress = async () => {
+    if (!user) return;
+    await supabase.from("savings_progress").delete().eq("user_id", user.id);
+  };
+
   const handleRecalculate = async (profileData: UserProfile) => {
     if (!user) return;
+    // Show confirmation if there's existing data
+    if (result) {
+      setPendingProfile(profileData);
+      setShowUpdateConfirm(true);
+      return;
+    }
+    await executeRecalculate(profileData);
+  };
+
+  const executeRecalculate = async (profileData: UserProfile) => {
     setIsCalculating(true);
     await new Promise(resolve => setTimeout(resolve, 800));
     const r = calculateAffordability(profileData);
     setResult(r);
+    computeAids(profileData, r, allAids);
     setIsCalculating(false);
     try {
-      const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
+      const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user!.id).limit(1);
       const payload = {
-        user_id: user.id, city: profileData.city, age: profileData.age, employment_status: profileData.employmentStatus,
+        user_id: user!.id, city: profileData.city, age: profileData.age, employment_status: profileData.employmentStatus,
         monthly_income: profileData.monthlyIncome, savings: profileData.savings, monthly_savings: profileData.monthlySavings,
         monthly_debts: profileData.monthlyDebts, num_buyers: profileData.numBuyers, co_buyers: profileData.coBuyers as any,
         property_type: profileData.preferences.propertyType, size_sqm: Number(profileData.preferences.size),
         rooms: profileData.preferences.rooms, zone: profileData.preferences.zone, reform_state: profileData.preferences.reformState,
-        mortgage_percent: profileData.mortgagePercent, result_json: r as any
+        mortgage_percent: profileData.mortgagePercent, result_json: r as any,
+        number_of_children: profileData.numberOfChildren, first_home: profileData.firstHome,
       };
       if (existing && existing.length > 0) {
         await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);
@@ -90,6 +157,14 @@ const Portal = () => {
       setSavedFormData(profileData);
       toast.success("Plan actualizado y guardado");
     } catch { toast.error("Error al guardar"); }
+  };
+
+  const handleConfirmUpdate = async () => {
+    setShowUpdateConfirm(false);
+    if (!pendingProfile) return;
+    await resetTrackerProgress();
+    await executeRecalculate(pendingProfile);
+    setPendingProfile(null);
   };
 
   if (authLoading || loadingData) return (
@@ -127,7 +202,10 @@ const Portal = () => {
           <TabsContent value="roadmap">
             {result ? (
               <div className="space-y-6">
-                <Dashboard result={result} eligibleAids={[]} aidsImpact={null} aidsEnabled={false} onToggleAids={() => {}} />
+                {/* Plan summary + estimated time + costs */}
+                <Dashboard result={result} eligibleAids={eligibleAids} aidsImpact={aidsImpact} aidsEnabled={aidsEnabled} onToggleAids={setAidsEnabled} />
+
+                {/* Savings tracker */}
                 {user && (
                   <SavingsProgressTracker
                     userId={user.id}
@@ -135,6 +213,23 @@ const Portal = () => {
                     monthlySavingsTarget={result.totalMonthlySavings}
                     currentSavings={result.totalSavings}
                   />
+                )}
+
+                {/* Housing aids section */}
+                {eligibleAids.length > 0 && aidsImpact && (
+                  <div>
+                    <h3 className="text-lg font-extrabold mb-3 flex items-center gap-2">
+                      Ayudas públicas disponibles
+                    </h3>
+                    <HousingAidsSection
+                      eligibleAids={eligibleAids}
+                      impact={aidsImpact}
+                      isYoungBuyer={result.isYoungBuyer}
+                      originalYearsToSave={result.yearsToSave}
+                      onToggleAids={setAidsEnabled}
+                      aidsEnabled={aidsEnabled}
+                    />
+                  </div>
                 )}
               </div>
             ) : (
@@ -173,16 +268,8 @@ const Portal = () => {
                 <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                   <Card className="glow-card overflow-hidden group hover:shadow-lg transition-all duration-300">
                     <div className="relative h-40 overflow-hidden">
-                      <img
-                        src={thumbnailUrl}
-                        alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
-                          target.nextElementSibling?.classList.remove("hidden");
-                        }}
-                      />
+                      <img src={thumbnailUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => { const target = e.target as HTMLImageElement; target.style.display = "none"; target.nextElementSibling?.classList.remove("hidden"); }} />
                       <div className={`hidden w-full h-full bg-gradient-to-br ${gradientColors[i % gradientColors.length]} items-center justify-center absolute inset-0`}>
                         <Building2 className="h-12 w-12 text-muted-foreground/40" />
                       </div>
@@ -237,6 +324,22 @@ const Portal = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Confirmation dialog */}
+      <AlertDialog open={showUpdateConfirm} onOpenChange={setShowUpdateConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Actualizar tu plan?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Si actualizas tu plan con estos nuevos datos, tu progreso de ahorro se reiniciará.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingProfile(null)}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmUpdate}>Actualizar mi plan</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

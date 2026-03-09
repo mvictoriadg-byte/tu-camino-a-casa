@@ -25,9 +25,10 @@ interface OnboardingWizardProps {
   onCalculate: (profile: UserProfile) => void;
   isCalculating?: boolean;
   initialValues?: Partial<UserProfile>;
+  submitLabel?: string;
 }
 
-const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: OnboardingWizardProps) => {
+const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLabel }: OnboardingWizardProps) => {
   const iv = initialValues;
   const [step, setStep] = useState(1);
   const [city, setCity] = useState(iv?.city || "");
@@ -48,6 +49,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
   const [reformState, setReformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
+  const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleNumBuyersChange = (val: string) => {
@@ -112,7 +114,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers), coBuyers: parsedCoBuyers, mortgagePercent,
-      firstHome,
+      firstHome, numberOfChildren: Number(numberOfChildren) || 0,
     });
   };
 
@@ -220,6 +222,19 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
                       <SelectItem value="2">2 personas</SelectItem>
                       <SelectItem value="3">3 personas</SelectItem>
                       <SelectItem value="4">4 personas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <FieldLabel icon={Users}>¿Tienes hijos?</FieldLabel>
+                  <Select value={numberOfChildren} onValueChange={setNumberOfChildren}>
+                    <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">No tengo hijos</SelectItem>
+                      <SelectItem value="1">1 hijo</SelectItem>
+                      <SelectItem value="2">2 hijos</SelectItem>
+                      <SelectItem value="3">3 hijos</SelectItem>
+                      <SelectItem value="4">4 o más hijos</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -344,7 +359,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
             {isCalculating ? (
               <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creando tu plan…</>
             ) : step === TOTAL_STEPS ? (
-              <>Ver mi plan <ArrowRight className="h-4 w-4 ml-2" /></>
+              <>{submitLabel || "Ver mi plan"} <ArrowRight className="h-4 w-4 ml-2" /></>
             ) : (
               <>Siguiente <ArrowRight className="h-4 w-4 ml-2" /></>
             )}

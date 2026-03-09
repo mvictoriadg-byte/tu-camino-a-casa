@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import Dashboard from "@/components/Dashboard";
+import LockedTrackerCTA from "@/components/LockedTrackerCTA";
+import SavingsProgressTracker from "@/components/SavingsProgressTracker";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +12,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Home, User, LogIn, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Index = () => {
   const [result, setResult] = useState<AffordabilityResult | null>(null);
@@ -20,10 +26,11 @@ const Index = () => {
   const [aidsImpact, setAidsImpact] = useState<AidsImpactSummary | null>(null);
   const [aidsEnabled, setAidsEnabled] = useState(true);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
+  const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
+  const [pendingProfile, setPendingProfile] = useState<UserProfile | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Fetch housing aids on mount
   useEffect(() => {
     fetchHousingAids().then(setAllAids);
   }, []);
@@ -31,22 +38,16 @@ const Index = () => {
   const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
     const city = cityData[profile.city];
     const eligible = filterEligibleAids(aids, {
-      region: city.region,
-      age: profile.age,
-      annualIncome: profile.monthlyIncome * 12,
-      estimatedPrice: r.estimatedPrice,
+      region: city.region, age: profile.age,
+      annualIncome: profile.monthlyIncome * 12, estimatedPrice: r.estimatedPrice,
       firstHome: profile.firstHome,
     });
     setEligibleAids(eligible);
-
     if (eligible.length > 0) {
       const impact = calculateAidsImpact(eligible, {
-        estimatedPrice: r.estimatedPrice,
-        currentMortgagePercent: profile.mortgagePercent,
-        totalUpfront: r.totalUpfront,
-        totalSavings: r.totalSavings,
-        totalMonthlySavings: r.totalMonthlySavings,
-        taxesAndFees: r.taxesAndFees,
+        estimatedPrice: r.estimatedPrice, currentMortgagePercent: profile.mortgagePercent,
+        totalUpfront: r.totalUpfront, totalSavings: r.totalSavings,
+        totalMonthlySavings: r.totalMonthlySavings, taxesAndFees: r.taxesAndFees,
         reformCostEstimate: r.reformCostEstimate,
       });
       setAidsImpact(impact);
@@ -55,7 +56,47 @@ const Index = () => {
     }
   };
 
+  const resetTrackerProgress = async () => {
+    if (!user) return;
+    await supabase.from("savings_progress").delete().eq("user_id", user.id);
+  };
+
+  const saveUserData = async (profile: UserProfile, r: AffordabilityResult) => {
+    if (!user) return;
+    try {
+      const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
+      const payload = {
+        user_id: user.id, city: profile.city, age: profile.age, employment_status: profile.employmentStatus,
+        monthly_income: profile.monthlyIncome, savings: profile.savings, monthly_savings: profile.monthlySavings,
+        monthly_debts: profile.monthlyDebts, num_buyers: profile.numBuyers, co_buyers: profile.coBuyers as any,
+        property_type: profile.preferences.propertyType, size_sqm: Number(profile.preferences.size),
+        rooms: profile.preferences.rooms, zone: profile.preferences.zone, reform_state: profile.preferences.reformState,
+        mortgage_percent: profile.mortgagePercent, result_json: r as any,
+        number_of_children: profile.numberOfChildren, first_home: profile.firstHome,
+      };
+      if (existing && existing.length > 0) {
+        await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);
+      } else {
+        await supabase.from("user_financial_data").insert(payload);
+      }
+      toast.success("Plan guardado en tu cuenta");
+    } catch {/* silent */}
+  };
+
   const handleCalculate = async (profile: UserProfile) => {
+    // If logged-in user, check if they have existing data → show confirmation
+    if (user) {
+      const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
+      if (existing && existing.length > 0) {
+        setPendingProfile(profile);
+        setShowUpdateConfirm(true);
+        return;
+      }
+    }
+    await executeCalculation(profile);
+  };
+
+  const executeCalculation = async (profile: UserProfile) => {
     setIsCalculating(true);
     setPhase("loading");
     setCurrentProfile(profile);
@@ -72,24 +113,16 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     if (user) {
-      try {
-        const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
-        const payload = {
-          user_id: user.id, city: profile.city, age: profile.age, employment_status: profile.employmentStatus,
-          monthly_income: profile.monthlyIncome, savings: profile.savings, monthly_savings: profile.monthlySavings,
-          monthly_debts: profile.monthlyDebts, num_buyers: profile.numBuyers, co_buyers: profile.coBuyers as any,
-          property_type: profile.preferences.propertyType, size_sqm: Number(profile.preferences.size),
-          rooms: profile.preferences.rooms, zone: profile.preferences.zone, reform_state: profile.preferences.reformState,
-          mortgage_percent: profile.mortgagePercent, result_json: r as any
-        };
-        if (existing && existing.length > 0) {
-          await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);
-        } else {
-          await supabase.from("user_financial_data").insert(payload);
-        }
-        toast.success("Plan guardado en tu cuenta");
-      } catch {/* silent */}
+      await saveUserData(profile, r);
     }
+  };
+
+  const handleConfirmUpdate = async () => {
+    setShowUpdateConfirm(false);
+    if (!pendingProfile) return;
+    await resetTrackerProgress();
+    await executeCalculation(pendingProfile);
+    setPendingProfile(null);
   };
 
   const handleBackToForm = () => {
@@ -98,8 +131,8 @@ const Index = () => {
   };
 
   const SaveCTA = () =>
-  !user ?
-  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+    !user ? (
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="rounded-2xl bg-primary p-8 text-center">
           <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guardar mi plan de ahorro</h3>
           <p className="text-sm text-primary-foreground/70 mb-1 max-w-md mx-auto">
@@ -110,36 +143,34 @@ const Index = () => {
             Crear cuenta gratis <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
-      </motion.div> :
-  null;
+      </motion.div>
+    ) : null;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav */}
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
-          <button onClick={() => {setPhase("onboarding");setResult(null);}} className="flex items-center gap-2">
+          <button onClick={() => { setPhase("onboarding"); setResult(null); }} className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
               <Home className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
           </button>
-          {user ?
-          <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
+          {user ? (
+            <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
               <User className="h-4 w-4 mr-1.5" /> Mi Portal
-            </Button> :
-
-          <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
+            </Button>
+          ) : (
+            <Button size="sm" variant="outline" className="rounded-full font-semibold" onClick={() => navigate("/auth")}>
               <LogIn className="h-4 w-4 mr-1.5" /> Acceder
             </Button>
-          }
+          )}
         </div>
       </nav>
 
       <AnimatePresence mode="wait">
-        {phase === "onboarding" &&
-        <motion.div key="onboarding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-            {/* Hero */}
+        {phase === "onboarding" && (
+          <motion.div key="onboarding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             <section className="pt-10 sm:pt-14 pb-4 sm:pb-6 px-4 sm:px-6">
               <div className="container max-w-3xl text-center">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -148,30 +179,27 @@ const Index = () => {
                     <br className="hidden sm:block" />
                     <span className="gradient-text">está más cerca</span>
                   </h1>
-                  <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">Responde unas preguntas y te mostraremos en qué situación te encuentras.
-
-                </p>
+                  <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
+                    Responde unas preguntas y te mostraremos en qué situación te encuentras.
+                  </p>
                 </motion.div>
               </div>
             </section>
-
-            {/* Wizard */}
             <section className="pb-20 px-4 sm:px-6">
               <div className="container max-w-2xl">
-                <OnboardingWizard onCalculate={handleCalculate} isCalculating={isCalculating} />
+                <OnboardingWizard
+                  onCalculate={handleCalculate}
+                  isCalculating={isCalculating}
+                  submitLabel={user ? "Actualizar mi plan" : undefined}
+                />
               </div>
             </section>
           </motion.div>
-        }
+        )}
 
-        {phase === "loading" &&
-        <motion.div
-          key="loading"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="flex flex-col items-center justify-center py-32 gap-5">
-          
+        {phase === "loading" && (
+          <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-32 gap-5">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}>
               <Loader2 className="h-10 w-10 text-primary" />
             </motion.div>
@@ -180,10 +208,10 @@ const Index = () => {
               <p className="text-sm text-muted-foreground mt-1">Solo un momento</p>
             </div>
           </motion.div>
-        }
+        )}
 
-        {phase === "results" && result &&
-        <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+        {phase === "results" && result && (
+          <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             <section className="py-8 px-4 sm:px-6">
               <div className="container max-w-4xl">
                 <div className="flex items-center justify-between mb-6">
@@ -194,21 +222,44 @@ const Index = () => {
                 </div>
                 <div className="space-y-6">
                   <Dashboard
-                    result={result}
-                    eligibleAids={eligibleAids}
-                    aidsImpact={aidsImpact}
-                    aidsEnabled={aidsEnabled}
-                    onToggleAids={setAidsEnabled}
+                    result={result} eligibleAids={eligibleAids} aidsImpact={aidsImpact}
+                    aidsEnabled={aidsEnabled} onToggleAids={setAidsEnabled}
                   />
+                  {/* Tracker: locked for non-logged, active for logged-in */}
+                  {user ? (
+                    <SavingsProgressTracker
+                      userId={user.id}
+                      totalUpfront={result.totalUpfront}
+                      monthlySavingsTarget={result.totalMonthlySavings}
+                      currentSavings={result.totalSavings}
+                    />
+                  ) : (
+                    <LockedTrackerCTA />
+                  )}
                   <SaveCTA />
                 </div>
               </div>
             </section>
           </motion.div>
-        }
+        )}
       </AnimatePresence>
 
-      {/* Footer */}
+      {/* Confirmation dialog for plan update */}
+      <AlertDialog open={showUpdateConfirm} onOpenChange={setShowUpdateConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Actualizar tu plan?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Si actualizas tu plan con estos nuevos datos, tu progreso de ahorro se reiniciará.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingProfile(null)}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmUpdate}>Actualizar mi plan</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <footer className="border-t border-border py-8 px-4">
         <div className="container max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
@@ -224,8 +275,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 };
 
 export default Index;

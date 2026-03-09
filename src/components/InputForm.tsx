@@ -9,9 +9,10 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { Switch } from "@/components/ui/switch";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
-  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, Loader2,
+  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
 import illustrationFinance from "@/assets/illustration-finance.png";
@@ -45,6 +46,8 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
   const [zone, setZone] = useState(iv?.preferences?.zone || "");
   const [reformState, setReformState] = useState(iv?.preferences?.reformState || "");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
+  const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
+  const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -94,7 +97,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers), coBuyers: parsedCoBuyers, mortgagePercent,
-      firstHome: true,
+      firstHome, numberOfChildren: Number(numberOfChildren) || 0,
     });
   };
 
@@ -175,6 +178,27 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                       <SelectItem value="4">4 personas</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <FieldLabel icon={Users}>¿Tienes hijos?</FieldLabel>
+                  <Select value={numberOfChildren} onValueChange={setNumberOfChildren}>
+                    <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">No tengo hijos</SelectItem>
+                      <SelectItem value="1">1 hijo</SelectItem>
+                      <SelectItem value="2">2 hijos</SelectItem>
+                      <SelectItem value="3">3 hijos</SelectItem>
+                      <SelectItem value="4">4 o más hijos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border h-full">
+                  <div>
+                    <FieldLabel icon={Home}>¿Primera vivienda?</FieldLabel>
+                  </div>
+                  <Switch checked={firstHome} onCheckedChange={setFirstHome} />
                 </div>
               </div>
             </div>
