@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/housing-data";
 import {
   type EligibleAid,
