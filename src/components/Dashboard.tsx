@@ -8,6 +8,8 @@ import {
   Users, Timer, ExternalLink,
 } from "lucide-react";
 import SavingsTimeline from "@/components/SavingsTimeline";
+import HousingAidsSection from "@/components/HousingAidsSection";
+import { type EligibleAid, type AidsImpactSummary } from "@/lib/housing-aids";
 
 import doodleCelebrate from "@/assets/doodle-celebrate.png";
 import doodleStrength from "@/assets/doodle-strength.png";
@@ -31,6 +33,10 @@ const doodleIconMap: Record<string, string> = {
 
 interface DashboardProps {
   result: AffordabilityResult;
+  eligibleAids: EligibleAid[];
+  aidsImpact: AidsImpactSummary | null;
+  aidsEnabled: boolean;
+  onToggleAids: (enabled: boolean) => void;
 }
 
 const propertyTypeLabels: Record<string, string> = {
