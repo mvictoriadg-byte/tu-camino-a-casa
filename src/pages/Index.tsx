@@ -259,7 +259,6 @@ const Index = () => {
                   )}
                   <SaveCTA />
                 </div>
-                </div>
               </div>
             </section>
           </motion.div>
