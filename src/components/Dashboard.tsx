@@ -103,14 +103,14 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
             </div>
             <div className="px-6 py-3 border-t border-border">
               <div className="progress-bar">
-                <motion.div className="progress-bar-fill" initial={{ width: 0 }} animate={{ width: `${Math.min(savingsProgress, 100)}%` }} transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }} />
+                <motion.div className="progress-bar-fill" initial={{ width: 0 }} animate={{ width: `${Math.min(displaySavingsProgress, 100)}%` }} transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }} />
               </div>
               <div className="flex justify-between text-xs text-muted-foreground mt-2 font-medium">
                 <span>Ahorros: {formatCurrency(totalSavings)}</span>
-                {!canAfford && savingsGap > 0 && (
-                  <span>Faltan: <span className="font-bold text-foreground">{formatCurrency(savingsGap)}</span></span>
+                {!displayCanAfford && displaySavingsGap > 0 && (
+                  <span>Faltan: <span className="font-bold text-foreground">{formatCurrency(displaySavingsGap)}</span></span>
                 )}
-                <span>Meta: {formatCurrency(totalUpfront)}</span>
+                <span>Meta: {formatCurrency(displayTotalUpfront)}</span>
               </div>
             </div>
           </CardContent>
