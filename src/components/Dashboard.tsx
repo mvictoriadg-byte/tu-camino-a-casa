@@ -71,7 +71,7 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
     <div className="space-y-5">
       {/* HERO: Time to Buy */}
       <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-        <Card className={`glow-card overflow-hidden ${canAfford ? "border-success border-2" : "border-2 border-primary"}`}>
+        <Card className={`glow-card overflow-hidden ${displayCanAfford ? "border-success border-2" : "border-2 border-primary"}`}>
           <CardContent className="p-0">
             <div className={`px-6 py-5 ${canAfford ? "bg-success/10" : "bg-primary/10"}`}>
               <div className="flex items-center gap-4">
