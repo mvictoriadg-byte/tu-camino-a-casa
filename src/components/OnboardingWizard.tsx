@@ -48,6 +48,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues }: Onboard
   const [reformState, setReformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
+  const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleNumBuyersChange = (val: string) => {
