@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from "@/lib/housing-data";
-import { CheckCircle2, Circle, Target, TrendingUp, Sparkles, PartyPopper } from "lucide-react";
+import { CheckCircle2, Circle, Target, TrendingUp, Sparkles, Euro } from "lucide-react";
 import { toast } from "sonner";
 
 interface MonthEntry {
@@ -13,6 +14,7 @@ interface MonthEntry {
   month_number: number;
   month_label: string;
   completed: boolean;
+  saved_amount: number;
 }
 
 interface SavingsProgressTrackerProps {
@@ -22,24 +24,18 @@ interface SavingsProgressTrackerProps {
   currentSavings: number;
 }
 
-const motivationalMessages = [
-  "¡Buen trabajo! Estás un paso más cerca de tu casa. 🏠",
-  "¡Sigue así! La constancia es la clave del éxito. 💪",
-  "¡Genial! Cada euro cuenta para tu futuro hogar. ✨",
-  "¡Increíble disciplina! Tu casa te espera. 🎯",
-  "¡Otro mes cumplido! Estás construyendo tu sueño. 🌟",
-];
-
 const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, currentSavings }: SavingsProgressTrackerProps) => {
   const [months, setMonths] = useState<MonthEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showMotivation, setShowMotivation] = useState<string | null>(null);
+  const [editingMonth, setEditingMonth] = useState<number | null>(null);
+  const [inputAmount, setInputAmount] = useState("");
 
   const totalMonthsNeeded = monthlySavingsTarget > 0 ? Math.ceil(Math.max(0, totalUpfront - currentSavings) / monthlySavingsTarget) : 12;
   const displayMonths = Math.min(Math.max(totalMonthsNeeded, 6), 36);
 
   const completedCount = months.filter(m => m.completed).length;
-  const totalSaved = currentSavings + completedCount * monthlySavingsTarget;
+  const totalManualSaved = months.reduce((sum, m) => sum + (m.saved_amount || 0), 0);
+  const totalSaved = currentSavings + totalManualSaved;
   const remaining = Math.max(0, totalUpfront - totalSaved);
   const progressPercent = totalUpfront > 0 ? Math.min(100, Math.round((totalSaved / totalUpfront) * 100)) : 100;
   const estimatedMonthsLeft = monthlySavingsTarget > 0 ? Math.ceil(remaining / monthlySavingsTarget) : 0;
@@ -63,13 +59,14 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
         month_number: d.month_number,
         month_label: d.month_label,
         completed: d.completed,
+        saved_amount: Number(d.saved_amount) || 0,
       })));
     } else {
-      // Initialize months
       const initial: MonthEntry[] = Array.from({ length: displayMonths }, (_, i) => ({
         month_number: i + 1,
         month_label: getMonthLabel(i),
         completed: false,
+        saved_amount: 0,
       }));
       setMonths(initial);
     }
@@ -78,30 +75,31 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
 
   useEffect(() => { loadProgress(); }, [loadProgress]);
 
-  const toggleMonth = async (monthNumber: number) => {
+  const saveMonth = async (monthNumber: number, completed: boolean, savedAmount: number) => {
     const month = months.find(m => m.month_number === monthNumber);
     if (!month) return;
 
-    const newCompleted = !month.completed;
-
     // Optimistic update
-    setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed: newCompleted } : m));
+    setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed, saved_amount: savedAmount } : m));
 
-    if (newCompleted) {
-      const msg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
-      setShowMotivation(msg);
-      setTimeout(() => setShowMotivation(null), 3000);
+    if (completed) {
+      toast.success("¡Buen trabajo! Tu progreso se ha actualizado. 🎉");
     }
 
     try {
       if (month.id) {
-        await supabase.from("savings_progress").update({ completed: newCompleted, updated_at: new Date().toISOString() }).eq("id", month.id);
+        await supabase.from("savings_progress").update({
+          completed,
+          saved_amount: savedAmount,
+          updated_at: new Date().toISOString()
+        }).eq("id", month.id);
       } else {
         const { data } = await supabase.from("savings_progress").insert({
           user_id: userId,
           month_number: monthNumber,
           month_label: month.month_label,
-          completed: newCompleted,
+          completed,
+          saved_amount: savedAmount,
           target_amount: monthlySavingsTarget,
           total_upfront: totalUpfront,
         }).select().single();
@@ -111,9 +109,32 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
       }
     } catch {
       // Revert
-      setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed: !newCompleted } : m));
+      setMonths(prev => prev.map(m => m.month_number === monthNumber ? { ...m, completed: !completed, saved_amount: month.saved_amount } : m));
       toast.error("Error al guardar el progreso");
     }
+  };
+
+  const handleMonthClick = (monthNumber: number) => {
+    const month = months.find(m => m.month_number === monthNumber);
+    if (!month) return;
+
+    if (month.completed) {
+      // Toggle off
+      saveMonth(monthNumber, false, 0);
+      setEditingMonth(null);
+    } else {
+      // Open input
+      setEditingMonth(monthNumber);
+      setInputAmount(String(monthlySavingsTarget));
+    }
+  };
+
+  const handleSaveAmount = (monthNumber: number) => {
+    const amount = Number(inputAmount) || 0;
+    if (amount <= 0) return;
+    saveMonth(monthNumber, true, amount);
+    setEditingMonth(null);
+    setInputAmount("");
   };
 
   if (loading) return null;
@@ -163,21 +184,6 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
             )}
           </div>
 
-          {/* Motivational message */}
-          <AnimatePresence>
-            {showMotivation && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                className="flex items-center gap-2 p-3 rounded-xl bg-success/10 border border-success/20"
-              >
-                <PartyPopper className="h-5 w-5 text-success shrink-0" />
-                <p className="text-sm font-bold text-success">{showMotivation}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Monthly tracker */}
           <div>
             <p className="text-sm font-bold mb-3 flex items-center gap-1.5">
@@ -186,29 +192,69 @@ const SavingsProgressTracker = ({ userId, totalUpfront, monthlySavingsTarget, cu
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
               {months.slice(0, displayMonths).map((month, i) => (
-                <motion.button
-                  key={month.month_number}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.02 }}
-                  onClick={() => toggleMonth(month.month_number)}
-                  className={`
-                    flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all duration-200 cursor-pointer
-                    ${month.completed
-                      ? "bg-success/10 border-success/30 hover:bg-success/20"
-                      : "bg-muted/30 border-border hover:bg-muted/60"
-                    }
-                  `}
-                >
-                  {month.completed ? (
-                    <CheckCircle2 className="h-5 w-5 text-success" />
-                  ) : (
-                    <Circle className="h-5 w-5 text-muted-foreground/40" />
-                  )}
-                  <span className="text-[10px] font-semibold text-muted-foreground capitalize leading-tight">
-                    {month.month_label}
-                  </span>
-                </motion.button>
+                <div key={month.month_number}>
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.02 }}
+                    onClick={() => handleMonthClick(month.month_number)}
+                    className={`
+                      w-full flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all duration-200 cursor-pointer
+                      ${month.completed
+                        ? "bg-success/10 border-success/30 hover:bg-success/20"
+                        : "bg-muted/30 border-border hover:bg-muted/60"
+                      }
+                    `}
+                  >
+                    {month.completed ? (
+                      <CheckCircle2 className="h-5 w-5 text-success" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-muted-foreground/40" />
+                    )}
+                    <span className="text-[10px] font-semibold text-muted-foreground capitalize leading-tight">
+                      {month.month_label}
+                    </span>
+                    {month.completed && month.saved_amount > 0 && (
+                      <span className="text-[9px] font-bold text-success">
+                        {formatCurrency(month.saved_amount)}
+                      </span>
+                    )}
+                  </motion.button>
+
+                  {/* Inline input for saving amount */}
+                  <AnimatePresence>
+                    {editingMonth === month.month_number && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-1 overflow-hidden"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <div className="relative">
+                            <Euro className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="€"
+                              value={inputAmount}
+                              onChange={e => setInputAmount(e.target.value)}
+                              className="h-7 text-xs pl-6 rounded-lg"
+                              autoFocus
+                              onKeyDown={e => e.key === "Enter" && handleSaveAmount(month.month_number)}
+                            />
+                          </div>
+                          <Button
+                            size="sm"
+                            className="h-6 text-[10px] rounded-lg"
+                            onClick={() => handleSaveAmount(month.month_number)}
+                          >
+                            Guardar
+                          </Button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ))}
             </div>
           </div>

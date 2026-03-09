@@ -181,6 +181,7 @@ export interface UserProfile {
   coBuyers: CoBuyer[];
   mortgagePercent: number;
   firstHome: boolean;
+  numberOfChildren: number;
 }
 
 export interface ActionStep {
