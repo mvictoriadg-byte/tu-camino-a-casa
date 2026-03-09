@@ -116,15 +116,6 @@ const HousingAidsSection = ({
                 </div>
               )}
             </div>
-
-            {/* Toggle */}
-            <div className="px-6 py-4 border-t border-border flex items-center justify-between">
-              <div>
-                <Label className="text-sm font-bold cursor-pointer">Incluir ayudas públicas en el cálculo</Label>
-                <p className="text-xs text-muted-foreground">Recalcula el tiempo estimado con las ayudas aplicables</p>
-              </div>
-              <Switch checked={aidsEnabled} onCheckedChange={onToggleAids} />
-            </div>
           </CardContent>
         </Card>
       </motion.div>
