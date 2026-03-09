@@ -242,34 +242,6 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
         </Card>
       </motion.div>
 
-
-      {/* Subsidies */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 1.2 }}>
-        <Card className="glow-card">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-bold flex items-center gap-2">
-              <Landmark className="h-5 w-5 text-primary" /> Ayudas Públicas
-              {isYoungBuyer && (
-                <span className="ml-2 text-xs px-2.5 py-1 rounded-full bg-success/10 text-success font-bold">
-                  <Shield className="h-3 w-3 inline mr-1" />Joven &lt;35
-                </span>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {city.subsidies.map((subsidy, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.25 + i * 0.06 }}
-                className="flex items-start gap-3 p-4 rounded-xl bg-muted/60">
-                <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                <a href={subsidy.url} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline text-foreground">
-                  {subsidy.name}
-                  <ExternalLink className="h-3 w-3 inline ml-1.5 text-muted-foreground" />
-                </a>
-              </motion.div>
-            ))}
-          </CardContent>
-        </Card>
-      </motion.div>
     </div>
   );
 };
