@@ -101,6 +101,42 @@ export type Database = {
         }
         Relationships: []
       }
+      savings_progress: {
+        Row: {
+          completed: boolean
+          created_at: string
+          id: string
+          month_label: string
+          month_number: number
+          target_amount: number
+          total_upfront: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          month_label: string
+          month_number: number
+          target_amount?: number
+          total_upfront?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          month_label?: string
+          month_number?: number
+          target_amount?: number
+          total_upfront?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_financial_data: {
         Row: {
           age: number

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
+import SavingsProgressTracker from "@/components/SavingsProgressTracker";
 import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency } from "@/lib/housing-data";
 import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, MapPin, Building2 } from "lucide-react";
@@ -124,7 +125,19 @@ const Portal = () => {
             <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><User className="h-4 w-4 mr-1.5" /> Perfil</TabsTrigger>
           </TabsList>
           <TabsContent value="roadmap">
-            {result ? <Dashboard result={result} eligibleAids={[]} aidsImpact={null} aidsEnabled={false} onToggleAids={() => {}} /> : (
+            {result ? (
+              <div className="space-y-6">
+                <Dashboard result={result} eligibleAids={[]} aidsImpact={null} aidsEnabled={false} onToggleAids={() => {}} />
+                {user && (
+                  <SavingsProgressTracker
+                    userId={user.id}
+                    totalUpfront={result.totalUpfront}
+                    monthlySavingsTarget={result.totalMonthlySavings}
+                    currentSavings={result.totalSavings}
+                  />
+                )}
+              </div>
+            ) : (
               <Card className="glow-card"><CardContent className="p-12 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4"><Home className="h-8 w-8 text-primary" /></div>
                 <h3 className="text-xl font-bold mb-2">Aún no tienes un plan</h3><p className="text-muted-foreground text-sm mb-6">Rellena el formulario para generar tu plan</p>
