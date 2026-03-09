@@ -64,8 +64,8 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
   const displayMonthsToSave = aidsEnabled && aidsImpact ? aidsImpact.adjustedMonthsToSave : monthsToSave;
 
   const propertyDesc = `${propertyTypeLabels[preferences.propertyType] || preferences.propertyType} · ${sqm} m² · ${preferences.rooms} hab · ${zoneLabels[preferences.zone] || preferences.zone}`;
-  const displayYears = yearsToSave === 0 ? "¡Ya!" : yearsToSave === Infinity ? "—" : `~${yearsToSave} años`;
-  const displayMonths = monthsToSave <= 0 ? "" : `${monthsToSave} meses`;
+  const displayYears = displayYearsToSave === 0 ? "¡Ya!" : displayYearsToSave === Infinity ? "—" : `~${displayYearsToSave} años`;
+  const displayMonths = displayMonthsToSave <= 0 ? "" : `${displayMonthsToSave} meses`;
 
   return (
     <div className="space-y-5">
