@@ -214,27 +214,6 @@ const Dashboard = ({ result }: DashboardProps) => {
         </Card>
       </motion.div>
 
-      {/* Tips */}
-      {optimizationTips.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 1.0 }}>
-          <Card className="glow-card">
-            <CardHeader className="pb-3"><CardTitle className="text-lg font-bold flex items-center gap-2"><Lightbulb className="h-5 w-5 text-warning" /> Ideas para Optimizar</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {optimizationTips.map((tip, i) => (
-                <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.05 + i * 0.06 }}
-                  className="flex items-start gap-3 p-4 rounded-xl bg-warning/5 border border-warning/20">
-                  <Lightbulb className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm font-bold">{tip.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{tip.description}</p>
-                    <span className="inline-block mt-1 text-xs font-bold text-warning">{tip.potentialSaving}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
 
       {/* Subsidies */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 1.2 }}>
