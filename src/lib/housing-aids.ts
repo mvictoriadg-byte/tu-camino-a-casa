@@ -10,12 +10,14 @@ export interface HousingAid {
   impact_type: "financing_increase" | "downpayment_reduction" | "grant" | "tax_reduction";
   max_financing_percent: number | null;
   age_limit: number | null;
+  min_age: number | null;
   income_limit: number | null;
   property_price_limit: number | null;
   first_home_required: boolean;
   residency_years_required: number | null;
   family_conditions: string | null;
   notes: string | null;
+  active: boolean;
 }
 
 export interface EligibleAid extends HousingAid {
@@ -58,13 +60,24 @@ export function filterEligibleAids(
     firstHome: boolean;
   }
 ): EligibleAid[] {
+  const seen = new Set<string>();
   return aids
     .filter((aid) => {
-      // Region match
+      // Active check
+      if (aid.active === false) return false;
+
+      // Deduplicate
+      if (seen.has(aid.id)) return false;
+      seen.add(aid.id);
+
+      // Region match: national ("España") or user's region
       if (aid.region !== "España" && aid.region !== params.region) return false;
 
-      // Age limit
+      // Age limit (max age)
       if (aid.age_limit && params.age > aid.age_limit) return false;
+
+      // Min age
+      if (aid.min_age && params.age < aid.min_age) return false;
 
       // Income limit (annual)
       if (aid.income_limit && params.annualIncome > aid.income_limit) return false;

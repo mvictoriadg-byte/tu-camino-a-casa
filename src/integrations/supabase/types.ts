@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       housing_aids: {
         Row: {
+          active: boolean
           age_limit: number | null
           aid_type: string
           benefit_amount_estimate: number | null
@@ -27,6 +28,7 @@ export type Database = {
           impact_type: Database["public"]["Enums"]["aid_impact_type"]
           income_limit: number | null
           max_financing_percent: number | null
+          min_age: number | null
           name: string
           notes: string | null
           property_price_limit: number | null
@@ -34,6 +36,7 @@ export type Database = {
           residency_years_required: number | null
         }
         Insert: {
+          active?: boolean
           age_limit?: number | null
           aid_type: string
           benefit_amount_estimate?: number | null
@@ -45,6 +48,7 @@ export type Database = {
           impact_type: Database["public"]["Enums"]["aid_impact_type"]
           income_limit?: number | null
           max_financing_percent?: number | null
+          min_age?: number | null
           name: string
           notes?: string | null
           property_price_limit?: number | null
@@ -52,6 +56,7 @@ export type Database = {
           residency_years_required?: number | null
         }
         Update: {
+          active?: boolean
           age_limit?: number | null
           aid_type?: string
           benefit_amount_estimate?: number | null
@@ -63,6 +68,7 @@ export type Database = {
           impact_type?: Database["public"]["Enums"]["aid_impact_type"]
           income_limit?: number | null
           max_financing_percent?: number | null
+          min_age?: number | null
           name?: string
           notes?: string | null
           property_price_limit?: number | null
