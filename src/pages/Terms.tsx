@@ -1,6 +1,7 @@
 import { Home, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import logoHouse from "@/assets/logo-house.png";
 
 const Terms = () => {
   const navigate = useNavigate();
