@@ -13,7 +13,7 @@ import ScenarioComparison from "@/components/ScenarioComparison";
 import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
-import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2 } from "lucide-react";
+import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -41,6 +41,8 @@ const Portal = () => {
   const [aidsEnabled, setAidsEnabled] = useState(true);
   const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
   const [pendingProfile, setPendingProfile] = useState<UserProfile | null>(null);
+  const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
   useEffect(() => { if (user) loadData(); }, [user]);
@@ -357,6 +359,15 @@ const Portal = () => {
                   hideFooterNote
                 />
               </div>
+              <Card className="border-destructive/30">
+                <CardHeader><CardTitle className="text-lg font-bold flex items-center gap-2 text-destructive"><AlertTriangle className="h-5 w-5" /> Zona de peligro</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">Eliminar tu cuenta borrará permanentemente todos tus datos, incluyendo tu plan, progreso de ahorro y wishlist.</p>
+                  <Button variant="destructive" className="rounded-full font-bold" onClick={() => setDeleteStep(1)}>
+                    <Trash2 className="h-4 w-4 mr-2" /> Eliminar cuenta
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
@@ -374,6 +385,59 @@ const Portal = () => {
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setPendingProfile(null)}>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmUpdate}>Actualizar mi plan</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete account - Step 1 */}
+      <AlertDialog open={deleteStep === 1} onOpenChange={(open) => { if (!open) setDeleteStep(0); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-destructive" /> Eliminar cuenta</AlertDialogTitle>
+            <AlertDialogDescription>
+              ⚠️ Esta acción eliminará permanentemente tu cuenta. Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteStep(0)}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => setDeleteStep(2)}>Continuar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete account - Step 2 */}
+      <AlertDialog open={deleteStep === 2} onOpenChange={(open) => { if (!open) setDeleteStep(0); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Está seguro que desea eliminar la cuenta?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteStep(0)}>No</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isDeleting}
+              onClick={async () => {
+                setIsDeleting(true);
+                try {
+                  const { data: { session } } = await supabase.auth.getSession();
+                  if (!session) throw new Error("No session");
+                  const res = await supabase.functions.invoke("delete-account", {
+                    headers: { Authorization: `Bearer ${session.access_token}` },
+                  });
+                  if (res.error) throw res.error;
+                  await signOut();
+                  navigate("/");
+                  toast.success("Tu cuenta ha sido eliminada.");
+                } catch {
+                  toast.error("Error al eliminar la cuenta. Inténtalo de nuevo.");
+                } finally {
+                  setIsDeleting(false);
+                  setDeleteStep(0);
+                }
+              }}
+            >
+              {isDeleting ? "Eliminando..." : "Eliminar mi cuenta definitivamente"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
