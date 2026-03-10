@@ -76,7 +76,7 @@ const Landing = () => {
                   Crear mi plan de compra <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-4 flex items-center gap-3">
+              <p className="text-muted-foreground mt-4 flex items-center gap-3 text-sm">
                 <span className="flex items-center gap-1"><Shield className="h-3.5 w-3.5" /> Gratis</span>
                 <span>·</span>
                 <span>Anónimo</span>
@@ -200,8 +200,8 @@ const Landing = () => {
                 <Card className="glow-card h-full border-border">
                   <CardContent className="p-5 flex flex-col items-start gap-3">
                     <img src={card.icon} alt="" className="h-12 w-12 object-contain" />
-                    <h3 className="font-extrabold text-sm">{card.title}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
+                    <h3 className="font-extrabold text-base">{card.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed text-sm">{card.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -244,8 +244,8 @@ const Landing = () => {
                   <img src={s.icon} alt="" className="h-10 w-10 object-contain" />
                 </div>
                 <span className="text-xs font-bold text-primary uppercase tracking-widest">{s.step}</span>
-                <h3 className="font-extrabold text-sm mt-1 mb-2">{s.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
+                <h3 className="font-extrabold mt-1 mb-2 text-base">{s.title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm">{s.desc}</p>
               </motion.div>
             )}
           </div>
