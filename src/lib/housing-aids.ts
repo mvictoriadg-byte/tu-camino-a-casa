@@ -10,12 +10,14 @@ export interface HousingAid {
   impact_type: "financing_increase" | "downpayment_reduction" | "grant" | "tax_reduction";
   max_financing_percent: number | null;
   age_limit: number | null;
+  min_age: number | null;
   income_limit: number | null;
   property_price_limit: number | null;
   first_home_required: boolean;
   residency_years_required: number | null;
   family_conditions: string | null;
   notes: string | null;
+  active: boolean;
 }
 
 export interface EligibleAid extends HousingAid {
