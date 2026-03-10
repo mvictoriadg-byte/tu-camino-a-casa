@@ -13,6 +13,7 @@ import doodleChart from "@/assets/doodle-chart.png";
 import doodleCelebrate from "@/assets/doodle-celebrate.png";
 import doodleGovernment from "@/assets/doodle-government.png";
 import doodleStrength from "@/assets/doodle-strength.png";
+import logoHouse from "@/assets/logo-house.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -34,9 +35,7 @@ const Landing = () => {
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
           <button onClick={() => navigate("/")} className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
-              <Home className="h-4 w-4 text-primary-foreground" />
-            </div>
+            <img src={logoHouse} alt="Tu camino a casa" className="h-8 w-8 object-contain" />
             <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
           </button>
           {user ?
@@ -313,9 +312,7 @@ const Landing = () => {
       <footer className="border-t border-border py-8 px-4">
         <div className="container max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-lg bg-primary flex items-center justify-center">
-              <Home className="h-3 w-3 text-primary-foreground" />
-            </div>
+            <img src={logoHouse} alt="Tu camino a casa" className="h-6 w-6 object-contain" />
             <span className="font-bold text-sm">Tu camino a casa</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">

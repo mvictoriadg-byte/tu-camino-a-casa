@@ -13,6 +13,7 @@ import ScenarioComparison from "@/components/ScenarioComparison";
 import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
+import logoHouse from "@/assets/logo-house.png";
 import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -207,7 +208,7 @@ const Portal = () => {
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="rounded-full"><ArrowLeft className="h-5 w-5" /></Button>
             <button onClick={() => navigate("/")} className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center"><Home className="h-4 w-4 text-primary-foreground" /></div>
+              <img src={logoHouse} alt="Tu camino a casa" className="h-8 w-8 object-contain" />
               <span className="font-extrabold text-lg">Tu camino a casa</span>
             </button>
           </div>
