@@ -221,6 +221,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_messages: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          message: string
+          name: string | null
+          page_context: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message: string
+          name?: string | null
+          page_context?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string
+          name?: string | null
+          page_context?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
