@@ -407,17 +407,21 @@ const Portal = () => {
       </AlertDialog>
 
       {/* Delete account - Step 2 */}
-      <AlertDialog open={deleteStep === 2} onOpenChange={(open) => { if (!open) setDeleteStep(0); }}>
+      <AlertDialog open={deleteStep === 2} onOpenChange={(open) => { if (!open && !isDeleting) setDeleteStep(0); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Está seguro que desea eliminar la cuenta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción es irreversible. Se eliminarán todos tus datos.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setDeleteStep(0)}>No</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            <AlertDialogCancel disabled={isDeleting} onClick={() => setDeleteStep(0)}>No</AlertDialogCancel>
+            <Button
+              variant="destructive"
               disabled={isDeleting}
-              onClick={async () => {
+              onClick={async (e) => {
+                e.preventDefault();
                 setIsDeleting(true);
                 try {
                   const { data: { session } } = await supabase.auth.getSession();
@@ -426,19 +430,17 @@ const Portal = () => {
                     headers: { Authorization: `Bearer ${session.access_token}` },
                   });
                   if (res.error) throw res.error;
+                  toast.success("Tu cuenta y todos tus datos han sido eliminados.");
                   await signOut();
                   navigate("/");
-                  toast.success("Tu cuenta ha sido eliminada.");
                 } catch {
-                  toast.error("Error al eliminar la cuenta. Inténtalo de nuevo.");
-                } finally {
+                  toast.error("No se pudo eliminar tu cuenta. Por favor, intenta de nuevo.");
                   setIsDeleting(false);
-                  setDeleteStep(0);
                 }
               }}
             >
               {isDeleting ? "Eliminando..." : "Eliminar mi cuenta definitivamente"}
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

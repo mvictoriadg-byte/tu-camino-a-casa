@@ -122,9 +122,9 @@ const Landing = () => {
                 </div>
                 {/* Mock timeline */}
                 <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((n) => {}
-
-                  )}
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <div key={n} className={`w-6 h-6 rounded-full border-2 ${n <= 2 ? "bg-primary/30 border-primary/50" : "border-muted-foreground/20"}`} />
+                  ))}
                 </div>
               </div>
               {/* Floating accent */}
