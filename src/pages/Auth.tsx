@@ -52,10 +52,10 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm">
-        <div className="container max-w-6xl flex items-center h-14 px-4">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2">
-            <img src={logoHouse} alt="Tu camino a casa" className="h-8 w-8 object-contain" />
-            <span className="font-extrabold text-lg tracking-tight">Tu camino a casa</span>
+        <div className="container max-w-6xl flex items-center py-5 px-4">
+          <button onClick={() => navigate("/")} className="flex items-center gap-3">
+            <img src={logoHouse} alt="Camino a casa" className="h-7 w-7 object-contain" />
+            <span className="font-semibold text-lg tracking-tight">Camino a casa</span>
           </button>
         </div>
       </nav>

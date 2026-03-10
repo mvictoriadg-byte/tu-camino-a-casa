@@ -204,12 +204,12 @@ const Portal = () => {
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
+        <div className="container max-w-6xl flex items-center justify-between py-5 px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="rounded-full"><ArrowLeft className="h-5 w-5" /></Button>
-            <button onClick={() => navigate("/")} className="flex items-center gap-2">
-              <img src={logoHouse} alt="Tu camino a casa" className="h-8 w-8 object-contain" />
-              <span className="font-extrabold text-lg">Tu camino a casa</span>
+            <button onClick={() => navigate("/")} className="flex items-center gap-3">
+              <img src={logoHouse} alt="Camino a casa" className="h-7 w-7 object-contain" />
+              <span className="font-semibold text-lg">Camino a casa</span>
             </button>
           </div>
           <div className="flex items-center gap-3">
