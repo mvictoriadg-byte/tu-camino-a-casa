@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AppFooter } from "@/components/AppFooter";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -20,15 +21,19 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/simulador" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/portal" element={<Portal />} />
-            <Route path="/terminos" element={<Terms />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-1">
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/simulador" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/portal" element={<Portal />} />
+                <Route path="/terminos" element={<Terms />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+            <AppFooter />
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
