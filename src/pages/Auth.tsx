@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
 import { Home, Mail, Lock, User, ArrowRight } from "lucide-react";
+import logoHouse from "@/assets/logo-house.png";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
