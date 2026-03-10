@@ -316,7 +316,7 @@ const Landing = () => {
             <span className="font-semibold text-sm">Camino a casa</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span>© 2026 Tu camino a casa · España</span>
+            <span>© 2026 Camino a casa · España</span>
             <span>·</span>
             <a href="/terminos" className="underline hover:text-primary transition-colors">Términos y Condiciones</a>
           </div>
