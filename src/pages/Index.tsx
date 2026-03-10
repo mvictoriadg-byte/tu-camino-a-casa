@@ -11,6 +11,7 @@ import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type Eligibl
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Home, User, LogIn, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import logoHouse from "@/assets/logo-house.png";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -150,12 +151,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
-          <button onClick={() => { setPhase("onboarding"); setResult(null); }} className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
-              <Home className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
+        <div className="container max-w-6xl flex items-center justify-between py-5 px-4 sm:px-6">
+          <button onClick={() => { setPhase("onboarding"); setResult(null); }} className="flex items-center gap-3">
+            <img src={logoHouse} alt="Camino a casa" className="h-7 w-7 object-contain" />
+            <span className="font-semibold text-lg tracking-tight">Camino a casa</span>
           </button>
           {user ? (
             <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
@@ -283,14 +282,12 @@ const Index = () => {
 
       <footer className="border-t border-border py-8 px-4">
         <div className="container max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-lg bg-primary flex items-center justify-center">
-              <Home className="h-3 w-3 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-sm">Tu camino a casa</span>
+          <div className="flex items-center gap-3">
+            <img src={logoHouse} alt="Camino a casa" className="h-6 w-6 object-contain" />
+            <span className="font-semibold text-sm">Camino a casa</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span>© 2026 Tu camino a casa · España</span>
+            <span>© 2026 Camino a casa · España</span>
             <span>·</span>
             <a href="/terminos" className="underline hover:text-primary transition-colors">Términos y Condiciones</a>
           </div>

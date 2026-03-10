@@ -33,10 +33,10 @@ const Landing = () => {
     <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2">
-            <img src={logoHouse} alt="Tu camino a casa" className="h-8 w-8 object-contain" />
-            <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
+        <div className="container max-w-6xl flex items-center justify-between py-5 px-4 sm:px-6">
+          <button onClick={() => navigate("/")} className="flex items-center gap-3">
+            <img src={logoHouse} alt="Camino a casa" className="h-7 w-7 object-contain" />
+            <span className="font-semibold text-lg tracking-tight">Camino a casa</span>
           </button>
           {user ?
           <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
@@ -311,12 +311,12 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8 px-4">
         <div className="container max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img src={logoHouse} alt="Tu camino a casa" className="h-6 w-6 object-contain" />
-            <span className="font-bold text-sm">Tu camino a casa</span>
+          <div className="flex items-center gap-3">
+            <img src={logoHouse} alt="Camino a casa" className="h-6 w-6 object-contain" />
+            <span className="font-semibold text-sm">Camino a casa</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span>© 2026 Tu camino a casa · España</span>
+            <span>© 2026 Camino a casa · España</span>
             <span>·</span>
             <a href="/terminos" className="underline hover:text-primary transition-colors">Términos y Condiciones</a>
           </div>
