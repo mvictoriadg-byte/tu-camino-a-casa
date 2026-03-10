@@ -41,6 +41,8 @@ const Portal = () => {
   const [aidsEnabled, setAidsEnabled] = useState(true);
   const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
   const [pendingProfile, setPendingProfile] = useState<UserProfile | null>(null);
+  const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
   useEffect(() => { if (user) loadData(); }, [user]);
