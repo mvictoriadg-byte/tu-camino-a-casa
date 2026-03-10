@@ -94,7 +94,7 @@ const Landing = () => {
                   <div className="h-3 w-3 rounded-full bg-destructive/50" />
                   <div className="h-3 w-3 rounded-full bg-warning/50" />
                   <div className="h-3 w-3 rounded-full bg-success/50" />
-                  <span className="ml-2 text-[10px] font-mono text-muted-foreground">tucaminoacasa.app/resultados</span>
+                  <span className="ml-2 text-[10px] font-mono text-muted-foreground">​</span>
                 </div>
                 {/* Mock stats */}
                 <div className="grid grid-cols-3 gap-3">
@@ -122,8 +122,8 @@ const Landing = () => {
                 </div>
                 {/* Mock timeline */}
                 <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((n) =>
-                  <div key={n} className={`flex-1 h-1.5 rounded-full ${n <= 2 ? "bg-primary" : "bg-muted"}`} />
+                  {[1, 2, 3, 4, 5].map((n) => {}
+
                   )}
                 </div>
               </div>
