@@ -311,9 +311,7 @@ const Landing = () => {
       <footer className="border-t border-border py-8 px-4">
         <div className="container max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-lg bg-primary flex items-center justify-center">
-              <Home className="h-3 w-3 text-primary-foreground" />
-            </div>
+            <img src={logoHouse} alt="Tu camino a casa" className="h-6 w-6 object-contain" />
             <span className="font-bold text-sm">Tu camino a casa</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
