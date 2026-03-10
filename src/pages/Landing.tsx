@@ -13,6 +13,7 @@ import doodleChart from "@/assets/doodle-chart.png";
 import doodleCelebrate from "@/assets/doodle-celebrate.png";
 import doodleGovernment from "@/assets/doodle-government.png";
 import doodleStrength from "@/assets/doodle-strength.png";
+import logoHouse from "@/assets/logo-house.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
