@@ -359,6 +359,15 @@ const Portal = () => {
                   hideFooterNote
                 />
               </div>
+              <Card className="border-destructive/30">
+                <CardHeader><CardTitle className="text-lg font-bold flex items-center gap-2 text-destructive"><AlertTriangle className="h-5 w-5" /> Zona de peligro</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">Eliminar tu cuenta borrará permanentemente todos tus datos, incluyendo tu plan, progreso de ahorro y wishlist.</p>
+                  <Button variant="destructive" className="rounded-full font-bold" onClick={() => setDeleteStep(1)}>
+                    <Trash2 className="h-4 w-4 mr-2" /> Eliminar cuenta
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
