@@ -151,12 +151,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container max-w-6xl flex items-center justify-between h-14 px-4 sm:px-6">
-          <button onClick={() => { setPhase("onboarding"); setResult(null); }} className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
-              <Home className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-extrabold text-base sm:text-lg tracking-tight">Tu camino a casa</span>
+        <div className="container max-w-6xl flex items-center justify-between py-5 px-4 sm:px-6">
+          <button onClick={() => { setPhase("onboarding"); setResult(null); }} className="flex items-center gap-3">
+            <img src={logoHouse} alt="Camino a casa" className="h-7 w-7 object-contain" />
+            <span className="font-semibold text-lg tracking-tight">Camino a casa</span>
           </button>
           {user ? (
             <Button size="sm" className="rounded-full font-semibold" onClick={() => navigate("/portal")}>
