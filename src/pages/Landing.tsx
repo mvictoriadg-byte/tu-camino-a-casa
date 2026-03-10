@@ -311,9 +311,9 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8 px-4">
         <div className="container max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img src={logoHouse} alt="Tu camino a casa" className="h-6 w-6 object-contain" />
-            <span className="font-bold text-sm">Tu camino a casa</span>
+          <div className="flex items-center gap-3">
+            <img src={logoHouse} alt="Camino a casa" className="h-6 w-6 object-contain" />
+            <span className="font-semibold text-sm">Camino a casa</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span>© 2026 Tu camino a casa · España</span>
