@@ -53,7 +53,7 @@ const Auth = () => {
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm">
         <div className="container max-w-6xl flex items-center h-14 px-4">
           <button onClick={() => navigate("/")} className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center"><Home className="h-4 w-4 text-primary-foreground" /></div>
+            <img src={logoHouse} alt="Tu camino a casa" className="h-8 w-8 object-contain" />
             <span className="font-extrabold text-lg tracking-tight">Tu camino a casa</span>
           </button>
         </div>
