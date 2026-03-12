@@ -117,6 +117,11 @@ const Index = () => {
 
     if (user) {
       await saveUserData(profile, r);
+    } else {
+      // Store pending plan for post-signup persistence
+      try {
+        localStorage.setItem("pending_plan", JSON.stringify({ profile, result: r }));
+      } catch {/* silent */}
     }
   };
 
