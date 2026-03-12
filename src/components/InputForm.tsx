@@ -165,7 +165,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                       </SelectContent>
                     </Select>
                   </div>
-                )
+                )}
                 <div className="space-y-1.5">
                   <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
                   <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl ${fieldBorder("age")}`} />
