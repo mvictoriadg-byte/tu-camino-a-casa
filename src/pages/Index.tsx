@@ -6,7 +6,7 @@ import Dashboard from "@/components/Dashboard";
 import LockedTrackerCTA from "@/components/LockedTrackerCTA";
 import ScenarioComparison from "@/components/ScenarioComparison";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
-import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData } from "@/lib/housing-data";
+import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData, formatCurrency } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
