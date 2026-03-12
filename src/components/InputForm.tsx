@@ -30,7 +30,10 @@ interface InputFormProps {
 
 const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hideFooterNote }: InputFormProps) => {
   const iv = initialValues;
+  const [comunidad, setComunidad] = useState(iv?.comunidad || "");
+  const [ciudad, setCiudad] = useState(iv?.ciudad || "");
   const [city, setCity] = useState(iv?.city || "");
+  const { comunidades, getCiudades, getAvgPriceM2, getMortgageRate } = useLocationPrices();
   const [age, setAge] = useState(iv?.age ? String(iv.age) : "");
   const [employmentStatus, setEmploymentStatus] = useState(iv?.employmentStatus || "");
   const [income, setIncome] = useState(iv?.monthlyIncome ? String(iv.monthlyIncome) : "");
