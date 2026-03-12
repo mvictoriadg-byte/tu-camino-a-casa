@@ -490,12 +490,19 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
   };
 
   const actionPlan = generateActionPlan(partialResult, profileForPlan);
-  const bankOptions = generateBankOptions(city.mortgageRate, profile.mortgagePercent);
+  const bankOptions = generateBankOptions(effectiveMortgageRate, profile.mortgagePercent);
   const optimizationTips = generateOptimizationTips(partialResult, profileForPlan);
   const milestones = generateMilestones(profileForPlan, totalUpfront, savingsGap, totalSavings, totalMonthlySavings);
 
+  // Build city object with effective values for display
+  const effectiveCity: CityData = {
+    ...city,
+    avgPricePerSqm: effectiveAvgPrice,
+    mortgageRate: effectiveMortgageRate,
+  };
+
   return {
-    city,
+    city: effectiveCity,
     preferences: profile.preferences,
     userProfile: profile,
     estimatedPrice,
