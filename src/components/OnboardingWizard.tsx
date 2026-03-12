@@ -9,7 +9,8 @@ import { Switch } from "@/components/ui/switch";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { useLocationPrices } from "@/hooks/use-location-prices";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
   Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, ArrowLeft, Loader2, Home,
