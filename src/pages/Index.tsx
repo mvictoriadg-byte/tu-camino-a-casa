@@ -6,7 +6,7 @@ import Dashboard from "@/components/Dashboard";
 import LockedTrackerCTA from "@/components/LockedTrackerCTA";
 import ScenarioComparison from "@/components/ScenarioComparison";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
-import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData } from "@/lib/housing-data";
+import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData, formatCurrency } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,9 +38,9 @@ const Index = () => {
   }, []);
 
   const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
-    const city = cityData[profile.city];
+    const region = profile.comunidad || cityData[profile.city]?.region || "España";
     const eligible = filterEligibleAids(aids, {
-      region: city.region, age: profile.age,
+      region, age: profile.age,
       annualIncome: profile.monthlyIncome * 12, estimatedPrice: r.estimatedPrice,
       firstHome: profile.firstHome,
     });
@@ -67,7 +67,7 @@ const Index = () => {
     if (!user) return;
     try {
       const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user.id).limit(1);
-      const payload = {
+      const payload: any = {
         user_id: user.id, city: profile.city, age: profile.age, employment_status: profile.employmentStatus,
         monthly_income: profile.monthlyIncome, savings: profile.savings, monthly_savings: profile.monthlySavings,
         monthly_debts: profile.monthlyDebts, num_buyers: profile.numBuyers, co_buyers: profile.coBuyers as any,
@@ -75,6 +75,7 @@ const Index = () => {
         rooms: profile.preferences.rooms, zone: profile.preferences.zone, reform_state: profile.preferences.reformState,
         mortgage_percent: profile.mortgagePercent, result_json: r as any,
         number_of_children: profile.numberOfChildren, first_home: profile.firstHome,
+        comunidad: profile.comunidad || null, ciudad: profile.ciudad || null,
       };
       if (existing && existing.length > 0) {
         await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);

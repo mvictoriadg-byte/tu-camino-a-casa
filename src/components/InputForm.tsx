@@ -8,7 +8,8 @@ import { Slider } from "@/components/ui/slider";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { useLocationPrices } from "@/hooks/use-location-prices";
 import { Switch } from "@/components/ui/switch";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
@@ -29,7 +30,10 @@ interface InputFormProps {
 
 const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hideFooterNote }: InputFormProps) => {
   const iv = initialValues;
+  const [comunidad, setComunidad] = useState(iv?.comunidad || "");
+  const [ciudad, setCiudad] = useState(iv?.ciudad || "");
   const [city, setCity] = useState(iv?.city || "");
+  const { comunidades, getCiudades, getAvgPriceM2, getMortgageRate } = useLocationPrices();
   const [age, setAge] = useState(iv?.age ? String(iv.age) : "");
   const [employmentStatus, setEmploymentStatus] = useState(iv?.employmentStatus || "");
   const [income, setIncome] = useState(iv?.monthlyIncome ? String(iv.monthlyIncome) : "");
@@ -67,7 +71,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
-    if (!city) e.city = "Campo obligatorio";
+    if (!comunidad) e.comunidad = "Campo obligatorio";
     if (!age) e.age = "Campo obligatorio";
     if (!employmentStatus) e.employmentStatus = "Campo obligatorio";
     if (!income) e.income = "Campo obligatorio";
@@ -90,13 +94,17 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
       monthlySavings: Number(cb.monthlySavings) || 0, monthlyDebts: Number(cb.monthlyDebts) || 0,
     }));
 
+    const avgPriceM2 = getAvgPriceM2(comunidad, ciudad || undefined);
+    const mortgageRate = getMortgageRate(comunidad, ciudad || undefined);
     onCalculate({
-      city, age: Number(age), employmentStatus, monthlyIncome: Number(income),
+      city: ciudad || comunidad, comunidad, ciudad: ciudad || undefined,
+      age: Number(age), employmentStatus, monthlyIncome: Number(income),
       savings: Number(savings), monthlySavings: Number(monthlySavings),
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers), coBuyers: parsedCoBuyers, mortgagePercent,
       firstHome, numberOfChildren: Number(numberOfChildren) || 0,
+      avgPricePerSqm: avgPriceM2, mortgageRate,
     });
   };
 
@@ -138,14 +146,26 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
             <SectionHeader title="Sobre ti" subtitle="Cuéntanos un poco sobre ti" illustration={illustrationPersonal} step={1} />
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <FieldLabel icon={MapPin}>¿Dónde quieres comprar?</FieldLabel>
-                  <Select value={city} onValueChange={v => { setCity(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("city")}`}><SelectValue placeholder="Elige tu ciudad" /></SelectTrigger>
-                    <SelectContent>{Object.entries(cityData).map(([key, data]) => <SelectItem key={key} value={key}>{data.name}</SelectItem>)}</SelectContent>
+                <div className="space-y-1.5 col-span-2">
+                  <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
+                  <Select value={comunidad} onValueChange={v => { setComunidad(v); setCiudad(""); setCity(v); if (submitted) validate(); }}>
+                    <SelectTrigger className={`rounded-xl ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
+                    <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                   </Select>
-                  <FieldError field="city" />
+                  <FieldError field="comunidad" />
                 </div>
+                {comunidad && getCiudades(comunidad).length > 0 && (
+                  <div className="space-y-1.5 col-span-2">
+                    <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
+                    <Select value={ciudad || "__comunidad_avg__"} onValueChange={v => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Media de la comunidad" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__comunidad_avg__">Media de {comunidad}</SelectItem>
+                        {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div className="space-y-1.5">
                   <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
                   <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl ${fieldBorder("age")}`} />

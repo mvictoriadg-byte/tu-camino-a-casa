@@ -50,10 +50,9 @@ const Portal = () => {
   useEffect(() => { fetchHousingAids().then(setAllAids); }, []);
 
   const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
-    const city = cityData[profile.city];
-    if (!city) return;
+    const region = profile.comunidad || cityData[profile.city]?.region || "España";
     const eligible = filterEligibleAids(aids, {
-      region: city.region, age: profile.age,
+      region, age: profile.age,
       annualIncome: profile.monthlyIncome * 12, estimatedPrice: r.estimatedPrice,
       firstHome: profile.firstHome,
     });
@@ -86,6 +85,8 @@ const Portal = () => {
       const d = f.data[0];
       const formData: Partial<UserProfile> = {
         city: d.city, age: d.age, employmentStatus: d.employment_status,
+        comunidad: (d as any).comunidad || undefined,
+        ciudad: (d as any).ciudad || undefined,
         monthlyIncome: Number(d.monthly_income), savings: Number(d.savings),
         monthlySavings: Number(d.monthly_savings), monthlyDebts: Number(d.monthly_debts),
         numBuyers: d.num_buyers, coBuyers: d.co_buyers as any || [],
@@ -146,7 +147,7 @@ const Portal = () => {
     setIsCalculating(false);
     try {
       const { data: existing } = await supabase.from("user_financial_data").select("id").eq("user_id", user!.id).limit(1);
-      const payload = {
+      const payload: any = {
         user_id: user!.id, city: profileData.city, age: profileData.age, employment_status: profileData.employmentStatus,
         monthly_income: profileData.monthlyIncome, savings: profileData.savings, monthly_savings: profileData.monthlySavings,
         monthly_debts: profileData.monthlyDebts, num_buyers: profileData.numBuyers, co_buyers: profileData.coBuyers as any,
@@ -154,6 +155,7 @@ const Portal = () => {
         rooms: profileData.preferences.rooms, zone: profileData.preferences.zone, reform_state: profileData.preferences.reformState,
         mortgage_percent: profileData.mortgagePercent, result_json: r as any,
         number_of_children: profileData.numberOfChildren, first_home: profileData.firstHome,
+        comunidad: profileData.comunidad || null, ciudad: profileData.ciudad || null,
       };
       if (existing && existing.length > 0) {
         await supabase.from("user_financial_data").update(payload).eq("id", existing[0].id);

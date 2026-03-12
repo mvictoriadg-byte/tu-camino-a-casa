@@ -9,7 +9,8 @@ import { Switch } from "@/components/ui/switch";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { useLocationPrices } from "@/hooks/use-location-prices";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
   Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, ArrowLeft, Loader2, Home,
@@ -31,7 +32,10 @@ interface OnboardingWizardProps {
 const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLabel }: OnboardingWizardProps) => {
   const iv = initialValues;
   const [step, setStep] = useState(1);
+  const [comunidad, setComunidad] = useState(iv?.comunidad || "");
+  const [ciudad, setCiudad] = useState(iv?.ciudad || "");
   const [city, setCity] = useState(iv?.city || "");
+  const { comunidades, getCiudades, getAvgPriceM2, getMortgageRate } = useLocationPrices();
   const [age, setAge] = useState(iv?.age ? String(iv.age) : "");
   const [employmentStatus, setEmploymentStatus] = useState(iv?.employmentStatus || "");
   const [income, setIncome] = useState(iv?.monthlyIncome ? String(iv.monthlyIncome) : "");
@@ -69,7 +73,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
   const validateStep = (s: number): boolean => {
     const e: Record<string, string> = {};
     if (s === 1) {
-      if (!city) e.city = "Obligatorio";
+      if (!comunidad) e.comunidad = "Obligatorio";
       if (!age) e.age = "Obligatorio";
       if (!employmentStatus) e.employmentStatus = "Obligatorio";
     } else if (s === 2) {
@@ -108,13 +112,17 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
       monthlyIncome: Number(cb.income) || 0, savings: Number(cb.savings) || 0,
       monthlySavings: Number(cb.monthlySavings) || 0, monthlyDebts: Number(cb.monthlyDebts) || 0,
     }));
+    const avgPriceM2 = getAvgPriceM2(comunidad, ciudad || undefined);
+    const mortgageRate = getMortgageRate(comunidad, ciudad || undefined);
     onCalculate({
-      city, age: Number(age), employmentStatus, monthlyIncome: Number(income),
+      city: ciudad || comunidad, comunidad, ciudad: ciudad || undefined,
+      age: Number(age), employmentStatus, monthlyIncome: Number(income),
       savings: Number(savings), monthlySavings: Number(monthlySavings),
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers), coBuyers: parsedCoBuyers, mortgagePercent,
       firstHome, numberOfChildren: Number(numberOfChildren) || 0,
+      avgPricePerSqm: avgPriceM2, mortgageRate,
     });
   };
 
@@ -188,13 +196,25 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
             {step === 1 && (
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <FieldLabel icon={MapPin}>¿Dónde quieres comprar?</FieldLabel>
-                  <Select value={city} onValueChange={setCity}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("city")}`}><SelectValue placeholder="Elige tu ciudad" /></SelectTrigger>
-                    <SelectContent>{Object.entries(cityData).map(([key, data]) => <SelectItem key={key} value={key}>{data.name}</SelectItem>)}</SelectContent>
+                  <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
+                  <Select value={comunidad} onValueChange={(v) => { setComunidad(v); setCiudad(""); setCity(v); }}>
+                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
+                    <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                   </Select>
-                  <FieldError field="city" />
+                  <FieldError field="comunidad" />
                 </div>
+                {comunidad && getCiudades(comunidad).length > 0 && (
+                  <div className="space-y-2">
+                    <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
+                    <Select value={ciudad || "__comunidad_avg__"} onValueChange={(v) => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
+                      <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue placeholder="Usa media de la comunidad" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__comunidad_avg__">Media de {comunidad}</SelectItem>
+                        {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
                   <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl h-12 text-base ${fieldBorder("age")}`} />

@@ -77,6 +77,33 @@ export type Database = {
         }
         Relationships: []
       }
+      location_prices: {
+        Row: {
+          avg_price_m2: number
+          ciudad: string | null
+          comunidad: string
+          id: string
+          mortgage_rate: number
+          updated_at: string
+        }
+        Insert: {
+          avg_price_m2: number
+          ciudad?: string | null
+          comunidad: string
+          id?: string
+          mortgage_rate?: number
+          updated_at?: string
+        }
+        Update: {
+          avg_price_m2?: number
+          ciudad?: string | null
+          comunidad?: string
+          id?: string
+          mortgage_rate?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -150,7 +177,9 @@ export type Database = {
         Row: {
           age: number
           city: string
+          ciudad: string | null
           co_buyers: Json | null
+          comunidad: string | null
           created_at: string
           employment_status: string
           first_home: boolean
@@ -174,7 +203,9 @@ export type Database = {
         Insert: {
           age: number
           city: string
+          ciudad?: string | null
           co_buyers?: Json | null
+          comunidad?: string | null
           created_at?: string
           employment_status: string
           first_home?: boolean
@@ -198,7 +229,9 @@ export type Database = {
         Update: {
           age?: number
           city?: string
+          ciudad?: string | null
           co_buyers?: Json | null
+          comunidad?: string | null
           created_at?: string
           employment_status?: string
           first_home?: boolean
