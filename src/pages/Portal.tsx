@@ -207,7 +207,7 @@ const Portal = () => {
         <div className="container max-w-6xl flex items-center justify-between py-5 px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="rounded-full"><ArrowLeft className="h-5 w-5" /></Button>
-            <button onClick={() => navigate("/")} className="flex items-center gap-3">
+            <button onClick={() => navigate("/")} className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
               <img src={logoHouse} alt="Camino a casa" className="h-7 w-7 object-contain" />
               <span className="font-semibold text-lg">Camino a casa</span>
             </button>
