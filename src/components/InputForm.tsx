@@ -71,7 +71,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
-    if (!city) e.city = "Campo obligatorio";
+    if (!comunidad) e.comunidad = "Campo obligatorio";
     if (!age) e.age = "Campo obligatorio";
     if (!employmentStatus) e.employmentStatus = "Campo obligatorio";
     if (!income) e.income = "Campo obligatorio";
