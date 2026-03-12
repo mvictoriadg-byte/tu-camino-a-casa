@@ -25,7 +25,7 @@ import {
 interface WishlistItem { id: string; url: string; title: string; estimated_price: number; notes: string; created_at: string; }
 
 const Portal = () => {
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, session, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<{ display_name: string; email: string } | null>(null);
   const [result, setResult] = useState<AffordabilityResult | null>(null);
@@ -422,19 +422,32 @@ const Portal = () => {
               disabled={isDeleting}
               onClick={async (e) => {
                 e.preventDefault();
+                if (isDeleting) return;
+
+                if (!session?.access_token) {
+                  toast.error("Tu sesión ha expirado. Inicia sesión de nuevo.");
+                  navigate("/auth");
+                  return;
+                }
+
                 setIsDeleting(true);
                 try {
-                  const { data: { session } } = await supabase.auth.getSession();
-                  if (!session) throw new Error("No session");
                   const res = await supabase.functions.invoke("delete-account", {
+                    method: "POST",
                     headers: { Authorization: `Bearer ${session.access_token}` },
                   });
-                  if (res.error) throw res.error;
+
+                  if (res.error) {
+                    throw new Error(res.error.message || "Error al eliminar la cuenta");
+                  }
+
                   toast.success("Tu cuenta y todos tus datos han sido eliminados.");
                   await signOut();
                   navigate("/");
-                } catch {
-                  toast.error("No se pudo eliminar tu cuenta. Por favor, intenta de nuevo.");
+                } catch (error) {
+                  console.error("delete-account error:", error);
+                  toast.error("No se pudo eliminar tu cuenta. Vuelve a iniciar sesión e inténtalo de nuevo.");
+                } finally {
                   setIsDeleting(false);
                 }
               }}
