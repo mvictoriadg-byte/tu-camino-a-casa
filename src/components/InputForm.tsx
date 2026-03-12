@@ -8,7 +8,8 @@ import { Slider } from "@/components/ui/slider";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { cityData, type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { useLocationPrices } from "@/hooks/use-location-prices";
 import { Switch } from "@/components/ui/switch";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
