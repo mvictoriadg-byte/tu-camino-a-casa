@@ -94,13 +94,17 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
       monthlySavings: Number(cb.monthlySavings) || 0, monthlyDebts: Number(cb.monthlyDebts) || 0,
     }));
 
+    const avgPriceM2 = getAvgPriceM2(comunidad, ciudad || undefined);
+    const mortgageRate = getMortgageRate(comunidad, ciudad || undefined);
     onCalculate({
-      city, age: Number(age), employmentStatus, monthlyIncome: Number(income),
+      city: ciudad || comunidad, comunidad, ciudad: ciudad || undefined,
+      age: Number(age), employmentStatus, monthlyIncome: Number(income),
       savings: Number(savings), monthlySavings: Number(monthlySavings),
       monthlyDebts: Number(monthlyDebts) || 0,
       preferences: { propertyType, size: String(size), rooms, zone, reformState },
       numBuyers: Number(numBuyers), coBuyers: parsedCoBuyers, mortgagePercent,
       firstHome, numberOfChildren: Number(numberOfChildren) || 0,
+      avgPricePerSqm: avgPriceM2, mortgageRate,
     });
   };
 
