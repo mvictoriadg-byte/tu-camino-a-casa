@@ -38,9 +38,9 @@ const Index = () => {
   }, []);
 
   const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
-    const city = cityData[profile.city];
+    const region = profile.comunidad || cityData[profile.city]?.region || "España";
     const eligible = filterEligibleAids(aids, {
-      region: city.region, age: profile.age,
+      region, age: profile.age,
       annualIncome: profile.monthlyIncome * 12, estimatedPrice: r.estimatedPrice,
       firstHome: profile.firstHome,
     });
