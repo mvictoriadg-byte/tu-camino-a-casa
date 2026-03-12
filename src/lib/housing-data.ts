@@ -170,6 +170,8 @@ export interface CoBuyer {
 
 export interface UserProfile {
   city: string;
+  comunidad?: string;
+  ciudad?: string;
   age: number;
   employmentStatus: string;
   monthlyIncome: number;
@@ -182,6 +184,8 @@ export interface UserProfile {
   mortgagePercent: number;
   firstHome: boolean;
   numberOfChildren: number;
+  avgPricePerSqm?: number;
+  mortgageRate?: number;
 }
 
 export interface ActionStep {
