@@ -419,13 +419,22 @@ export function formatCurrency(n: number): string {
 }
 
 export function calculateAffordability(profile: UserProfile): AffordabilityResult {
-  const city = cityData[profile.city];
+  // Use DB-provided avg price if available, otherwise fall back to hardcoded cityData
+  const city = cityData[profile.city] || {
+    name: profile.ciudad || profile.comunidad || "España",
+    region: profile.comunidad || "España",
+    avgPricePerSqm: profile.avgPricePerSqm || 2100,
+    mortgageRate: profile.mortgageRate || 3.2,
+    subsidies: [],
+  };
+  const effectiveAvgPrice = profile.avgPricePerSqm || city.avgPricePerSqm;
+  const effectiveMortgageRate = profile.mortgageRate || city.mortgageRate;
   const sqm = Number(profile.preferences.size) || 70;
-  const basePrice = city.avgPricePerSqm * sqm;
+  const basePrice = effectiveAvgPrice * sqm;
   const typeMulti = propertyTypeMultiplier[profile.preferences.propertyType] || 1;
   const zoneMulti = zoneMultiplier[profile.preferences.zone] || 1;
   const estimatedPrice = Math.round(basePrice * typeMulti * zoneMulti);
-  const pricePerSqm = Math.round(city.avgPricePerSqm * typeMulti * zoneMulti);
+  const pricePerSqm = Math.round(effectiveAvgPrice * typeMulti * zoneMulti);
   const reformCostEstimate = reformCost[profile.preferences.reformState] || 0;
   const totalCost = estimatedPrice + reformCostEstimate;
 
