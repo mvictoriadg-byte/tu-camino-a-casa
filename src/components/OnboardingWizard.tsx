@@ -196,13 +196,25 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
             {step === 1 && (
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <FieldLabel icon={MapPin}>¿Dónde quieres comprar?</FieldLabel>
-                  <Select value={city} onValueChange={setCity}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("city")}`}><SelectValue placeholder="Elige tu ciudad" /></SelectTrigger>
-                    <SelectContent>{Object.entries(cityData).map(([key, data]) => <SelectItem key={key} value={key}>{data.name}</SelectItem>)}</SelectContent>
+                  <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
+                  <Select value={comunidad} onValueChange={(v) => { setComunidad(v); setCiudad(""); setCity(v); }}>
+                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
+                    <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                   </Select>
-                  <FieldError field="city" />
+                  <FieldError field="comunidad" />
                 </div>
+                {comunidad && getCiudades(comunidad).length > 0 && (
+                  <div className="space-y-2">
+                    <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
+                    <Select value={ciudad} onValueChange={(v) => { setCiudad(v); setCity(v || comunidad); }}>
+                      <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue placeholder="Usa media de la comunidad" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Media de {comunidad}</SelectItem>
+                        {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
                   <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl h-12 text-base ${fieldBorder("age")}`} />
