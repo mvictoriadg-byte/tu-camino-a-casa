@@ -22,7 +22,33 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  useEffect(() => { if (user) navigate("/portal"); }, [user, navigate]);
+  const savePendingPlan = async (userId: string) => {
+    try {
+      const raw = localStorage.getItem("pending_plan");
+      if (!raw) return;
+      const { profile, result } = JSON.parse(raw);
+      if (!profile || !result) return;
+      const payload: any = {
+        user_id: userId, city: profile.city, age: profile.age, employment_status: profile.employmentStatus,
+        monthly_income: profile.monthlyIncome, savings: profile.savings, monthly_savings: profile.monthlySavings,
+        monthly_debts: profile.monthlyDebts, num_buyers: profile.numBuyers, co_buyers: profile.coBuyers,
+        property_type: profile.preferences.propertyType, size_sqm: Number(profile.preferences.size),
+        rooms: profile.preferences.rooms, zone: profile.preferences.zone, reform_state: profile.preferences.reformState,
+        mortgage_percent: profile.mortgagePercent, result_json: result,
+        number_of_children: profile.numberOfChildren, first_home: profile.firstHome,
+        comunidad: profile.comunidad || null, ciudad: profile.ciudad || null,
+      };
+      await supabase.from("user_financial_data").insert(payload);
+      localStorage.removeItem("pending_plan");
+      toast.success("¡Tu plan ha sido guardado!");
+    } catch {/* silent */}
+  };
+
+  useEffect(() => {
+    if (user) {
+      savePendingPlan(user.id).then(() => navigate("/portal"));
+    }
+  }, [user, navigate]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +58,6 @@ const Auth = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("¡Bienvenido de vuelta!");
-        navigate("/portal");
       } else {
         const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: window.location.origin } });
         if (error) throw error;
