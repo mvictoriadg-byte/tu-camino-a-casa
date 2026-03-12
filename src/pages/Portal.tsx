@@ -25,7 +25,7 @@ import {
 interface WishlistItem { id: string; url: string; title: string; estimated_price: number; notes: string; created_at: string; }
 
 const Portal = () => {
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, session, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<{ display_name: string; email: string } | null>(null);
   const [result, setResult] = useState<AffordabilityResult | null>(null);
