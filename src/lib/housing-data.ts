@@ -455,9 +455,8 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
   const monthsToSave = totalMonthlySavings > 0 ? Math.ceil(savingsGap / totalMonthlySavings) : savingsGap > 0 ? Infinity : 0;
   const yearsToSave = monthsToSave === Infinity ? Infinity : Math.round((monthsToSave / 12) * 10) / 10;
 
-  // Mortgage capacity: 35% of combined income minus combined debts
   const maxMonthlyPayment = Math.max(0, totalMonthlyIncome * 0.35 - totalMonthlyDebts);
-  const monthlyRate = city.mortgageRate / 100 / 12;
+  const monthlyRate = effectiveMortgageRate / 100 / 12;
   const numPayments = 30 * 12;
   const maxMortgage =
     monthlyRate > 0
