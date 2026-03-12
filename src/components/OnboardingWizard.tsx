@@ -263,6 +263,9 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
 
             {step === 2 && (
               <div className="space-y-5">
+                {Number(numBuyers) > 1 && (
+                  <p className="text-sm font-bold flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-muted-foreground" /> Comprador 1 (tú)</p>
+                )}
                 <div className="space-y-2">
                   <FieldLabel icon={Euro}>¿Cuánto ganas al mes? (neto)</FieldLabel>
                   <Input type="number" placeholder="Ej: 2.500 €" value={income} onChange={e => setIncome(e.target.value)} min={0} className={`rounded-xl h-12 text-base ${fieldBorder("income")}`} />
