@@ -69,7 +69,7 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/portal" });
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
       if (result.error) throw result.error;
     } catch (err: any) { toast.error(err.message || "Error con Google"); setLoading(false); }
   };
