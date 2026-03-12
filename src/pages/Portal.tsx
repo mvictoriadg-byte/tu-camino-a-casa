@@ -75,7 +75,7 @@ const Portal = () => {
     if (!user) return;
     setLoadingData(true);
     const [p, f, w] = await Promise.all([
-      supabase.from("profiles").select("*").eq("user_id", user.id).single(),
+      supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("user_financial_data").select("*").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(1),
       supabase.from("user_wishlist").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     ]);
