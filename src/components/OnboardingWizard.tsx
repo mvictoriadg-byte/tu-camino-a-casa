@@ -21,6 +21,17 @@ import illustrationFinance from "@/assets/illustration-finance.png";
 import illustrationHousing from "@/assets/illustration-housing.png";
 import illustrationMortgage from "@/assets/illustration-mortgage.png";
 
+const EstimatedPriceDisplay = ({ ciudad, comunidad, zone, reformState, size }: { ciudad: string; comunidad: string; zone: string; reformState: string; size: number }) => {
+  const estimated = useMemo(() => estimatePropertyPrice(ciudad || undefined, comunidad || undefined, zone, reformState, size), [ciudad, comunidad, zone, reformState, size]);
+  return (
+    <div className="rounded-2xl bg-primary/5 border border-primary/20 p-5 text-center">
+      <p className="text-sm font-semibold text-muted-foreground mb-1">Precio estimado de la vivienda</p>
+      <p className="text-3xl font-extrabold tracking-tight text-primary">{formatCurrency(estimated)}</p>
+      <p className="text-xs text-muted-foreground mt-2">Estimación basada en la ciudad, la zona, el estado de la vivienda y los metros cuadrados.</p>
+    </div>
+  );
+};
+
 const TOTAL_STEPS = 4;
 
 interface OnboardingWizardProps {
