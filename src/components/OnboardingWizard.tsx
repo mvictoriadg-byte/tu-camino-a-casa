@@ -215,8 +215,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
                     <SelectContent>
                       <SelectItem value="1">Solo yo</SelectItem>
                       <SelectItem value="2">2 personas</SelectItem>
-                      <SelectItem value="3">3 personas</SelectItem>
-                      <SelectItem value="4">4 personas</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
