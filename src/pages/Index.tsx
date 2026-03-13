@@ -196,6 +196,7 @@ const Index = () => {
                 <OnboardingWizard
                   onCalculate={handleCalculate}
                   isCalculating={isCalculating}
+                  initialValues={currentProfile ?? undefined}
                   submitLabel={user ? "Actualizar mi plan" : undefined}
                 />
               </div>
