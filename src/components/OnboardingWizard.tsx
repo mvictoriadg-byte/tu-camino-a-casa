@@ -147,7 +147,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
 
   const stepConfig = [
     { title: "Sobre ti", subtitle: "Cuéntanos un poco sobre ti", illustration: illustrationPersonal, emoji: "👋" },
-    { title: "Tu economía", subtitle: "🔒 Simulación anónima. Usamos estos datos solo para calcular tu plan. No pedimos nombre, email ni guardamos información personal.", illustration: illustrationFinance, emoji: "💰" },
+    { title: "Tu economía", subtitle: "🔒 Simulación anónima. Usamos estos datos solo para simular tu plan. No pedimos nombre, email ni guardaremos tu información personal.", illustration: illustrationFinance, emoji: "💰" },
     { title: "Tu casa ideal", subtitle: "¿Cómo imaginas tu futuro hogar?", illustration: illustrationHousing, emoji: "🏡" },
     { title: "Tu hipoteca", subtitle: "¿Cuánto quieres financiar?", illustration: illustrationMortgage, emoji: "🏦" },
   ];
