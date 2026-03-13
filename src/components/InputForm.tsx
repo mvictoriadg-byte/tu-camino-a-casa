@@ -144,33 +144,11 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
             <SectionHeader title="Sobre ti" subtitle="Cuéntanos un poco sobre ti" illustration={illustrationPersonal} step={1} />
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5 col-span-2">
-                  <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
-                  <Select value={comunidad} onValueChange={v => { setComunidad(v); setCiudad(""); setCity(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
-                    <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <FieldError field="comunidad" />
-                </div>
-                {comunidad && getCiudades(comunidad).length > 0 && (
-                  <div className="space-y-1.5 col-span-2">
-                    <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
-                    <Select value={ciudad || "__comunidad_avg__"} onValueChange={v => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
-                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Precio promedio en la comunidad" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="__comunidad_avg__">Precio promedio en {comunidad}</SelectItem>
-                        {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
                 <div className="space-y-1.5">
                   <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
                   <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl ${fieldBorder("age")}`} />
                   <FieldError field="age" />
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>
                   <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
@@ -197,12 +175,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                       <SelectItem value="4">4 o más hijos</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border h-full">
-                  <div>
-                    <FieldLabel icon={Home}>¿Primera vivienda?</FieldLabel>
-                  </div>
-                  <Switch checked={firstHome} onCheckedChange={setFirstHome} />
                 </div>
               </div>
             </div>
