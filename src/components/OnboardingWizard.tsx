@@ -270,6 +270,26 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
             {step === 3 && (
               <div className="space-y-5">
                 <div className="space-y-2">
+                  <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
+                  <Select value={comunidad} onValueChange={(v) => { setComunidad(v); setCiudad(""); setCity(v); }}>
+                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
+                    <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                  </Select>
+                  <FieldError field="comunidad" />
+                </div>
+                {comunidad && getCiudades(comunidad).length > 0 && (
+                  <div className="space-y-2">
+                    <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
+                    <Select value={ciudad || "__comunidad_avg__"} onValueChange={(v) => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
+                      <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue placeholder="Precio promedio en la comunidad" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__comunidad_avg__">Precio promedio en {comunidad}</SelectItem>
+                        {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                <div className="space-y-2">
                   <FieldLabel icon={Building2}>¿Qué tipo de vivienda buscas?</FieldLabel>
                   <Select value={propertyType} onValueChange={setPropertyType}>
                     <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("propertyType")}`}><SelectValue placeholder="Elige un tipo" /></SelectTrigger>
