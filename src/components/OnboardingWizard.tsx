@@ -187,9 +187,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
         <img src={current.illustration} alt="" className="w-20 h-20 sm:w-24 sm:h-24 object-contain mx-auto mb-4" />
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1">{current.title}</h2>
         <p className="text-sm text-muted-foreground">{current.subtitle}</p>
-        {step === 2 && (
-          <p className="text-xs text-muted-foreground/70 mt-2 max-w-sm mx-auto">🔒 Simulación anónima. Usamos estos datos solo para calcular tu plan. No pedimos nombre, email ni guardamos información personal.</p>
-        )}
       </motion.div>
 
       {/* Step content */}
