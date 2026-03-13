@@ -158,9 +158,9 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                   <div className="space-y-1.5 col-span-2">
                     <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
                     <Select value={ciudad || "__comunidad_avg__"} onValueChange={v => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
-                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Media de la comunidad" /></SelectTrigger>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Precio promedio en la comunidad" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="__comunidad_avg__">Media de {comunidad}</SelectItem>
+                        <SelectItem value="__comunidad_avg__">Precio promedio en {comunidad}</SelectItem>
                         {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                       </SelectContent>
                     </Select>

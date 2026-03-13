@@ -207,9 +207,9 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
                   <div className="space-y-2">
                     <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
                     <Select value={ciudad || "__comunidad_avg__"} onValueChange={(v) => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
-                      <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue placeholder="Usa media de la comunidad" /></SelectTrigger>
+                      <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue placeholder="Precio promedio en la comunidad" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="__comunidad_avg__">Media de {comunidad}</SelectItem>
+                        <SelectItem value="__comunidad_avg__">Precio promedio en {comunidad}</SelectItem>
                         {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                       </SelectContent>
                     </Select>
