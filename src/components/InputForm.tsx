@@ -174,19 +174,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <FieldLabel icon={Briefcase}>¿En qué trabajas?</FieldLabel>
-                  <Select value={employmentStatus} onValueChange={v => { setEmploymentStatus(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("employmentStatus")}`}><SelectValue placeholder="Tu situación" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="empleado">Empleado/a</SelectItem>
-                      <SelectItem value="autonomo">Autónomo/a</SelectItem>
-                      <SelectItem value="funcionario">Funcionario/a</SelectItem>
-                      <SelectItem value="temporal">Contrato temporal</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FieldError field="employmentStatus" />
-                </div>
-                <div className="space-y-1.5">
                   <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>
                   <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
                     <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>

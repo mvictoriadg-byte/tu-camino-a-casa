@@ -221,19 +221,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
                   <FieldError field="age" />
                 </div>
                 <div className="space-y-2">
-                  <FieldLabel icon={Briefcase}>¿En qué trabajas?</FieldLabel>
-                  <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("employmentStatus")}`}><SelectValue placeholder="Tu situación laboral" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="empleado">Empleado/a</SelectItem>
-                      <SelectItem value="autonomo">Autónomo/a</SelectItem>
-                      <SelectItem value="funcionario">Funcionario/a</SelectItem>
-                      <SelectItem value="temporal">Contrato temporal</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FieldError field="employmentStatus" />
-                </div>
-                <div className="space-y-2">
                   <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>
                   <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
                     <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue /></SelectTrigger>
