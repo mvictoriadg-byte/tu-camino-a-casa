@@ -209,12 +209,12 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
                   <FieldError field="age" />
                 </div>
                 <div className="space-y-2">
-                  <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>
+                  <FieldLabel icon={Users}>¿Comprarás la vivienda con otra persona?</FieldLabel>
                   <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
                     <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">Solo yo</SelectItem>
-                      <SelectItem value="2">2 personas</SelectItem>
+                      <SelectItem value="1">No, solo yo</SelectItem>
+                      <SelectItem value="2">Sí, con otra persona</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
