@@ -261,43 +261,63 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
           <CardContent className="p-5 sm:p-6">
             <SectionHeader title="Tu casa ideal" subtitle="¿Cómo imaginas tu futuro hogar?" illustration={illustrationHousing} step={3} />
             <div className="space-y-4">
+              <div className="space-y-1.5 col-span-2">
+                <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
+                <Select value={comunidad} onValueChange={v => { setComunidad(v); setCiudad(""); setCity(v); if (submitted) validate(); }}>
+                  <SelectTrigger className={`rounded-xl ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
+                  <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                </Select>
+                <FieldError field="comunidad" />
+              </div>
+              {comunidad && getCiudades(comunidad).length > 0 && (
+                <div className="space-y-1.5 col-span-2">
+                  <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
+                  <Select value={ciudad || "__comunidad_avg__"} onValueChange={v => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
+                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Precio promedio en la comunidad" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__comunidad_avg__">Precio promedio en {comunidad}</SelectItem>
+                      {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="space-y-1.5">
-                <FieldLabel icon={Building2}>¿Qué tipo de vivienda buscas?</FieldLabel>
-                <Select value={propertyType} onValueChange={v => { setPropertyType(v); if (submitted) validate(); }}>
-                  <SelectTrigger className={`rounded-xl ${fieldBorder("propertyType")}`}><SelectValue placeholder="Elige un tipo" /></SelectTrigger>
+                <FieldLabel icon={MapPin}>¿Qué tipo de zona te gustaría?</FieldLabel>
+                <Select value={zone} onValueChange={setZone}>
+                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Elige una zona" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="apartamento">Apartamento</SelectItem>
-                    <SelectItem value="casa">Casa</SelectItem>
-                    <SelectItem value="obra-nueva">Obra nueva</SelectItem>
-                    <SelectItem value="segunda-mano">Segunda mano</SelectItem>
+                    {(Object.entries(ZONE_LABELS) as [ZoneKey, string][]).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>{label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                <FieldError field="propertyType" />
+              </div>
+              <div className="space-y-1.5">
+                <FieldLabel icon={Wrench}>¿En qué estado está la vivienda?</FieldLabel>
+                <Select value={reformState} onValueChange={setReformState}>
+                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Elige un estado" /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.entries(STATE_LABELS) as [PropertyStateKey, string][]).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5">
                 <FieldLabel icon={Ruler}>¿De qué tamaño? {size} m²</FieldLabel>
                 <Slider value={[size]} onValueChange={v => setSize(v[0])} min={30} max={200} step={10} className="mt-2" />
                 <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>30 m²</span><span>200 m²</span></div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <FieldLabel icon={BedDouble}>¿Cuántas habitaciones?</FieldLabel>
-                  <Select value={rooms} onValueChange={v => { setRooms(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("rooms")}`}><SelectValue placeholder="Nº" /></SelectTrigger>
-                    <SelectContent><SelectItem value="1">1</SelectItem><SelectItem value="2">2</SelectItem><SelectItem value="3">3</SelectItem><SelectItem value="4+">4+</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="rooms" />
+
+              {/* Real-time estimated price */}
+              <InputFormEstimatedPrice ciudad={ciudad} comunidad={comunidad} zone={zone} reformState={reformState} size={size} />
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border">
+                <div>
+                  <FieldLabel icon={Home}>¿Primera vivienda?</FieldLabel>
                 </div>
-                <div className="space-y-1.5">
-                  <FieldLabel icon={MapPin}>¿En qué zona?</FieldLabel>
-                  <Select value={zone} onValueChange={v => { setZone(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("zone")}`}><SelectValue placeholder="Zona" /></SelectTrigger>
-                    <SelectContent><SelectItem value="centro">Centro</SelectItem><SelectItem value="metropolitana">Metropolitana</SelectItem><SelectItem value="periferia">Periferia</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="zone" />
-                </div>
+                <Switch checked={firstHome} onCheckedChange={setFirstHome} />
               </div>
-{/* Reform state hidden - default value used */}
             </div>
           </CardContent>
         </Card>
