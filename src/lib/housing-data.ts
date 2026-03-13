@@ -443,7 +443,6 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
   const estimatedPrice = Math.round(adjustedPriceM2 * sqm);
   const pricePerSqm = adjustedPriceM2;
   const reformCostEstimate = 0; // Reform cost is now embedded in the state factor
-  const reformCostEstimate = 0; // Reform cost is now embedded in the state factor
   const totalCost = estimatedPrice + reformCostEstimate;
 
   const mortgagePct = profile.mortgagePercent / 100;
