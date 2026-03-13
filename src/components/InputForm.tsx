@@ -128,6 +128,19 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     </div>
   );
 
+  const estimatedPrice = useMemo(() => estimatePropertyPrice(ciudad || undefined, comunidad || undefined, zone, reformState, size), [ciudad, comunidad, zone, reformState, size]);
+
+  const InputFormEstimatedPrice = ({ ciudad: c, comunidad: com, zone: z, reformState: rs, size: s }: { ciudad: string; comunidad: string; zone: string; reformState: string; size: number }) => {
+    const est = useMemo(() => estimatePropertyPrice(c || undefined, com || undefined, z, rs, s), [c, com, z, rs, s]);
+    return (
+      <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4 text-center">
+        <p className="text-sm font-semibold text-muted-foreground mb-1">Precio estimado de la vivienda</p>
+        <p className="text-2xl font-extrabold tracking-tight text-primary">{formatCurrency(est)}</p>
+        <p className="text-xs text-muted-foreground mt-1.5">Estimación basada en la ciudad, la zona, el estado de la vivienda y los metros cuadrados.</p>
+      </div>
+    );
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
       <div className="mb-5">
