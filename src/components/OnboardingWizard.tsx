@@ -75,7 +75,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
     if (s === 1) {
       if (!comunidad) e.comunidad = "Obligatorio";
       if (!age) e.age = "Obligatorio";
-      if (!employmentStatus) e.employmentStatus = "Obligatorio";
+      
     } else if (s === 2) {
       if (!income) e.income = "Obligatorio";
       if (!savings) e.savings = "Obligatorio";
