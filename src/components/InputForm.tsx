@@ -78,9 +78,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     if (!income) e.income = "Campo obligatorio";
     if (!savings) e.savings = "Campo obligatorio";
     if (!monthlySavings) e.monthlySavings = "Campo obligatorio";
-    if (!propertyType) e.propertyType = "Campo obligatorio";
-    if (!rooms) e.rooms = "Campo obligatorio";
-    if (!zone) e.zone = "Campo obligatorio";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
