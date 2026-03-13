@@ -82,10 +82,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
       if (!monthlySavings) e.monthlySavings = "Obligatorio";
     } else if (s === 3) {
       if (!comunidad) e.comunidad = "Obligatorio";
-      if (!propertyType) e.propertyType = "Obligatorio";
-      if (!rooms) e.rooms = "Obligatorio";
-      if (!zone) e.zone = "Obligatorio";
-      
     }
     setErrors(e);
     return Object.keys(e).length === 0;
