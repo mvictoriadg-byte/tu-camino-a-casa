@@ -263,27 +263,19 @@ function generateOptimizationTips(
 ): OptimizationTip[] {
   const tips: OptimizationTip[] = [];
 
-  if (profile.preferences.zone === "centro") {
+  if (profile.preferences.zone === "centrico") {
     tips.push({
-      title: "Considera zona metropolitana",
-      description: "Mudarte al área metropolitana puede reducir el precio hasta un 30% manteniendo buenas conexiones.",
+      title: "Considera una zona más alejada del centro",
+      description: "Mudarte a las afueras o un municipio cercano puede reducir el precio hasta un 30% manteniendo buenas conexiones.",
       potentialSaving: "Hasta -30% en precio",
     });
   }
 
-  if (profile.preferences.propertyType === "obra-nueva") {
+  if (profile.preferences.reformState === "nueva") {
     tips.push({
-      title: "Explora segunda mano con reforma",
-      description: "Una vivienda de segunda mano con pequeña reforma puede ahorrarte un 25–35% frente a obra nueva.",
-      potentialSaving: "Hasta -35% en precio",
-    });
-  }
-
-  if (profile.preferences.reformState === "listo-para-entrar") {
-    tips.push({
-      title: "Vivienda para reformar = oportunidad",
-      description: "Comprar una vivienda que necesite reforma ligera permite negociar mejor precio de entrada.",
-      potentialSaving: "Hasta -15% negociando",
+      title: "Explora viviendas con pequeña reforma",
+      description: "Una vivienda que necesite una pequeña reforma puede ahorrarte un 15–20% frente a una nueva.",
+      potentialSaving: "Hasta -20% en precio",
     });
   }
 
