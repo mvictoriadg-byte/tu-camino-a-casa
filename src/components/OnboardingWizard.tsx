@@ -13,7 +13,7 @@ import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
 import { useLocationPrices } from "@/hooks/use-location-prices";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
-  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, ArrowLeft, Loader2, Home,
+  Building2, User, CreditCard, Users, Percent, ArrowRight, ArrowLeft, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
 import illustrationFinance from "@/assets/illustration-finance.png";
@@ -37,7 +37,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
   const [city, setCity] = useState(iv?.city || "");
   const { comunidades, getCiudades, getAvgPriceM2, getMortgageRate } = useLocationPrices();
   const [age, setAge] = useState(iv?.age ? String(iv.age) : "");
-  const [employmentStatus, setEmploymentStatus] = useState(iv?.employmentStatus || "");
+  const [employmentStatus] = useState(iv?.employmentStatus || "empleado");
   const [income, setIncome] = useState(iv?.monthlyIncome ? String(iv.monthlyIncome) : "");
   const [savings, setSavings] = useState(iv?.savings ? String(iv.savings) : "");
   const [monthlySavings, setMonthlySavings] = useState(iv?.monthlySavings ? String(iv.monthlySavings) : "");
@@ -75,7 +75,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
     if (s === 1) {
       if (!comunidad) e.comunidad = "Obligatorio";
       if (!age) e.age = "Obligatorio";
-      if (!employmentStatus) e.employmentStatus = "Obligatorio";
+      
     } else if (s === 2) {
       if (!income) e.income = "Obligatorio";
       if (!savings) e.savings = "Obligatorio";
@@ -219,19 +219,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
                   <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
                   <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl h-12 text-base ${fieldBorder("age")}`} />
                   <FieldError field="age" />
-                </div>
-                <div className="space-y-2">
-                  <FieldLabel icon={Briefcase}>¿En qué trabajas?</FieldLabel>
-                  <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("employmentStatus")}`}><SelectValue placeholder="Tu situación laboral" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="empleado">Empleado/a</SelectItem>
-                      <SelectItem value="autonomo">Autónomo/a</SelectItem>
-                      <SelectItem value="funcionario">Funcionario/a</SelectItem>
-                      <SelectItem value="temporal">Contrato temporal</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FieldError field="employmentStatus" />
                 </div>
                 <div className="space-y-2">
                   <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>

@@ -13,7 +13,7 @@ import { useLocationPrices } from "@/hooks/use-location-prices";
 import { Switch } from "@/components/ui/switch";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
-  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
+  Building2, User, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
 import illustrationFinance from "@/assets/illustration-finance.png";
@@ -35,7 +35,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
   const [city, setCity] = useState(iv?.city || "");
   const { comunidades, getCiudades, getAvgPriceM2, getMortgageRate } = useLocationPrices();
   const [age, setAge] = useState(iv?.age ? String(iv.age) : "");
-  const [employmentStatus, setEmploymentStatus] = useState(iv?.employmentStatus || "");
+  const [employmentStatus] = useState(iv?.employmentStatus || "empleado");
   const [income, setIncome] = useState(iv?.monthlyIncome ? String(iv.monthlyIncome) : "");
   const [savings, setSavings] = useState(iv?.savings ? String(iv.savings) : "");
   const [monthlySavings, setMonthlySavings] = useState(iv?.monthlySavings ? String(iv.monthlySavings) : "");
@@ -73,7 +73,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     const e: Record<string, string> = {};
     if (!comunidad) e.comunidad = "Campo obligatorio";
     if (!age) e.age = "Campo obligatorio";
-    if (!employmentStatus) e.employmentStatus = "Campo obligatorio";
+    
     if (!income) e.income = "Campo obligatorio";
     if (!savings) e.savings = "Campo obligatorio";
     if (!monthlySavings) e.monthlySavings = "Campo obligatorio";
@@ -173,19 +173,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <FieldLabel icon={Briefcase}>¿En qué trabajas?</FieldLabel>
-                  <Select value={employmentStatus} onValueChange={v => { setEmploymentStatus(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("employmentStatus")}`}><SelectValue placeholder="Tu situación" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="empleado">Empleado/a</SelectItem>
-                      <SelectItem value="autonomo">Autónomo/a</SelectItem>
-                      <SelectItem value="funcionario">Funcionario/a</SelectItem>
-                      <SelectItem value="temporal">Contrato temporal</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FieldError field="employmentStatus" />
-                </div>
                 <div className="space-y-1.5">
                   <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>
                   <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
