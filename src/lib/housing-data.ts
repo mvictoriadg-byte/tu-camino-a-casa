@@ -430,12 +430,20 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
   const effectiveAvgPrice = profile.avgPricePerSqm || city.avgPricePerSqm;
   const effectiveMortgageRate = profile.mortgageRate || city.mortgageRate;
   const sqm = Number(profile.preferences.size) || 70;
-  const basePrice = effectiveAvgPrice * sqm;
-  const typeMulti = propertyTypeMultiplier[profile.preferences.propertyType] || 1;
-  const zoneMulti = zoneMultiplier[profile.preferences.zone] || 1;
-  const estimatedPrice = Math.round(basePrice * typeMulti * zoneMulti);
-  const pricePerSqm = Math.round(effectiveAvgPrice * typeMulti * zoneMulti);
-  const reformCostEstimate = reformCost[profile.preferences.reformState] || 0;
+
+  // Use new city-pricing module for price estimation
+  const { getAdjustedPriceM2 } = await import("@/lib/city-pricing");
+  const adjustedPriceM2 = getAdjustedPriceM2(
+    profile.ciudad,
+    profile.comunidad,
+    profile.preferences.zone,
+    profile.preferences.reformState
+  );
+  // If DB avg price exists and is more specific, blend it; otherwise use city-pricing
+  const finalPriceM2 = profile.avgPricePerSqm ? adjustedPriceM2 : adjustedPriceM2;
+  const estimatedPrice = Math.round(finalPriceM2 * sqm);
+  const pricePerSqm = finalPriceM2;
+  const reformCostEstimate = 0; // Reform cost is now embedded in the state factor
   const totalCost = estimatedPrice + reformCostEstimate;
 
   const mortgagePct = profile.mortgagePercent / 100;
