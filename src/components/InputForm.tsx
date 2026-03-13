@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,11 +8,12 @@ import { Slider } from "@/components/ui/slider";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { type UserProfile, type CoBuyer, formatCurrency } from "@/lib/housing-data";
 import { useLocationPrices } from "@/hooks/use-location-prices";
 import { Switch } from "@/components/ui/switch";
+import { estimatePropertyPrice, ZONE_LABELS, STATE_LABELS, type ZoneKey, type PropertyStateKey } from "@/lib/city-pricing";
 import {
-  Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
+  Euro, PiggyBank, TrendingUp, Ruler, MapPin, Wrench,
   Building2, User, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
@@ -44,11 +45,11 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
   const [coBuyers, setCoBuyers] = useState<{ income: string; savings: string; monthlySavings: string; monthlyDebts: string }[]>(
     iv?.coBuyers?.map(cb => ({ income: String(cb.monthlyIncome || ""), savings: String(cb.savings || ""), monthlySavings: String(cb.monthlySavings || ""), monthlyDebts: String(cb.monthlyDebts || "") })) || []
   );
-  const [propertyType, setPropertyType] = useState(iv?.preferences?.propertyType || "");
+  const [propertyType] = useState(iv?.preferences?.propertyType || "segunda-mano");
   const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
-  const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
-  const [zone, setZone] = useState(iv?.preferences?.zone || "");
-  const [reformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
+  const [rooms] = useState(iv?.preferences?.rooms || "2");
+  const [zone, setZone] = useState(iv?.preferences?.zone || "cerca_centro");
+  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "nueva");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
   const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
@@ -77,9 +78,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     if (!income) e.income = "Campo obligatorio";
     if (!savings) e.savings = "Campo obligatorio";
     if (!monthlySavings) e.monthlySavings = "Campo obligatorio";
-    if (!propertyType) e.propertyType = "Campo obligatorio";
-    if (!rooms) e.rooms = "Campo obligatorio";
-    if (!zone) e.zone = "Campo obligatorio";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -130,6 +128,19 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     </div>
   );
 
+  const estimatedPrice = useMemo(() => estimatePropertyPrice(ciudad || undefined, comunidad || undefined, zone, reformState, size), [ciudad, comunidad, zone, reformState, size]);
+
+  const InputFormEstimatedPrice = ({ ciudad: c, comunidad: com, zone: z, reformState: rs, size: s }: { ciudad: string; comunidad: string; zone: string; reformState: string; size: number }) => {
+    const est = useMemo(() => estimatePropertyPrice(c || undefined, com || undefined, z, rs, s), [c, com, z, rs, s]);
+    return (
+      <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4 text-center">
+        <p className="text-sm font-semibold text-muted-foreground mb-1">Precio estimado de la vivienda</p>
+        <p className="text-2xl font-extrabold tracking-tight text-primary">{formatCurrency(est)}</p>
+        <p className="text-xs text-muted-foreground mt-1.5">Estimación basada en la ciudad, la zona, el estado de la vivienda y los metros cuadrados.</p>
+      </div>
+    );
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
       <div className="mb-5">
@@ -146,33 +157,11 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
             <SectionHeader title="Sobre ti" subtitle="Cuéntanos un poco sobre ti" illustration={illustrationPersonal} step={1} />
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5 col-span-2">
-                  <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
-                  <Select value={comunidad} onValueChange={v => { setComunidad(v); setCiudad(""); setCity(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
-                    <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <FieldError field="comunidad" />
-                </div>
-                {comunidad && getCiudades(comunidad).length > 0 && (
-                  <div className="space-y-1.5 col-span-2">
-                    <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
-                    <Select value={ciudad || "__comunidad_avg__"} onValueChange={v => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
-                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Precio promedio en la comunidad" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="__comunidad_avg__">Precio promedio en {comunidad}</SelectItem>
-                        {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
                 <div className="space-y-1.5">
                   <FieldLabel icon={User}>¿Cuántos años tienes?</FieldLabel>
                   <Input type="number" placeholder="Ej: 28" value={age} onChange={e => setAge(e.target.value)} min={18} max={70} className={`rounded-xl ${fieldBorder("age")}`} />
                   <FieldError field="age" />
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <FieldLabel icon={Users}>¿Compráis juntos?</FieldLabel>
                   <Select value={numBuyers} onValueChange={handleNumBuyersChange}>
@@ -199,12 +188,6 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
                       <SelectItem value="4">4 o más hijos</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border h-full">
-                  <div>
-                    <FieldLabel icon={Home}>¿Primera vivienda?</FieldLabel>
-                  </div>
-                  <Switch checked={firstHome} onCheckedChange={setFirstHome} />
                 </div>
               </div>
             </div>
@@ -260,43 +243,63 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
           <CardContent className="p-5 sm:p-6">
             <SectionHeader title="Tu casa ideal" subtitle="¿Cómo imaginas tu futuro hogar?" illustration={illustrationHousing} step={3} />
             <div className="space-y-4">
+              <div className="space-y-1.5 col-span-2">
+                <FieldLabel icon={MapPin}>Comunidad Autónoma</FieldLabel>
+                <Select value={comunidad} onValueChange={v => { setComunidad(v); setCiudad(""); setCity(v); if (submitted) validate(); }}>
+                  <SelectTrigger className={`rounded-xl ${fieldBorder("comunidad")}`}><SelectValue placeholder="Elige tu comunidad" /></SelectTrigger>
+                  <SelectContent>{comunidades.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                </Select>
+                <FieldError field="comunidad" />
+              </div>
+              {comunidad && getCiudades(comunidad).length > 0 && (
+                <div className="space-y-1.5 col-span-2">
+                  <FieldLabel icon={Building2}>Ciudad <span className="text-muted-foreground font-normal">(opcional)</span></FieldLabel>
+                  <Select value={ciudad || "__comunidad_avg__"} onValueChange={v => { const val = v === "__comunidad_avg__" ? "" : v; setCiudad(val); setCity(val || comunidad); }}>
+                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Precio promedio en la comunidad" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__comunidad_avg__">Precio promedio en {comunidad}</SelectItem>
+                      {getCiudades(comunidad).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="space-y-1.5">
-                <FieldLabel icon={Building2}>¿Qué tipo de vivienda buscas?</FieldLabel>
-                <Select value={propertyType} onValueChange={v => { setPropertyType(v); if (submitted) validate(); }}>
-                  <SelectTrigger className={`rounded-xl ${fieldBorder("propertyType")}`}><SelectValue placeholder="Elige un tipo" /></SelectTrigger>
+                <FieldLabel icon={MapPin}>¿Qué tipo de zona te gustaría?</FieldLabel>
+                <Select value={zone} onValueChange={setZone}>
+                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Elige una zona" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="apartamento">Apartamento</SelectItem>
-                    <SelectItem value="casa">Casa</SelectItem>
-                    <SelectItem value="obra-nueva">Obra nueva</SelectItem>
-                    <SelectItem value="segunda-mano">Segunda mano</SelectItem>
+                    {(Object.entries(ZONE_LABELS) as [ZoneKey, string][]).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>{label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                <FieldError field="propertyType" />
+              </div>
+              <div className="space-y-1.5">
+                <FieldLabel icon={Wrench}>¿En qué estado está la vivienda?</FieldLabel>
+                <Select value={reformState} onValueChange={setReformState}>
+                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Elige un estado" /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.entries(STATE_LABELS) as [PropertyStateKey, string][]).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5">
                 <FieldLabel icon={Ruler}>¿De qué tamaño? {size} m²</FieldLabel>
                 <Slider value={[size]} onValueChange={v => setSize(v[0])} min={30} max={200} step={10} className="mt-2" />
                 <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>30 m²</span><span>200 m²</span></div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <FieldLabel icon={BedDouble}>¿Cuántas habitaciones?</FieldLabel>
-                  <Select value={rooms} onValueChange={v => { setRooms(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("rooms")}`}><SelectValue placeholder="Nº" /></SelectTrigger>
-                    <SelectContent><SelectItem value="1">1</SelectItem><SelectItem value="2">2</SelectItem><SelectItem value="3">3</SelectItem><SelectItem value="4+">4+</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="rooms" />
+
+              {/* Real-time estimated price */}
+              <InputFormEstimatedPrice ciudad={ciudad} comunidad={comunidad} zone={zone} reformState={reformState} size={size} />
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border">
+                <div>
+                  <FieldLabel icon={Home}>¿Primera vivienda?</FieldLabel>
                 </div>
-                <div className="space-y-1.5">
-                  <FieldLabel icon={MapPin}>¿En qué zona?</FieldLabel>
-                  <Select value={zone} onValueChange={v => { setZone(v); if (submitted) validate(); }}>
-                    <SelectTrigger className={`rounded-xl ${fieldBorder("zone")}`}><SelectValue placeholder="Zona" /></SelectTrigger>
-                    <SelectContent><SelectItem value="centro">Centro</SelectItem><SelectItem value="metropolitana">Metropolitana</SelectItem><SelectItem value="periferia">Periferia</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="zone" />
-                </div>
+                <Switch checked={firstHome} onCheckedChange={setFirstHome} />
               </div>
-{/* Reform state hidden - default value used */}
             </div>
           </CardContent>
         </Card>

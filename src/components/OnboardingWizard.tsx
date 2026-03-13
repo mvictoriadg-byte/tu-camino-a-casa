@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,16 +9,28 @@ import { Switch } from "@/components/ui/switch";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { type UserProfile, type CoBuyer, formatCurrency } from "@/lib/housing-data";
 import { useLocationPrices } from "@/hooks/use-location-prices";
+import { estimatePropertyPrice, ZONE_LABELS, STATE_LABELS, type ZoneKey, type PropertyStateKey } from "@/lib/city-pricing";
 import {
-  Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
+  Euro, PiggyBank, TrendingUp, Ruler, MapPin, Wrench,
   Building2, User, CreditCard, Users, Percent, ArrowRight, ArrowLeft, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
 import illustrationFinance from "@/assets/illustration-finance.png";
 import illustrationHousing from "@/assets/illustration-housing.png";
 import illustrationMortgage from "@/assets/illustration-mortgage.png";
+
+const EstimatedPriceDisplay = ({ ciudad, comunidad, zone, reformState, size }: { ciudad: string; comunidad: string; zone: string; reformState: string; size: number }) => {
+  const estimated = useMemo(() => estimatePropertyPrice(ciudad || undefined, comunidad || undefined, zone, reformState, size), [ciudad, comunidad, zone, reformState, size]);
+  return (
+    <div className="rounded-2xl bg-primary/5 border border-primary/20 p-5 text-center">
+      <p className="text-sm font-semibold text-muted-foreground mb-1">Precio estimado de la vivienda</p>
+      <p className="text-3xl font-extrabold tracking-tight text-primary">{formatCurrency(estimated)}</p>
+      <p className="text-xs text-muted-foreground mt-2">Estimación basada en la ciudad, la zona, el estado de la vivienda y los metros cuadrados.</p>
+    </div>
+  );
+};
 
 const TOTAL_STEPS = 4;
 
@@ -46,11 +58,11 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
   const [coBuyers, setCoBuyers] = useState<{ income: string; savings: string; monthlySavings: string; monthlyDebts: string }[]>(
     iv?.coBuyers?.map(cb => ({ income: String(cb.monthlyIncome || ""), savings: String(cb.savings || ""), monthlySavings: String(cb.monthlySavings || ""), monthlyDebts: String(cb.monthlyDebts || "") })) || []
   );
-  const [propertyType, setPropertyType] = useState(iv?.preferences?.propertyType || "");
+  const [propertyType] = useState(iv?.preferences?.propertyType || "segunda-mano");
   const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
-  const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
-  const [zone, setZone] = useState(iv?.preferences?.zone || "");
-  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
+  const [rooms] = useState(iv?.preferences?.rooms || "2");
+  const [zone, setZone] = useState(iv?.preferences?.zone || "cerca_centro");
+  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "nueva");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
   const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
@@ -81,10 +93,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
       if (!monthlySavings) e.monthlySavings = "Obligatorio";
     } else if (s === 3) {
       if (!comunidad) e.comunidad = "Obligatorio";
-      if (!propertyType) e.propertyType = "Obligatorio";
-      if (!rooms) e.rooms = "Obligatorio";
-      if (!zone) e.zone = "Obligatorio";
-      
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -290,39 +298,36 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
                   </div>
                 )}
                 <div className="space-y-2">
-                  <FieldLabel icon={Building2}>¿Qué tipo de vivienda buscas?</FieldLabel>
-                  <Select value={propertyType} onValueChange={setPropertyType}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("propertyType")}`}><SelectValue placeholder="Elige un tipo" /></SelectTrigger>
+                  <FieldLabel icon={MapPin}>¿Qué tipo de zona te gustaría?</FieldLabel>
+                  <Select value={zone} onValueChange={setZone}>
+                    <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue placeholder="Elige una zona" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="apartamento">Apartamento</SelectItem>
-                      <SelectItem value="casa">Casa</SelectItem>
-                      <SelectItem value="obra-nueva">Obra nueva</SelectItem>
-                      <SelectItem value="segunda-mano">Segunda mano</SelectItem>
+                      {(Object.entries(ZONE_LABELS) as [ZoneKey, string][]).map(([key, label]) => (
+                        <SelectItem key={key} value={key}>{label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                  <FieldError field="propertyType" />
+                </div>
+                <div className="space-y-2">
+                  <FieldLabel icon={Wrench}>¿En qué estado está la vivienda?</FieldLabel>
+                  <Select value={reformState} onValueChange={setReformState}>
+                    <SelectTrigger className="rounded-xl h-12 text-base"><SelectValue placeholder="Elige un estado" /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.entries(STATE_LABELS) as [PropertyStateKey, string][]).map(([key, label]) => (
+                        <SelectItem key={key} value={key}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <FieldLabel icon={Ruler}>¿De qué tamaño? <span className="font-mono text-foreground ml-1">{size} m²</span></FieldLabel>
                   <Slider value={[size]} onValueChange={v => setSize(v[0])} min={30} max={200} step={10} className="mt-3" />
                   <div className="flex justify-between text-xs text-muted-foreground font-medium"><span>30 m²</span><span>200 m²</span></div>
                 </div>
-                <div className="space-y-2">
-                  <FieldLabel icon={BedDouble}>¿Cuántas habitaciones?</FieldLabel>
-                  <Select value={rooms} onValueChange={setRooms}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("rooms")}`}><SelectValue placeholder="Nº habitaciones" /></SelectTrigger>
-                    <SelectContent><SelectItem value="1">1</SelectItem><SelectItem value="2">2</SelectItem><SelectItem value="3">3</SelectItem><SelectItem value="4+">4+</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="rooms" />
-                </div>
-                <div className="space-y-2">
-                  <FieldLabel icon={MapPin}>¿En qué zona?</FieldLabel>
-                  <Select value={zone} onValueChange={setZone}>
-                    <SelectTrigger className={`rounded-xl h-12 text-base ${fieldBorder("zone")}`}><SelectValue placeholder="Zona preferida" /></SelectTrigger>
-                    <SelectContent><SelectItem value="centro">Centro</SelectItem><SelectItem value="metropolitana">Metropolitana</SelectItem><SelectItem value="periferia">Periferia</SelectItem></SelectContent>
-                  </Select>
-                  <FieldError field="zone" />
-                </div>
+
+                {/* Real-time estimated price */}
+                <EstimatedPriceDisplay ciudad={ciudad} comunidad={comunidad} zone={zone} reformState={reformState} size={size} />
+
                 <div className="flex items-center justify-between p-4 rounded-xl bg-muted/60 border border-border">
                   <div>
                     <FieldLabel icon={Home}>¿Es tu primera vivienda?</FieldLabel>
