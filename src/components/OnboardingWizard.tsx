@@ -147,7 +147,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
 
   const stepConfig = [
     { title: "Sobre ti", subtitle: "Cuéntanos un poco sobre ti", illustration: illustrationPersonal, emoji: "👋" },
-    { title: "Tu economía", subtitle: "Para calcular tu capacidad de compra", illustration: illustrationFinance, emoji: "💰" },
+    { title: "Tu economía", subtitle: "🔒 Simulación anónima. Usamos estos datos solo para calcular tu plan. No pedimos nombre, email ni guardamos información personal.", illustration: illustrationFinance, emoji: "💰" },
     { title: "Tu casa ideal", subtitle: "¿Cómo imaginas tu futuro hogar?", illustration: illustrationHousing, emoji: "🏡" },
     { title: "Tu hipoteca", subtitle: "¿Cuánto quieres financiar?", illustration: illustrationMortgage, emoji: "🏦" },
   ];
@@ -187,9 +187,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
         <img src={current.illustration} alt="" className="w-20 h-20 sm:w-24 sm:h-24 object-contain mx-auto mb-4" />
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1">{current.title}</h2>
         <p className="text-sm text-muted-foreground">{current.subtitle}</p>
-        {step === 2 && (
-          <p className="text-xs text-muted-foreground/70 mt-2 max-w-sm mx-auto">🔒 Simulación anónima. Usamos estos datos solo para calcular tu plan. No pedimos nombre, email ni guardamos información personal.</p>
-        )}
       </motion.div>
 
       {/* Step content */}
