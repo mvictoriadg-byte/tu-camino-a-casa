@@ -13,7 +13,7 @@ import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
 import { useLocationPrices } from "@/hooks/use-location-prices";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin, Wrench,
-  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, ArrowLeft, Loader2, Home,
+  Building2, User, CreditCard, Users, Percent, ArrowRight, ArrowLeft, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
 import illustrationFinance from "@/assets/illustration-finance.png";

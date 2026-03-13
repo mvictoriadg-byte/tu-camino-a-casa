@@ -13,7 +13,7 @@ import { useLocationPrices } from "@/hooks/use-location-prices";
 import { Switch } from "@/components/ui/switch";
 import {
   Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
-  Building2, User, Briefcase, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
+  Building2, User, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
 import illustrationFinance from "@/assets/illustration-finance.png";
