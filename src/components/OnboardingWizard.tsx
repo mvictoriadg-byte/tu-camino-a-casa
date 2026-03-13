@@ -73,7 +73,6 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
   const validateStep = (s: number): boolean => {
     const e: Record<string, string> = {};
     if (s === 1) {
-      if (!comunidad) e.comunidad = "Obligatorio";
       if (!age) e.age = "Obligatorio";
       
     } else if (s === 2) {
@@ -81,6 +80,7 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
       if (!savings) e.savings = "Obligatorio";
       if (!monthlySavings) e.monthlySavings = "Obligatorio";
     } else if (s === 3) {
+      if (!comunidad) e.comunidad = "Obligatorio";
       if (!propertyType) e.propertyType = "Obligatorio";
       if (!rooms) e.rooms = "Obligatorio";
       if (!zone) e.zone = "Obligatorio";
