@@ -47,11 +47,11 @@ const OnboardingWizard = ({ onCalculate, isCalculating, initialValues, submitLab
   const [coBuyers, setCoBuyers] = useState<{ income: string; savings: string; monthlySavings: string; monthlyDebts: string }[]>(
     iv?.coBuyers?.map(cb => ({ income: String(cb.monthlyIncome || ""), savings: String(cb.savings || ""), monthlySavings: String(cb.monthlySavings || ""), monthlyDebts: String(cb.monthlyDebts || "") })) || []
   );
-  const [propertyType, setPropertyType] = useState(iv?.preferences?.propertyType || "");
+  const [propertyType] = useState(iv?.preferences?.propertyType || "segunda-mano");
   const [size, setSize] = useState(iv?.preferences?.size ? Number(iv.preferences.size) : 70);
-  const [rooms, setRooms] = useState(iv?.preferences?.rooms || "");
-  const [zone, setZone] = useState(iv?.preferences?.zone || "");
-  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "listo-para-entrar");
+  const [rooms] = useState(iv?.preferences?.rooms || "2");
+  const [zone, setZone] = useState(iv?.preferences?.zone || "cerca_centro");
+  const [reformState, setReformState] = useState(iv?.preferences?.reformState || "nueva");
   const [mortgagePercent, setMortgagePercent] = useState(iv?.mortgagePercent || 80);
   const [firstHome, setFirstHome] = useState(iv?.firstHome !== undefined ? iv.firstHome : true);
   const [numberOfChildren, setNumberOfChildren] = useState(iv?.numberOfChildren !== undefined ? String(iv.numberOfChildren) : "0");
