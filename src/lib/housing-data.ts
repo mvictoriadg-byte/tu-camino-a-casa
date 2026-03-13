@@ -434,17 +434,15 @@ export function calculateAffordability(profile: UserProfile): AffordabilityResul
   const sqm = Number(profile.preferences.size) || 70;
 
   // Use new city-pricing module for price estimation
-  const { getAdjustedPriceM2 } = await import("@/lib/city-pricing");
   const adjustedPriceM2 = getAdjustedPriceM2(
     profile.ciudad,
     profile.comunidad,
     profile.preferences.zone,
     profile.preferences.reformState
   );
-  // If DB avg price exists and is more specific, blend it; otherwise use city-pricing
-  const finalPriceM2 = profile.avgPricePerSqm ? adjustedPriceM2 : adjustedPriceM2;
-  const estimatedPrice = Math.round(finalPriceM2 * sqm);
-  const pricePerSqm = finalPriceM2;
+  const estimatedPrice = Math.round(adjustedPriceM2 * sqm);
+  const pricePerSqm = adjustedPriceM2;
+  const reformCostEstimate = 0; // Reform cost is now embedded in the state factor
   const reformCostEstimate = 0; // Reform cost is now embedded in the state factor
   const totalCost = estimatedPrice + reformCostEstimate;
 
