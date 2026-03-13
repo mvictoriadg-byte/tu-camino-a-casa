@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,11 +8,12 @@ import { Slider } from "@/components/ui/slider";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { type UserProfile, type CoBuyer } from "@/lib/housing-data";
+import { type UserProfile, type CoBuyer, formatCurrency } from "@/lib/housing-data";
 import { useLocationPrices } from "@/hooks/use-location-prices";
 import { Switch } from "@/components/ui/switch";
+import { estimatePropertyPrice, ZONE_LABELS, STATE_LABELS, type ZoneKey, type PropertyStateKey } from "@/lib/city-pricing";
 import {
-  Euro, PiggyBank, TrendingUp, Ruler, BedDouble, MapPin,
+  Euro, PiggyBank, TrendingUp, Ruler, MapPin, Wrench,
   Building2, User, CreditCard, Users, Percent, ArrowRight, Loader2, Home,
 } from "lucide-react";
 import illustrationPersonal from "@/assets/illustration-personal.png";
