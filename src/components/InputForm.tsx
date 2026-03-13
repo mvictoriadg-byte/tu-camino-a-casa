@@ -73,7 +73,7 @@ const InputForm = ({ onCalculate, isCalculating, initialValues, submitLabel, hid
     const e: Record<string, string> = {};
     if (!comunidad) e.comunidad = "Campo obligatorio";
     if (!age) e.age = "Campo obligatorio";
-    if (!employmentStatus) e.employmentStatus = "Campo obligatorio";
+    
     if (!income) e.income = "Campo obligatorio";
     if (!savings) e.savings = "Campo obligatorio";
     if (!monthlySavings) e.monthlySavings = "Campo obligatorio";
