@@ -237,7 +237,7 @@ const Index = () => {
                       />
                     );
                   })()}
-                  {/* Tracker: locked for non-logged, active for logged-in */}
+                  {/* Tracker for logged-in, unified CTA for guests */}
                   {user ? (
                     <SavingsProgressTracker
                       userId={user.id}
@@ -246,9 +246,8 @@ const Index = () => {
                       currentSavings={result.totalSavings}
                     />
                   ) : (
-                    <LockedTrackerCTA />
+                    <ConvertPlanCTA />
                   )}
-                  <SaveCTA />
                 </div>
               </div>
             </section>
