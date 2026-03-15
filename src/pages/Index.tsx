@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import Dashboard from "@/components/Dashboard";
-import LockedTrackerCTA from "@/components/LockedTrackerCTA";
+import ConvertPlanCTA from "@/components/ConvertPlanCTA";
 import ScenarioComparison from "@/components/ScenarioComparison";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData, formatCurrency } from "@/lib/housing-data";
@@ -138,21 +138,6 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const SaveCTA = () =>
-    !user ? (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="rounded-2xl bg-primary p-8 text-center">
-          <h3 className="text-2xl font-extrabold text-primary-foreground mb-2">Guardar mi plan de ahorro</h3>
-          <p className="text-sm text-primary-foreground/70 mb-1 max-w-md mx-auto">
-            Crea una cuenta gratuita para guardar tu plan, hacer seguimiento y crear tu wishlist de propiedades.
-          </p>
-          <p className="text-xs text-primary-foreground/50 mb-5">Podrás revisarlo y ajustarlo cuando quieras.</p>
-          <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-bold text-base px-8" onClick={() => navigate("/auth")}>
-            Crear cuenta gratis <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
-      </motion.div>
-    ) : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -252,7 +237,7 @@ const Index = () => {
                       />
                     );
                   })()}
-                  {/* Tracker: locked for non-logged, active for logged-in */}
+                  {/* Tracker for logged-in, unified CTA for guests */}
                   {user ? (
                     <SavingsProgressTracker
                       userId={user.id}
@@ -261,9 +246,8 @@ const Index = () => {
                       currentSavings={result.totalSavings}
                     />
                   ) : (
-                    <LockedTrackerCTA />
+                    <ConvertPlanCTA />
                   )}
-                  <SaveCTA />
                 </div>
               </div>
             </section>
