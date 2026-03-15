@@ -35,21 +35,13 @@ const ConvertPlanCTA = () => {
             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex items-center justify-center">
             <Button
               size="lg"
               className="rounded-full font-bold text-base px-8"
               onClick={() => navigate("/auth")}
             >
               Crear mi plan <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="lg"
-              className="rounded-full font-semibold text-sm text-muted-foreground"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              Seguir sin guardar
             </Button>
           </div>
         </CardContent>
