@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import Dashboard from "@/components/Dashboard";
-import LockedTrackerCTA from "@/components/LockedTrackerCTA";
+import ConvertPlanCTA from "@/components/ConvertPlanCTA";
 import ScenarioComparison from "@/components/ScenarioComparison";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData, formatCurrency } from "@/lib/housing-data";
