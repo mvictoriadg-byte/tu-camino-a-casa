@@ -77,6 +77,59 @@ export type Database = {
         }
         Relationships: []
       }
+      journey_phases: {
+        Row: {
+          description: string
+          id: string
+          name: string
+          order_index: number
+        }
+        Insert: {
+          description: string
+          id?: string
+          name: string
+          order_index: number
+        }
+        Update: {
+          description?: string
+          id?: string
+          name?: string
+          order_index?: number
+        }
+        Relationships: []
+      }
+      journey_steps: {
+        Row: {
+          description: string
+          id: string
+          order_index: number
+          phase_id: string
+          title: string
+        }
+        Insert: {
+          description?: string
+          id?: string
+          order_index: number
+          phase_id: string
+          title: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          order_index?: number
+          phase_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_steps_phase_id_fkey"
+            columns: ["phase_id"]
+            isOneToOne: false
+            referencedRelation: "journey_phases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       location_prices: {
         Row: {
           avg_price_m2: number
@@ -173,6 +226,27 @@ export type Database = {
         }
         Relationships: []
       }
+      tracker_milestones: {
+        Row: {
+          description: string
+          id: string
+          percentage_required: number
+          title: string
+        }
+        Insert: {
+          description: string
+          id?: string
+          percentage_required: number
+          title: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          percentage_required?: number
+          title?: string
+        }
+        Relationships: []
+      }
       user_financial_data: {
         Row: {
           age: number
@@ -254,6 +328,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_journey_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          id: string
+          step_id: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          step_id: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          step_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_journey_progress_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "journey_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_messages: {
         Row: {
           created_at: string
@@ -284,6 +390,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_milestones: {
+        Row: {
+          achieved_at: string
+          id: string
+          milestone_id: string
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string
+          id?: string
+          milestone_id: string
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string
+          id?: string
+          milestone_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_milestones_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "tracker_milestones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -301,6 +436,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_tracker_state: {
+        Row: {
+          current_phase_id: string | null
+          focus_message: string | null
+          id: string
+          last_calculated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_phase_id?: string | null
+          focus_message?: string | null
+          id?: string
+          last_calculated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_phase_id?: string | null
+          focus_message?: string | null
+          id?: string
+          last_calculated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_tracker_state_current_phase_id_fkey"
+            columns: ["current_phase_id"]
+            isOneToOne: false
+            referencedRelation: "journey_phases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_wishlist: {
         Row: {
