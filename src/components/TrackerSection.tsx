@@ -55,8 +55,36 @@ const TrackerSection = ({ tracker, userId, currentSavings, savingsTarget }: Trac
 
   return (
     <div className="space-y-6">
-      {/* Section 1 — Savings Progress */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+      {/* Section 1 — Focus Now */}
+      {currentPhase && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+          <Card className="glow-card bg-primary/5 border-primary/20">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
+                  <Compass className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-1">Tu foco ahora</p>
+                  <h3 className="text-xl font-extrabold mb-1">{currentPhase.name}</h3>
+                  {nextStep && (
+                    <div className="flex items-center gap-2 mt-2 mb-3">
+                      <Star className="h-4 w-4 text-warning" />
+                      <span className="text-sm font-bold">Paso clave: {nextStep.title}</span>
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    {trackerState?.focus_message || currentPhase.description}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Section 2 — Savings Progress */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
         <Card className="glow-card border-2 border-primary/30">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -98,34 +126,6 @@ const TrackerSection = ({ tracker, userId, currentSavings, savingsTarget }: Trac
           </CardContent>
         </Card>
       </motion.div>
-
-      {/* Section 2 — Focus Now */}
-      {currentPhase && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
-          <Card className="glow-card bg-primary/5 border-primary/20">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
-                  <Compass className="h-6 w-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-1">Tu foco ahora</p>
-                  <h3 className="text-xl font-extrabold mb-1">{currentPhase.name}</h3>
-                  {nextStep && (
-                    <div className="flex items-center gap-2 mt-2 mb-3">
-                      <Star className="h-4 w-4 text-warning" />
-                      <span className="text-sm font-bold">Paso clave: {nextStep.title}</span>
-                    </div>
-                  )}
-                  <p className="text-sm text-muted-foreground">
-                    {trackerState?.focus_message || currentPhase.description}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
 
       {/* Section 3 — Journey Timeline */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }}>
