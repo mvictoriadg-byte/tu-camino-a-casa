@@ -47,6 +47,9 @@ const Portal = () => {
   const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const estimatedMonths = result?.monthsToSave ?? null;
+  const trackerData = useTrackerData(user?.id, estimatedMonths);
+
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
   useEffect(() => { if (user) loadData(); }, [user]);
   useEffect(() => { fetchHousingAids().then(setAllAids); }, []);
