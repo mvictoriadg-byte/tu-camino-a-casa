@@ -371,17 +371,8 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
         </Card>
       </motion.div>
 
-      {/* ===== Housing Aids ===== */}
-      {eligibleAids.length > 0 && aidsImpact && (
-        <HousingAidsSection
-          eligibleAids={eligibleAids}
-          impact={aidsImpact}
-          isYoungBuyer={isYoungBuyer}
-          originalYearsToSave={yearsToSave}
-          onToggleAids={onToggleAids}
-          aidsEnabled={aidsEnabled}
-        />
-      )}
+
+
 
       {/* ===== ROW 4: TRACKER PREVIEW ===== */}
       {trackerData && trackerData.milestones.length > 0 && (
