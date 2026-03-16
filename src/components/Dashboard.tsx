@@ -128,27 +128,54 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
       {/* ===== ROW 1: KEY METRICS ===== */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-        {/* Card 1 — Time to buy */}
-        <motion.div {...cardDelay(0)}>
-          <Card className="glow-card h-full">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-9 w-9 rounded-xl bg-primary/15 flex items-center justify-center">
-                  <Timer className="h-4.5 w-4.5 text-primary" />
+        {/* Card 1 — Time to buy (spans 2 cols) */}
+        <motion.div {...cardDelay(0)} className="sm:col-span-2">
+          <Card className={`glow-card h-full overflow-hidden ${displayCanAfford ? "border-success border-2" : "border-2 border-primary/40"}`}>
+            <CardContent className="p-6">
+              <div className="flex items-start gap-5">
+                <div className={`h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 ${displayCanAfford ? "bg-success/15" : "bg-primary/15"}`}>
+                  <Timer className={`h-7 w-7 ${displayCanAfford ? "text-success" : "text-primary"}`} />
                 </div>
-                <span className="text-xs uppercase tracking-wider font-bold text-muted-foreground">Tiempo estimado</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-1">Tiempo estimado para comprar</p>
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <p className={`text-5xl font-extrabold tracking-tight font-mono ${displayCanAfford ? "text-success" : "text-foreground"}`}>
+                      {displayYears}
+                    </p>
+                    {!displayCanAfford && displayMonths && (
+                      <p className="text-lg text-muted-foreground font-mono">({displayMonths})</p>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {displayCanAfford
+                      ? "¡Puedes dar el paso cuando quieras!"
+                      : "Con tu situación actual estás avanzando en la dirección correcta."}
+                  </p>
+                </div>
               </div>
-              <p className={`text-3xl font-extrabold tracking-tight font-mono ${displayCanAfford ? "text-success" : "text-foreground"}`}>
-                {displayYears}
-              </p>
-              {!displayCanAfford && displayMonths && (
-                <p className="text-sm text-muted-foreground font-mono mt-0.5">({displayMonths})</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-2">
-                {displayCanAfford
-                  ? "¡Puedes dar el paso cuando quieras!"
-                  : "Con tu situación actual estás avanzando en la dirección correcta."}
-              </p>
+              {/* Readiness score integrated */}
+              <div className="mt-5 pt-4 border-t border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-xs uppercase tracking-wider font-bold text-muted-foreground">Preparación para comprar</span>
+                  </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className={`text-xl font-extrabold font-mono ${readiness.color}`}>{readinessScore}%</span>
+                    <span className={`text-xs font-bold ${readiness.color}`}>{readiness.label}</span>
+                  </div>
+                </div>
+                <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ background: "var(--gradient-primary)" }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${readinessScore}%` }}
+                    transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1.5">{readiness.message}</p>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
@@ -194,38 +221,6 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
               <p className="text-xs text-muted-foreground mt-1">
                 Basado en tus preferencias y mercado actual.
               </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Card 4 — Readiness score */}
-        <motion.div {...cardDelay(3)}>
-          <Card className="glow-card h-full">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-9 w-9 rounded-xl bg-warning/15 flex items-center justify-center">
-                  <Shield className="h-4.5 w-4.5 text-warning" />
-                </div>
-                <span className="text-xs uppercase tracking-wider font-bold text-muted-foreground">Preparación</span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <p className={`text-3xl font-extrabold tracking-tight font-mono ${readiness.color}`}>
-                  {readinessScore}%
-                </p>
-                <span className={`text-sm font-bold ${readiness.color}`}>{readiness.label}</span>
-              </div>
-              <div className="mt-2">
-                <div className="h-2 rounded-full bg-muted overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{ background: "var(--gradient-primary)" }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${readinessScore}%` }}
-                    transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-                  />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">{readiness.message}</p>
             </CardContent>
           </Card>
         </motion.div>
