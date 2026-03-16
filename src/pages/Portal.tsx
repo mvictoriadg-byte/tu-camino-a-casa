@@ -308,6 +308,7 @@ const Portal = () => {
             )}
           </TabsContent>
 
+          <TabsContent value="wishlist">
             <Card className="glow-card mb-6">
               <CardHeader className="pb-3"><CardTitle className="text-lg font-bold flex items-center gap-2"><Heart className="h-5 w-5 text-primary" /> Añadir propiedad</CardTitle></CardHeader>
               <CardContent className="space-y-4">
