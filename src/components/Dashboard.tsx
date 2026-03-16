@@ -241,6 +241,18 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
         </motion.div>
       )}
 
+      {/* ===== Housing Aids (detailed) ===== */}
+      {eligibleAids.length > 0 && aidsImpact && (
+        <HousingAidsSection
+          eligibleAids={eligibleAids}
+          impact={aidsImpact}
+          isYoungBuyer={isYoungBuyer}
+          originalYearsToSave={yearsToSave}
+          onToggleAids={onToggleAids}
+          aidsEnabled={aidsEnabled}
+        />
+      )}
+
       {/* ===== ROW 2: PROGRESS TOWARD PURCHASE ===== */}
       <motion.div {...cardDelay(5)}>
         <Card className="glow-card overflow-hidden">
