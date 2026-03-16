@@ -288,7 +288,26 @@ const Portal = () => {
             )}
           </TabsContent>
 
-          <TabsContent value="wishlist">
+          <TabsContent value="tracker">
+            {result && user ? (
+              <TrackerSection
+                tracker={trackerData}
+                userId={user.id}
+                currentSavings={result.totalSavings}
+                savingsTarget={aidsEnabled && aidsImpact ? aidsImpact.adjustedTotalUpfront : result.totalUpfront}
+              />
+            ) : (
+              <Card className="glow-card">
+                <CardContent className="p-12 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4"><Map className="h-8 w-8 text-primary" /></div>
+                  <h3 className="text-xl font-bold mb-2">Tu tracker estará disponible cuando tengas un plan</h3>
+                  <p className="text-muted-foreground text-sm mb-6">Primero completa el simulador para generar tu plan personalizado.</p>
+                  <Button className="rounded-full font-bold" onClick={() => navigate("/")}><Home className="h-4 w-4 mr-2" /> Ir al calculador</Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
             <Card className="glow-card mb-6">
               <CardHeader className="pb-3"><CardTitle className="text-lg font-bold flex items-center gap-2"><Heart className="h-5 w-5 text-primary" /> Añadir propiedad</CardTitle></CardHeader>
               <CardContent className="space-y-4">
