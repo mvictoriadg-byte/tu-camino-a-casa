@@ -249,7 +249,7 @@ const Portal = () => {
             {result ? (
               <div className="space-y-6">
                 {/* 1. Dashboard: hero + plan summary + estimated time + costs + housing aids + banks */}
-                <Dashboard result={result} eligibleAids={eligibleAids} aidsImpact={aidsImpact} aidsEnabled={aidsEnabled} onToggleAids={setAidsEnabled} trackerData={trackerData} />
+                <Dashboard result={result} eligibleAids={eligibleAids} aidsImpact={aidsImpact} aidsEnabled={aidsEnabled} onToggleAids={setAidsEnabled} />
 
                 {/* 2. Savings progress tracker */}
                 {user && (
