@@ -288,6 +288,7 @@ const Portal = () => {
             )}
           </TabsContent>
 
+          {import.meta.env.DEV && (
           <TabsContent value="tracker">
             {result && user ? (
               <TrackerSection
@@ -307,6 +308,7 @@ const Portal = () => {
               </Card>
             )}
           </TabsContent>
+          )}
 
           <TabsContent value="wishlist">
             <Card className="glow-card mb-6">
