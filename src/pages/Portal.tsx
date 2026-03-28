@@ -240,7 +240,7 @@ const Portal = () => {
         <Tabs defaultValue="roadmap" className="space-y-6">
           <TabsList className="bg-muted rounded-full p-1 h-auto flex-wrap">
             <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan</TabsTrigger>
-            <TabsTrigger value="tracker" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Map className="h-4 w-4 mr-1.5" /> Tracker</TabsTrigger>
+            {import.meta.env.DEV && <TabsTrigger value="tracker" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Map className="h-4 w-4 mr-1.5" /> Tracker</TabsTrigger>}
             <TabsTrigger value="wishlist" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Heart className="h-4 w-4 mr-1.5" /> Wishlist</TabsTrigger>
             <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><User className="h-4 w-4 mr-1.5" /> Perfil</TabsTrigger>
           </TabsList>
@@ -288,6 +288,7 @@ const Portal = () => {
             )}
           </TabsContent>
 
+          {import.meta.env.DEV && (
           <TabsContent value="tracker">
             {result && user ? (
               <TrackerSection
@@ -307,6 +308,7 @@ const Portal = () => {
               </Card>
             )}
           </TabsContent>
+          )}
 
           <TabsContent value="wishlist">
             <Card className="glow-card mb-6">
