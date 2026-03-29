@@ -315,23 +315,36 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
     <div className="space-y-6">
       {/* ── Global Progress ── */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="px-1">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-11 w-11 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
-              <Home className="h-5 w-5 text-primary" />
+        <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 sm:p-8">
+          <div className="flex items-center gap-5 sm:gap-8">
+            {/* Circular progress */}
+            <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0">
+              <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--border))" strokeWidth="8" />
+                <circle
+                  cx="50" cy="50" r="42" fill="none"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={`${2 * Math.PI * 42}`}
+                  strokeDashoffset={`${2 * Math.PI * 42 * (1 - globalPercent / 100)}`}
+                  className="transition-all duration-700 ease-out"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-xl sm:text-2xl font-extrabold text-primary leading-none">{globalPercent}%</span>
+              </div>
             </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-extrabold">Tu camino hacia tu casa</h2>
-              <p className="text-sm text-muted-foreground">{getGlobalMessage(globalPercent)}</p>
-            </div>
-            <div className="text-right shrink-0">
-              <p className="text-2xl font-extrabold text-primary">{globalPercent}%</p>
+
+            {/* Text */}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-1">Tu camino hacia tu casa</h2>
+              <p className="text-sm text-muted-foreground mb-2">{getGlobalMessage(globalPercent)}</p>
+              <p className="text-xs text-muted-foreground">
+                {completedTotal} de {totalSteps} pasos completados
+              </p>
             </div>
           </div>
-          <Progress value={globalPercent} className="h-3" />
-          <p className="text-xs text-muted-foreground mt-2">
-            {completedTotal} de {totalSteps} pasos completados
-          </p>
         </div>
       </motion.div>
 
