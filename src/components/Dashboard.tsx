@@ -9,7 +9,7 @@ import {
   Wrench, Sparkles, ArrowRight, Building, Lightbulb, Trophy, Shield,
   Users, Timer, ExternalLink,
 } from "lucide-react";
-import SavingsTimeline from "@/components/SavingsTimeline";
+
 import HousingAidsSection from "@/components/HousingAidsSection";
 import { type EligibleAid, type AidsImpactSummary } from "@/lib/housing-aids";
 
