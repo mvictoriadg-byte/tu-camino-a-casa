@@ -177,12 +177,6 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
           variant={debtToIncomeRatio <= 35 ? "success" : "destructive"} delay={0.35} />
       </div>
 
-      <SavingsTimeline
-        milestones={milestones}
-        totalSavings={totalSavings}
-        totalUpfront={totalUpfront}
-        savingsProgress={savingsProgress}
-      />
 
       {/* Co-buyers */}
       {numBuyers > 1 && (
