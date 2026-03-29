@@ -315,26 +315,24 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
     <div className="space-y-6">
       {/* ── Global Progress ── */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="glow-card border-2 border-primary/30 overflow-hidden">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-11 w-11 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
-                <Home className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-extrabold">Tu camino hacia tu casa</h2>
-                <p className="text-sm text-muted-foreground">{getGlobalMessage(globalPercent)}</p>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="text-2xl font-extrabold text-primary">{globalPercent}%</p>
-              </div>
+        <div className="px-1">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-11 w-11 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
+              <Home className="h-5 w-5 text-primary" />
             </div>
-            <Progress value={globalPercent} className="h-3" />
-            <p className="text-xs text-muted-foreground mt-2">
-              {completedTotal} de {totalSteps} pasos completados
-            </p>
-          </CardContent>
-        </Card>
+            <div className="flex-1">
+              <h2 className="text-lg font-extrabold">Tu camino hacia tu casa</h2>
+              <p className="text-sm text-muted-foreground">{getGlobalMessage(globalPercent)}</p>
+            </div>
+            <div className="text-right shrink-0">
+              <p className="text-2xl font-extrabold text-primary">{globalPercent}%</p>
+            </div>
+          </div>
+          <Progress value={globalPercent} className="h-3" />
+          <p className="text-xs text-muted-foreground mt-2">
+            {completedTotal} de {totalSteps} pasos completados
+          </p>
+        </div>
       </motion.div>
 
       {/* ── Unlocked Insight Overlay ── */}
