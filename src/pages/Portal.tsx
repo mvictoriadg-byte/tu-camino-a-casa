@@ -241,7 +241,7 @@ const Portal = () => {
           <TabsList className="bg-muted rounded-full p-1 h-auto flex-wrap">
             <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan</TabsTrigger>
             
-            {import.meta.env.DEV && <TabsTrigger value="journey" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Compass className="h-4 w-4 mr-1.5" /> Camino a tu casa</TabsTrigger>}
+             {import.meta.env.DEV && <TabsTrigger value="journey" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Compass className="h-4 w-4 mr-1.5" /> Camino a casa</TabsTrigger>}
             <TabsTrigger value="wishlist" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Heart className="h-4 w-4 mr-1.5" /> Wishlist</TabsTrigger>
             <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><User className="h-4 w-4 mr-1.5" /> Perfil</TabsTrigger>
           </TabsList>
