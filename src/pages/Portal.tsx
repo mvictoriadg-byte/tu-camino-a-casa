@@ -14,9 +14,10 @@ import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
 import TrackerSection from "@/components/TrackerSection";
+import JourneyPath from "@/components/JourneyPath";
 import { useTrackerData } from "@/hooks/use-tracker-data";
 import logoHouse from "@/assets/logo-house.png";
-import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2, AlertTriangle, Map } from "lucide-react";
+import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2, AlertTriangle, Map, Compass } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
