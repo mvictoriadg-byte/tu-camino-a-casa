@@ -270,6 +270,27 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
   const [unlockedInsight, setUnlockedInsight] = useState<{ title: string; text: string } | null>(null);
   const [deepDivePhase, setDeepDivePhase] = useState<number | null>(null);
+  const [microlearnModal, setMicrolearnModal] = useState<MicrolearningEntry | null>(null);
+
+  // Track which steps have been "learned" — persisted in localStorage
+  const [learnedSteps, setLearnedSteps] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem(`learned_steps_${userId}`);
+      return saved ? new Set(JSON.parse(saved)) : new Set<string>();
+    } catch {
+      return new Set<string>();
+    }
+  });
+
+  const markAsLearned = useCallback((stepTitle: string) => {
+    setLearnedSteps(prev => {
+      const next = new Set(prev);
+      next.add(stepTitle);
+      localStorage.setItem(`learned_steps_${userId}`, JSON.stringify([...next]));
+      return next;
+    });
+    toast.success("✔️ Ya entiendes este paso", { duration: 2000 });
+  }, [userId]);
 
   const completedStepIds = new Set(stepProgress.filter(s => s.completed).map(s => s.step_id));
   const totalSteps = steps.length;
