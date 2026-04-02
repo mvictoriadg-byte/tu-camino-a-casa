@@ -481,7 +481,7 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
               <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-1">Tu camino hacia tu casa</h2>
               <p className="text-sm text-muted-foreground mb-2">{getGlobalMessage(globalPercent)}</p>
               <p className="text-xs text-muted-foreground">
-                {completedTotal} de {totalSteps} pasos completados
+                {fullyCompletedCount} de {totalSteps} pasos completados
               </p>
             </div>
           </div>
