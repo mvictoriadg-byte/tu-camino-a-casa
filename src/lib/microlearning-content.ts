@@ -261,7 +261,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Entender financiación 80/90/100": {
+  "Elige tu financiación 80/90/100": {
     title: "Financiación al 80%, 90% o 100%",
     sections: [
       {
