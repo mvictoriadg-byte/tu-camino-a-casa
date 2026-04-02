@@ -218,7 +218,7 @@ const STEP_INSIGHTS: Record<string, string> = {
   "Revisar perfil financiero": "Un perfil financiero claro es lo que los bancos miran primero.",
   "Reducir deudas": "Cada deuda que reduces mejora directamente tu capacidad hipotecaria.",
   "Construir la entrada": "No necesitas el 100% del dinero de golpe. Con constancia, se construye sola.",
-  "Entender financiación 80/90/100": "Existen opciones de financiación al 90% o 100% que pueden cambiar tu horizonte.",
+  "Elige tu financiación 80/90/100": "Existen opciones de financiación al 90% o 100% que pueden cambiar tu horizonte.",
   "Explorar aval público": "Los avales públicos pueden cubrir hasta el 20% que el banco no financia.",
   "Explorar aval familiar": "Un aval familiar bien gestionado puede adelantar tu compra varios años.",
   "Definir presupuesto real": "Tener un presupuesto claro te da confianza para negociar sin miedo.",
