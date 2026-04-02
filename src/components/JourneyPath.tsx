@@ -551,35 +551,66 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                       <div className="space-y-1.5 ml-14">
                         {phaseSteps.map(step => {
                           const isCompleted = completedStepIds.has(step.id);
+                          const microlearn = STEP_MICROLEARNING[step.title];
+                          const isLearned = learnedSteps.has(step.title);
                           return (
-                            <label
-                              key={step.id}
-                              className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted/50 cursor-pointer transition-colors group"
-                            >
-                              <Checkbox
-                                checked={isCompleted}
-                                onCheckedChange={(checked) => handleToggleStep(step.id, !!checked, step.title)}
-                                className="shrink-0 mt-0.5"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <span className={`text-sm font-medium block ${isCompleted ? "line-through text-muted-foreground" : "text-foreground"}`}>
-                                  {step.title}
-                                </span>
-                                {step.description && (
-                                  <span className="text-xs text-muted-foreground block mt-0.5">
-                                    {step.description}
+                            <div key={step.id} className="space-y-1">
+                              <label
+                                className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted/50 cursor-pointer transition-colors group"
+                              >
+                                <Checkbox
+                                  checked={isCompleted}
+                                  onCheckedChange={(checked) => handleToggleStep(step.id, !!checked, step.title)}
+                                  className="shrink-0 mt-0.5"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <span className={`text-sm font-medium block ${isCompleted ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                                    {step.title}
                                   </span>
+                                  {step.description && (
+                                    <span className="text-xs text-muted-foreground block mt-0.5">
+                                      {step.description}
+                                    </span>
+                                  )}
+                                </div>
+                                {isCompleted && (
+                                  <motion.div
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                  >
+                                    <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
+                                  </motion.div>
                                 )}
-                              </div>
-                              {isCompleted && (
-                                <motion.div
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                >
-                                  <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
-                                </motion.div>
+                              </label>
+
+                              {/* Microlearning button or learned badge */}
+                              {microlearn && (
+                                <div className="ml-10 pl-2">
+                                  {isLearned ? (
+                                    <span className="inline-flex items-center gap-1.5 text-xs text-success font-medium">
+                                      <CheckCircle2 className="h-3.5 w-3.5" />
+                                      Ya entiendes este paso
+                                    </span>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setMicrolearnModal(microlearn);
+                                        markAsLearned(step.title);
+                                      }}
+                                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 hover:underline transition-colors"
+                                    >
+                                      <GraduationCap className="h-3.5 w-3.5" />
+                                      Aprende sobre esta sección
+                                    </button>
+                                  )}
+                                </div>
                               )}
+                            </div>
+                          );
+                        })}
                             </label>
                           );
                         })}
