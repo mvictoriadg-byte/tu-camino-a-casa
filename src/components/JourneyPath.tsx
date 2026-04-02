@@ -611,9 +611,6 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                             </div>
                           );
                         })}
-                            </label>
-                          );
-                        })}
                       </div>
 
                       {/* ── 2. Essential Learning (always visible) ── */}
