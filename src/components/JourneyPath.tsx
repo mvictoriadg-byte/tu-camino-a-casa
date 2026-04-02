@@ -33,9 +33,9 @@ const PHASE_LEARNING: Record<number, PhaseLearn> = {
   1: {
     essentials: [
       "Tu capacidad de compra depende de tus ingresos, ahorros y deudas actuales",
-      "Los precios varían mucho según la zona — conocerlos te evita perder tiempo",
-      "Existen ayudas públicas que mucha gente desconoce y que podrían aplicarse a tu caso",
-      "No necesitas tener todo el dinero — se trata de saber si tu objetivo es alcanzable",
+      "Comprar una casa implica entrada (~20%) + gastos (~10%) además del precio",
+      "La cuota hipotecaria no debería superar el 30-35% de tu sueldo neto",
+      "El banco no solo mira cuánto ganas — mira la estabilidad de tus ingresos",
     ],
     deepDive: {
       buttonLabel: "Ver cómo calcular tu capacidad real",
@@ -43,7 +43,7 @@ const PHASE_LEARNING: Record<number, PhaseLearn> = {
       sections: [
         {
           heading: "La regla del 30-35%",
-          body: "Los bancos suelen aprobar hipotecas cuya cuota no supere el 30-35% de tus ingresos netos mensuales. Si ganas 2.000€/mes, tu cuota máxima sería de unos 600-700€. Este es tu punto de partida.",
+          body: "Los bancos suelen aprobar hipotecas cuya cuota no supere el 30-35% de tus ingresos netos mensuales. Si ganas 2.000€/mes, tu cuota máxima sería de unos 600-700€.",
         },
         {
           heading: "Ahorros necesarios",
@@ -58,114 +58,194 @@ const PHASE_LEARNING: Record<number, PhaseLearn> = {
   },
   2: {
     essentials: [
-      "Tu perfil financiero es lo primero que mira el banco para aprobar una hipoteca",
-      "Reducir deudas antes de pedir una hipoteca mejora tus condiciones",
-      "Ahorrar de forma constante es más importante que ahorrar mucho de golpe",
-      "Cada euro que reduces en deudas mejora directamente tu capacidad hipotecaria",
+      "Necesitarás aproximadamente el 30% del valor de la vivienda (entrada + gastos)",
+      "La entrada reduce tu hipoteca; los gastos son obligatorios y no la reducen",
+      "Ambos deben estar disponibles antes de firmar",
     ],
     deepDive: {
-      buttonLabel: "Ver cómo preparar tu perfil financiero",
-      title: "Preparar tu perfil para el banco",
+      buttonLabel: "Ver desglose completo entrada vs gastos",
+      title: "Entrada y gastos: todo lo que necesitas saber",
       sections: [
         {
-          heading: "¿Qué mira el banco?",
-          body: "El banco analiza: estabilidad laboral (contrato fijo vs temporal), antigüedad en el empleo, ratio de endeudamiento (deudas/ingresos), historial de ahorro constante y la existencia de otros préstamos activos.",
+          heading: "El 30% desglosado",
+          body: "Para una vivienda de 200.000€:\n• Entrada (20%): 40.000€\n• Gastos (~10%): 20.000€\n• Total: 60.000€",
         },
         {
-          heading: "Cómo reducir deudas de forma inteligente",
-          body: "Prioriza eliminar préstamos pequeños primero (método bola de nieve) o los de mayor interés (método avalancha). Cancela tarjetas de crédito con saldo pendiente. Cada deuda eliminada suma a tu capacidad hipotecaria.",
-        },
-        {
-          heading: "Construir la entrada paso a paso",
-          body: "Automatiza una transferencia mensual a una cuenta de ahorro separada. Incluso 200-300€/mes se acumulan: en 3 años tendrás 7.200-10.800€. Lo importante es la constancia, no la cantidad.",
+          heading: "Gastos: qué incluyen",
+          body: "ITP o IVA (según vivienda nueva o usada), notaría, registro de la propiedad y gestoría. Son obligatorios y no reducen tu hipoteca.",
         },
       ],
     },
   },
   3: {
     essentials: [
-      "El banco normalmente financia hasta el 80% de la vivienda",
-      "En algunos casos puedes conseguir financiación del 90% o incluso el 100%",
-      "Cuanto más te financian, menos entrada necesitas ahorrar",
-      "Los avales (públicos o familiares) pueden cubrir lo que el banco no financia",
+      "Existen ayudas que pueden reducir lo que necesitas ahorrar",
+      "Muchas están enfocadas en menores de 35 años — revísalas cuanto antes",
+      "Pueden reducir la entrada, aumentar financiación o mejorar condiciones",
+      "Tienen convocatorias con presupuesto limitado — si no aplicas a tiempo, las pierdes",
     ],
     deepDive: {
-      buttonLabel: "Ver cómo conseguir más financiación",
-      title: "Opciones de financiación avanzada",
+      buttonLabel: "Ver tipos de ayudas y cómo aplicar",
+      title: "Ayudas para comprar vivienda",
       sections: [
         {
-          heading: "De 80% a 90%: ¿cómo se consigue?",
-          body: "Algunos bancos ofrecen financiación al 90% si tienes un perfil muy sólido: contrato fijo, antigüedad laboral, sin deudas y un buen historial de ahorro. Un broker hipotecario puede ayudarte a encontrar estas ofertas.",
+          heading: "🏡 Aval ICO",
+          body: "Permite financiar hasta el 100%. El Estado avala parte del préstamo. Requisitos: menor de 35, primera vivienda, ingresos dentro de límites. Se solicita en el banco.",
         },
         {
-          heading: "Financiación al 100%: ¿es posible?",
-          body: "Sí, en casos especiales: viviendas de bancos (activos inmobiliarios), programas públicos para jóvenes con aval del ICO, o si aportas un aval familiar con una propiedad libre de cargas.",
+          heading: "💸 Ayudas autonómicas",
+          body: "Subvenciones directas que cubren parte del coste o entrada. Dependen de comunidad, ingresos y ubicación. Se solicitan por convocatoria pública.",
         },
         {
-          heading: "El rol de los avales",
-          body: "Un aval público (como el del ICO para jóvenes) puede cubrir hasta el 20% de la vivienda. Un aval familiar funciona de forma similar pero usando una propiedad de un familiar como garantía adicional. Ambos pueden reducir tu entrada a prácticamente 0€.",
+          heading: "🧾 Deducciones fiscales",
+          body: "Beneficios fiscales tras la compra que reducen tus impuestos en el tiempo.",
         },
       ],
     },
   },
   4: {
     essentials: [
-      "Define tu presupuesto máximo ANTES de buscar — te ahorrará mucho tiempo",
-      "No te enamores de la primera vivienda que veas — compara siempre",
-      "Las visitas presenciales revelan problemas que las fotos nunca muestran",
-      "Buscar con criterio claro es mucho más eficiente que visitar todo lo que aparece",
+      "Hay 3 tipos de hipoteca: fija, variable y mixta",
+      "TIN = interés puro; TAE = coste total (compara siempre la TAE)",
+      "El banco normalmente financia hasta el 80%, pero puede ser más",
+      "El pre-scoring es una evaluación rápida — no te compromete a nada",
+      "La tasación define cuánto te prestan, no el precio de venta",
     ],
     deepDive: {
-      buttonLabel: "Ver consejos para buscar bien",
-      title: "Cómo buscar vivienda de forma inteligente",
+      buttonLabel: "Ver todo sobre hipotecas",
+      title: "Entiende cómo funcionan las hipotecas",
       sections: [
         {
-          heading: "Define tus criterios clave",
-          body: "Antes de buscar, establece: presupuesto máximo, zona(s) preferida(s), tamaño mínimo, número de habitaciones y si aceptas reforma. Esto filtra el 80% de anuncios irrelevantes.",
+          heading: "Fija vs Variable vs Mixta",
+          body: "Fija: cuota estable siempre. Variable: varía con el Euríbor. Mixta: fija los primeros años, variable después.",
         },
         {
-          heading: "Qué mirar en las visitas",
-          body: "Revisa: orientación y luz natural, estado de instalaciones (fontanería, electricidad), humedad en techos y paredes, ruido del barrio, estado de zonas comunes y la comunidad de vecinos. Pregunta siempre por derramas pendientes.",
+          heading: "Negociación",
+          body: "Puedes negociar intereses, comisiones y productos vinculados. Compara al menos 3 ofertas.",
         },
         {
-          heading: "Negociar el precio",
-          body: "El precio publicado casi nunca es el precio final. Investiga precios de venta reales (no de anuncio) en la zona. Un margen de negociación del 5-10% es habitual, especialmente si la vivienda lleva tiempo en el mercado.",
+          heading: "Pre-scoring y tasación",
+          body: "El pre-scoring evalúa si tu perfil es viable. La tasación valora la vivienda oficialmente — el banco calcula la financiación sobre este valor.",
         },
       ],
     },
   },
   5: {
     essentials: [
-      "La preaprobación te dice exactamente cuánto te presta el banco",
-      "Comparar al menos 3-4 hipotecas puede ahorrarte miles de euros",
-      "La diferencia entre hipotecas puede suponer 10.000-30.000€ en el total",
-      "Negociar las condiciones es normal y esperado — no te cortes",
+      "Contacta al menos 2-3 bancos para comparar ofertas",
+      "Pide simulaciones detalladas: cuota, interés, comisiones",
+      "Un broker hipotecario puede negociar por ti y conseguir mejores condiciones",
+      "La diferencia entre ofertas puede suponer 10.000-30.000€ en el total",
     ],
     deepDive: {
-      buttonLabel: "Ver cómo comparar hipotecas",
-      title: "Conseguir la mejor hipoteca",
+      buttonLabel: "Ver cómo comparar ofertas",
+      title: "Cómo conseguir la mejor hipoteca",
       sections: [
         {
-          heading: "¿Qué es la preaprobación?",
-          body: "Es un documento del banco que confirma cuánto te prestarían y en qué condiciones aproximadas. No es vinculante pero te da mucha fuerza negociadora con los vendedores y te evita sorpresas.",
+          heading: "Compara con criterio",
+          body: "No solo mires el interés. Compara también comisiones, productos vinculados y TAE total.",
         },
         {
-          heading: "Fija vs variable vs mixta",
-          body: "Tipo fijo: cuota estable siempre (más seguridad). Tipo variable: cuota varía con el Euríbor (puede subir o bajar). Mixta: fija los primeros años, variable después. En momentos de tipos altos, la fija da más tranquilidad.",
-        },
-        {
-          heading: "Más allá del tipo de interés",
-          body: "Compara también: comisión de apertura, productos vinculados (seguros, nómina), comisión por amortización anticipada, y el TAE (que incluye todos los costes). Un broker hipotecario puede negociar por ti gratis.",
+          heading: "¿Broker o por tu cuenta?",
+          body: "El broker cobra comisión pero puede ahorrarte más de lo que cuesta. Algunos no cobran si no consiguen hipoteca.",
         },
       ],
     },
   },
   6: {
     essentials: [
-      "La reserva asegura que nadie más se lleve la vivienda mientras preparas todo",
+      "El banco mira estabilidad laboral, deudas e historial de ahorro",
+      "Cada deuda que reduces mejora directamente tu capacidad hipotecaria",
+      "Prepara la documentación con antelación para agilizar el proceso",
+    ],
+    deepDive: {
+      buttonLabel: "Ver cómo preparar tu perfil",
+      title: "Prepárate para que el banco te diga que sí",
+      sections: [
+        {
+          heading: "Documentación necesaria",
+          body: "Últimas 3 nóminas, contrato de trabajo, extractos bancarios (6 meses), declaración de la renta, DNI/NIE.",
+        },
+        {
+          heading: "Ratio de endeudamiento",
+          body: "El banco suma todas tus cuotas mensuales y las compara con tus ingresos. Si superas el 35-40%, es probable que no aprueben.",
+        },
+        {
+          heading: "Optimiza tu perfil",
+          body: "Cancela tarjetas sin uso, elimina deudas pequeñas, mantén ahorro constante y evita cambios de empleo justo antes.",
+        },
+      ],
+    },
+  },
+  7: {
+    essentials: [
+      "Separa lo imprescindible (MUST) de lo deseable (NICE)",
+      "Tener claras tus prioridades te evita decisiones emocionales",
+      "Conocer las red flags te protege de malas compras",
+    ],
+    deepDive: {
+      buttonLabel: "Ver cómo definir tu checklist",
+      title: "Define qué vivienda necesitas de verdad",
+      sections: [
+        {
+          heading: "MUST vs NICE",
+          body: "MUST = lo que no puedes negociar (ubicación, tamaño, presupuesto). NICE = lo que te gustaría pero puedes ceder (terraza, garaje, vistas).",
+        },
+        {
+          heading: "Red flags",
+          body: "Humedades, ruido excesivo, mala orientación, instalaciones antiguas y derramas pendientes son señales de alerta.",
+        },
+      ],
+    },
+  },
+  8: {
+    essentials: [
+      "Los precios varían enormemente entre barrios — analiza precios por m²",
+      "Evalúa infraestructura, crecimiento y servicios de cada zona",
+      "Visita el barrio a diferentes horas para detectar problemas reales",
+    ],
+    deepDive: {
+      buttonLabel: "Ver cómo analizar zonas",
+      title: "Analiza zonas como una decisión inteligente",
+      sections: [
+        {
+          heading: "Factores clave",
+          body: "Transporte público, colegios, comercios, zonas verdes y perspectiva de revalorización.",
+        },
+        {
+          heading: "Señales positivas",
+          body: "Nuevas líneas de transporte, apertura de comercios, obras de mejora urbana — indican crecimiento.",
+        },
+      ],
+    },
+  },
+  9: {
+    essentials: [
+      "Quédate con 3-5 opciones que cumplan tus MUST",
+      "Las visitas presenciales revelan cosas que las fotos nunca muestran",
+      "Visita a diferentes horas para detectar problemas de ruido o luz",
+    ],
+    deepDive: {
+      buttonLabel: "Ver consejos para visitas",
+      title: "Busca y visita viviendas con criterio",
+      sections: [
+        {
+          heading: "Checklist de visita",
+          body: "Revisa estado general, luz natural, ruido, humedades, zonas comunes. Pregunta por comunidad, derramas, tiempo en el mercado.",
+        },
+        {
+          heading: "Compara con criterio",
+          body: "Usa tu checklist para puntuar cada opción. Decisiones racionales, no emocionales.",
+        },
+      ],
+    },
+  },
+  10: {
+    essentials: [
+      "La reserva asegura que nadie más se lleve la vivienda",
       "Las arras son tu compromiso formal — a partir de ahí es prácticamente tuya",
-      "La firma de hipoteca es el último paso — después de esto, las llaves son tuyas",
-      "Todo el proceso desde reserva hasta firma puede durar entre 1 y 3 meses",
+      "Revisa todos los documentos (FEIN, nota simple) antes de firmar",
+      "Después de la firma ante notario, las llaves son tuyas 🏡",
     ],
     deepDive: {
       buttonLabel: "Ver los pasos finales en detalle",
@@ -173,15 +253,15 @@ const PHASE_LEARNING: Record<number, PhaseLearn> = {
       sections: [
         {
           heading: "La reserva (señal)",
-          body: "Normalmente entre 1.000€ y 5.000€ que se descuentan del precio final. Demuestra tu interés serio. Si te echas atrás, puedes perderla. Si se echa atrás el vendedor, te la devuelve duplicada.",
+          body: "Normalmente entre 1.000€ y 5.000€ que se descuentan del precio final.",
         },
         {
           heading: "El contrato de arras",
-          body: "Es un contrato privado donde se fija el precio, las condiciones y el plazo para la firma. Normalmente pagas el 10% del precio como señal. Si incumples, pierdes esa cantidad. Si incumple el vendedor, te devuelve el doble.",
+          body: "Contrato privado donde se fija precio, condiciones y plazo. Normalmente pagas el 10%. Si incumples, pierdes la señal. Si incumple el vendedor, te devuelve el doble.",
         },
         {
           heading: "La firma ante notario",
-          body: "Se firma la escritura de compraventa y la hipoteca el mismo día ante notario. Necesitarás tu DNI, la preaprobación del banco y los justificantes de pago. Después, solo queda inscribir en el Registro de la Propiedad. ¡Y ya tienes tu casa!",
+          body: "Se firma la escritura de compraventa y la hipoteca el mismo día. Después, solo queda inscribir en el Registro de la Propiedad. ¡Y ya tienes tu casa!",
         },
       ],
     },
@@ -190,46 +270,62 @@ const PHASE_LEARNING: Record<number, PhaseLearn> = {
 
 /* ── Completion micro-rewards (toasts) ── */
 const STEP_REWARDS: Record<string, string> = {
-  "Calcular cuánto puedes permitirte": "✔️ Ya sabes cuánto puedes gastar",
-  "Estimar precio de vivienda": "✔️ Tienes una referencia de precios real",
-  "Identificar ayudas públicas": "✔️ Estás aprovechando ventajas que mucha gente ignora",
-  "Revisar perfil financiero": "✔️ Tu perfil financiero está bajo control",
-  "Reducir deudas": "✔️ Estás mejorando tu capacidad hipotecaria",
-  "Construir la entrada": "✔️ Cada euro cuenta. Estás construyendo tu futuro",
-  "Elige tu financiación 80/90/100": "✔️ Ya entiendes las opciones que tienes",
-  "Explorar aval público": "✔️ Conoces una herramienta que puede acelerar tu compra",
-  "Explorar aval familiar": "✔️ Has explorado todas las opciones de aval",
-  "Definir presupuesto real": "✔️ Tienes un presupuesto realista y claro",
-  "Buscar viviendas": "✔️ Ya estás buscando con criterio",
-  "Visitar propiedades": "✔️ Estás conociendo viviendas de verdad",
-  "Pedir preaprobación": "✔️ Los bancos ya saben que vas en serio",
-  "Comparar hipotecas": "✔️ Estás evitando un error muy común",
-  "Negociar condiciones": "✔️ Esto te acerca a conseguir tu hipoteca",
-  "Reservar vivienda": "✔️ Tu vivienda está reservada",
-  "Firmar contrato de arras": "✔️ El compromiso está firmado",
-  "Firma de hipoteca": "🎉 ¡Enhorabuena! ¡Las llaves son tuyas!",
+  "Definir tu presupuesto máximo de compra": "✔️ Ya sabes cuánto puedes gastar",
+  "Calcular cuota mensual cómoda": "✔️ Tienes clara tu cuota máxima",
+  "Validar estabilidad de ingresos": "✔️ Tu estabilidad está validada",
+  "Calcular objetivo total de ahorro": "✔️ Ya conoces tu objetivo de ahorro",
+  "Separar entrada vs gastos": "✔️ Tienes claro qué es entrada y qué son gastos",
+  "Ver ayudas aplicables a mi perfil": "✔️ Estás aprovechando ventajas que mucha gente ignora",
+  "Identificar requisitos clave": "✔️ Sabes lo que necesitas para acceder a ayudas",
+  "Elegir tipo de hipoteca": "✔️ Ya entiendes los tipos de hipoteca",
+  "Entender porcentajes a financiar": "✔️ Sabes cuánto puede financiar el banco",
+  "Negociación con bancos": "✔️ Estás preparado para negociar",
+  "Qué es el pre-scoring": "✔️ Conoces cómo te evalúa el banco",
+  "Entender la tasación": "✔️ Entiendes cómo funciona la tasación",
+  "Contactar 2–3 bancos": "✔️ Ya estás comparando ofertas reales",
+  "Pedir simulaciones": "✔️ Tienes simulaciones para comparar",
+  "Evaluar broker": "✔️ Has evaluado todas tus opciones",
+  "Reunir documentación": "✔️ Tu documentación está lista",
+  "Revisar deudas": "✔️ Tus deudas están bajo control",
+  "Optimizar perfil financiero": "✔️ Tu perfil financiero está optimizado",
+  "Crear checklist de necesidades": "✔️ Tienes claras tus prioridades",
+  "Definir red flags": "✔️ Sabes qué evitar al comprar",
+  "Definir zonas objetivo": "✔️ Tienes zonas definidas con criterio",
+  "Evaluar riesgos de zona": "✔️ Has evaluado los riesgos de tus zonas",
+  "Analizar barrio": "✔️ Conoces los barrios que te interesan",
+  "Guardar favoritos": "✔️ Tienes opciones seleccionadas",
+  "Realizar visitas": "✔️ Has visitado viviendas de verdad",
+  "Hacer oferta": "🎉 ¡Estás cerrando la compra de tu casa!",
 };
 
 /* ── Unlocked insight on checkbox complete ── */
 const STEP_INSIGHTS: Record<string, string> = {
-  "Calcular cuánto puedes permitirte": "El banco suele permitir una cuota de hasta el 30-35% de tu sueldo neto.",
-  "Estimar precio de vivienda": "Conocer los precios reales de tu zona te evita perder tiempo.",
-  "Identificar ayudas públicas": "Muchas personas no aprovechan ayudas a las que tienen derecho.",
-  "Revisar perfil financiero": "Un perfil financiero claro es lo que los bancos miran primero.",
-  "Reducir deudas": "Cada deuda que reduces mejora directamente tu capacidad hipotecaria.",
-  "Construir la entrada": "No necesitas el 100% del dinero de golpe. Con constancia, se construye sola.",
-  "Elige tu financiación 80/90/100": "Existen opciones de financiación al 90% o 100% que pueden cambiar tu horizonte.",
-  "Explorar aval público": "Los avales públicos pueden cubrir hasta el 20% que el banco no financia.",
-  "Explorar aval familiar": "Un aval familiar bien gestionado puede adelantar tu compra varios años.",
-  "Definir presupuesto real": "Tener un presupuesto claro te da confianza para negociar sin miedo.",
-  "Buscar viviendas": "Buscar con criterio claro es mucho más eficiente.",
-  "Visitar propiedades": "Las visitas presenciales revelan cosas que las fotos nunca muestran.",
-  "Pedir preaprobación": "Con una preaprobación, los vendedores te toman mucho más en serio.",
-  "Comparar hipotecas": "La diferencia entre hipotecas puede suponer miles de euros.",
-  "Negociar condiciones": "Negociar puede ahorrarte entre 5.000€ y 20.000€.",
-  "Reservar vivienda": "La reserva asegura que nadie más se lleve tu vivienda.",
-  "Firmar contrato de arras": "Las arras son tu compromiso formal.",
-  "Firma de hipoteca": "¡El último paso! Después de esto, las llaves son tuyas.",
+  "Definir tu presupuesto máximo de compra": "El coste real incluye precio + entrada (20%) + gastos (~10%).",
+  "Calcular cuota mensual cómoda": "La cuota no debería superar el 30-35% de tu sueldo neto.",
+  "Validar estabilidad de ingresos": "El banco mira la seguridad de tus ingresos, no solo la cantidad.",
+  "Calcular objetivo total de ahorro": "Necesitarás aproximadamente el 30% del valor de la vivienda.",
+  "Separar entrada vs gastos": "La entrada reduce tu hipoteca; los gastos son obligatorios aparte.",
+  "Ver ayudas aplicables a mi perfil": "Muchas personas no aprovechan ayudas a las que tienen derecho.",
+  "Identificar requisitos clave": "Revisa requisitos de edad, ingresos y primera vivienda cuanto antes.",
+  "Elegir tipo de hipoteca": "Fija = estabilidad. Variable = posible ahorro con riesgo. Mixta = punto medio.",
+  "Entender porcentajes a financiar": "Con avales o perfil sólido puedes conseguir más del 80%.",
+  "Negociación con bancos": "Compara al menos 3 ofertas — el banco espera que negocies.",
+  "Qué es el pre-scoring": "El pre-scoring te dice si eres viable sin comprometerte a nada.",
+  "Entender la tasación": "El banco financia sobre el valor de tasación, no sobre el precio de compra.",
+  "Contactar 2–3 bancos": "Tener varias ofertas te da poder de negociación.",
+  "Pedir simulaciones": "La diferencia entre ofertas puede suponer 10.000-30.000€.",
+  "Evaluar broker": "Un broker puede ahorrarte más de lo que cobra.",
+  "Reunir documentación": "Preparar la documentación con antelación agiliza todo el proceso.",
+  "Revisar deudas": "Cada deuda que reduces mejora tu capacidad hipotecaria.",
+  "Optimizar perfil financiero": "Un perfil financiero claro es lo que los bancos miran primero.",
+  "Crear checklist de necesidades": "Separar MUST de NICE te evita decisiones emocionales.",
+  "Definir red flags": "Humedades, ruido y mala orientación son las red flags más comunes.",
+  "Definir zonas objetivo": "Los precios varían enormemente entre barrios — compara por m².",
+  "Evaluar riesgos de zona": "Infraestructura y crecimiento son indicadores clave de una buena zona.",
+  "Analizar barrio": "Visita a diferentes horas para detectar problemas reales.",
+  "Guardar favoritos": "3-5 opciones es el número ideal para decidir sin paralizarte.",
+  "Realizar visitas": "Las visitas presenciales revelan cosas que las fotos nunca muestran.",
+  "Hacer oferta": "Justifica tu oferta con datos de la zona — se toma más en serio.",
 };
 
 /* ── Mission icons ── */
@@ -237,9 +333,13 @@ const PHASE_ICONS: Record<number, React.ReactNode> = {
   1: <Target className="h-5 w-5" />,
   2: <Shield className="h-5 w-5" />,
   3: <Zap className="h-5 w-5" />,
-  4: <Search className="h-5 w-5" />,
-  5: <FileText className="h-5 w-5" />,
-  6: <Handshake className="h-5 w-5" />,
+  4: <FileText className="h-5 w-5" />,
+  5: <Handshake className="h-5 w-5" />,
+  6: <Shield className="h-5 w-5" />,
+  7: <Home className="h-5 w-5" />,
+  8: <Search className="h-5 w-5" />,
+  9: <Search className="h-5 w-5" />,
+  10: <Handshake className="h-5 w-5" />,
 };
 
 /* ── Helpers ── */

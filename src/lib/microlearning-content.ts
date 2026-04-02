@@ -48,24 +48,6 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Calcular cuánto puedes permitirte": {
-    title: "Cómo calcular tu capacidad de compra",
-    sections: [
-      {
-        heading: "La regla del 30-35%",
-        body: "Los bancos suelen aprobar hipotecas cuya cuota no supere el 30-35% de tus ingresos netos mensuales. Si ganas 2.000€/mes, tu cuota máxima sería de unos 600-700€.",
-      },
-      {
-        heading: "Ahorros necesarios",
-        body: "Normalmente necesitas tener ahorrado al menos el 20% del precio de la vivienda (entrada) más un 10-12% adicional para impuestos y gastos.",
-      },
-      {
-        heading: "Las ayudas cambian la ecuación",
-        body: "Dependiendo de tu edad, ingresos y comunidad autónoma, puedes acceder a avales públicos, subvenciones o deducciones fiscales que reducen significativamente la cantidad que necesitas ahorrar.",
-      },
-    ],
-  },
-
   "Validar estabilidad de ingresos": {
     title: "Cómo valida el banco tu estabilidad",
     sections: [
@@ -76,20 +58,6 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
       {
         heading: "No solo miran cuánto ganas",
         body: "👉 El banco NO mira solo ingresos → mira riesgo.\n\nLo importante no es solo cuánto ganas, sino la seguridad de esos ingresos. Un contrato fijo con 2 años de antigüedad vale más que un sueldo alto pero inestable.",
-      },
-    ],
-  },
-
-  "Estimar precio de vivienda": {
-    title: "Cómo estimar el precio de tu vivienda",
-    sections: [
-      {
-        heading: "Precio por metro cuadrado",
-        body: "Los precios varían enormemente según la zona. Conocer el precio medio por m² de tu zona objetivo te da un punto de partida realista.",
-      },
-      {
-        heading: "Factores que afectan al precio",
-        body: "• Ubicación y barrio\n• Estado de la vivienda (nueva vs segunda mano)\n• Planta y orientación\n• Zonas comunes y servicios\n• Transporte y conexiones",
       },
     ],
   },
@@ -125,29 +93,15 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Construir la entrada": {
-    title: "Cómo construir tu entrada paso a paso",
-    sections: [
-      {
-        heading: "Automatiza tu ahorro",
-        body: "Configura una transferencia automática mensual a una cuenta separada. Incluso 200-300€/mes se acumulan: en 3 años tendrás 7.200-10.800€.",
-      },
-      {
-        heading: "Lo importante es la constancia",
-        body: "No necesitas el 100% del dinero de golpe. Con constancia, la entrada se construye sola. El banco valora positivamente ver un historial de ahorro regular.",
-      },
-    ],
-  },
-
   /* ══════════════════════════════════════════
-     BLOQUE 3 — Descubre ayudas
+     BLOQUE 3 — Descubre cómo comprar antes (ayudas)
      ══════════════════════════════════════════ */
-  "Identificar ayudas públicas": {
-    title: "Ayudas públicas para comprar vivienda",
+  "Ver ayudas aplicables a mi perfil": {
+    title: "Ayudas aplicables a tu perfil",
     sections: [
       {
         heading: "¿De qué tratan?",
-        body: "Las ayudas públicas buscan facilitar el acceso a la vivienda. Pueden:\n• Reducir el ahorro necesario\n• Permitir mayor financiación\n• Mejorar condiciones de la hipoteca",
+        body: "Las ayudas públicas buscan facilitar el acceso a la vivienda. Pueden:\n• Reducir el ahorro necesario\n• Permitir mayor financiación\n• Mejorar condiciones",
       },
       {
         heading: "Edad límite",
@@ -160,6 +114,18 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
       {
         heading: "Plazos importantes",
         body: "Muchas ayudas tienen convocatorias con presupuesto limitado.\n\n👉 Si no aplicas a tiempo, puedes perderlas.",
+      },
+      {
+        heading: "🏡 Aval ICO",
+        body: "Permite financiar hasta el 100%. El Estado avala parte del préstamo, reduciendo el riesgo del banco.\n\nRequisitos:\n• Menor de 35 años\n• Primera vivienda\n• Ingresos dentro de límites\n\n👉 Se solicita en el banco.",
+      },
+      {
+        heading: "💸 Ayudas autonómicas",
+        body: "Subvenciones directas que cubren parte del coste o la entrada. Dependen de la comunidad, ingresos y ubicación.\n\n👉 Se solicitan por convocatoria pública.",
+      },
+      {
+        heading: "🧾 Deducciones fiscales",
+        body: "Beneficios fiscales tras la compra que reducen tus impuestos en el tiempo.",
       },
     ],
   },
@@ -186,30 +152,16 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Ver ayudas aplicables a su perfil": {
-    title: "Ayudas aplicables a tu perfil",
-    sections: [
-      {
-        heading: "¿De qué tratan?",
-        body: "Las ayudas públicas buscan facilitar el acceso a la vivienda. Pueden:\n• Reducir el ahorro necesario\n• Permitir mayor financiación\n• Mejorar condiciones",
-      },
-      {
-        heading: "Tipos principales",
-        body: "🏡 Aval ICO: Financiación hasta el 100%. El Estado avala parte del préstamo.\n\n💸 Ayudas autonómicas: Subvenciones directas por convocatoria pública.\n\n🧾 Deducciones fiscales: Reducen impuestos tras la compra.",
-      },
-      {
-        heading: "Plazos",
-        body: "Muchas ayudas tienen convocatorias con presupuesto limitado. Si no aplicas a tiempo, puedes perderlas.",
-      },
-    ],
-  },
-
   /* ══════════════════════════════════════════
-     BLOQUE 4 — Entiende tu hipoteca
+     BLOQUE 4 — Entiende cómo funcionará tu hipoteca
      ══════════════════════════════════════════ */
   "Elegir tipo de hipoteca": {
     title: "Tipos de hipoteca: ¿cuál elegir?",
     sections: [
+      {
+        heading: "¿Qué esperar de la llamada con un banco?",
+        body: "Te pedirán ingresos, ahorros y deudas para hacer una simulación inicial. No te compromete a nada.",
+      },
       {
         heading: "Tipo fijo",
         body: "La cuota no cambia nunca. Te da estabilidad y previsibilidad. Ideal si valoras la tranquilidad de saber siempre cuánto pagas.",
@@ -226,14 +178,10 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
         heading: "TIN vs TAE",
         body: "TIN = interés puro del préstamo.\nTAE = coste total anual (incluye comisiones y gastos).\n\n👉 Compara siempre la TAE entre ofertas.",
       },
-      {
-        heading: "¿Qué esperar de la llamada con un banco?",
-        body: "Te pedirán ingresos, ahorros y deudas para hacer una simulación inicial. No te compromete a nada.",
-      },
     ],
   },
 
-  "Porcentajes a financiar": {
+  "Entender porcentajes a financiar": {
     title: "¿Cuánto puede financiar el banco?",
     sections: [
       {
@@ -261,24 +209,6 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Elige tu financiación 80/90/100": {
-    title: "Financiación al 80%, 90% o 100%",
-    sections: [
-      {
-        heading: "80% estándar",
-        body: "El banco financia el 80% y tú aportas el 20% restante como entrada.",
-      },
-      {
-        heading: "90%: perfil sólido",
-        body: "Algunos bancos ofrecen 90% si tienes contrato fijo, antigüedad, sin deudas y buen historial de ahorro.",
-      },
-      {
-        heading: "100%: casos especiales",
-        body: "Posible con viviendas de bancos, programas de aval ICO para jóvenes, o aval familiar con propiedad libre de cargas.",
-      },
-    ],
-  },
-
   "Qué es el pre-scoring": {
     title: "¿Qué es el pre-scoring bancario?",
     sections: [
@@ -293,7 +223,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Tasación": {
+  "Entender la tasación": {
     title: "La tasación de la vivienda",
     sections: [
       {
@@ -308,7 +238,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
   },
 
   /* ══════════════════════════════════════════
-     BLOQUE 5 — Bancos o broker
+     BLOQUE 5 — Sal al mercado: bancos o broker
      ══════════════════════════════════════════ */
   "Contactar 2–3 bancos": {
     title: "Cómo contactar bancos",
@@ -318,22 +248,8 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
         body: "Empieza por tu banco habitual + otros 2 bancos diferentes. Tener varias ofertas te da poder de negociación.",
       },
       {
-        heading: "Qué preguntar",
+        heading: "Compara condiciones reales",
         body: "• Tipo de interés (fijo, variable, mixto)\n• Comisiones\n• Productos vinculados\n• Plazo máximo\n• Condiciones de amortización anticipada",
-      },
-    ],
-  },
-
-  "Pedir preaprobación": {
-    title: "La preaprobación hipotecaria",
-    sections: [
-      {
-        heading: "¿Qué es?",
-        body: "Es un documento del banco que confirma cuánto te prestarían y en qué condiciones aproximadas. No es vinculante.",
-      },
-      {
-        heading: "¿Para qué sirve?",
-        body: "Te da mucha fuerza negociadora con los vendedores. Demuestra que eres un comprador serio y solvente.",
       },
     ],
   },
@@ -366,36 +282,8 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Comparar hipotecas": {
-    title: "Cómo comparar hipotecas",
-    sections: [
-      {
-        heading: "No solo mires el interés",
-        body: "Compara también: comisión de apertura, productos vinculados, comisión por amortización anticipada y la TAE total.",
-      },
-      {
-        heading: "La diferencia importa",
-        body: "La diferencia entre hipotecas puede suponer 10.000-30.000€ en el total. Vale la pena dedicar tiempo a comparar.",
-      },
-    ],
-  },
-
-  "Negociar condiciones": {
-    title: "Negociar las condiciones de tu hipoteca",
-    sections: [
-      {
-        heading: "Es normal negociar",
-        body: "Los bancos esperan negociación. Puedes negociar intereses, comisiones y productos vinculados.",
-      },
-      {
-        heading: "Tu mejor arma",
-        body: "Tener ofertas de otros bancos es tu mejor herramienta de negociación. Si un banco ve que tienes alternativas, mejorará su oferta.",
-      },
-    ],
-  },
-
   /* ══════════════════════════════════════════
-     BLOQUE 6 — Que el banco diga sí
+     BLOQUE 6 — Prepárate para que el banco diga sí
      ══════════════════════════════════════════ */
   "Reunir documentación": {
     title: "Documentación necesaria para la hipoteca",
@@ -411,44 +299,16 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Revisar perfil financiero": {
-    title: "Tu perfil financiero ante el banco",
-    sections: [
-      {
-        heading: "¿Qué miran?",
-        body: "• Estabilidad laboral\n• Ratio de endeudamiento (deudas / ingresos)\n• Historial de ahorro constante\n• Otros préstamos activos",
-      },
-      {
-        heading: "Cómo mejorarlo",
-        body: "Reduce deudas, mantén un ahorro constante y evita contratar nuevos préstamos antes de pedir la hipoteca.",
-      },
-    ],
-  },
-
   "Revisar deudas": {
     title: "Cómo afectan tus deudas a la hipoteca",
     sections: [
       {
         heading: "¿Qué cuenta como deuda?",
-        body: "Préstamos personales, tarjetas de crédito con saldo pendiente, financiaciones de compras y cualquier otro compromiso de pago mensual.",
+        body: "Préstamos personales, tarjetas de crédito con saldo pendiente, financiaciones de compras y cualquier otro compromiso de pago mensual.\n\nDeudas = préstamos + tarjetas + financiaciones",
       },
       {
         heading: "El ratio de endeudamiento",
         body: "El banco suma todas tus cuotas mensuales (incluida la futura hipoteca) y las compara con tus ingresos. Si superas el 35-40%, es probable que no aprueben.",
-      },
-    ],
-  },
-
-  "Reducir deudas": {
-    title: "Estrategias para reducir deudas",
-    sections: [
-      {
-        heading: "Método bola de nieve",
-        body: "Prioriza eliminar préstamos pequeños primero. Cada deuda eliminada te da más capacidad para la siguiente.",
-      },
-      {
-        heading: "Método avalancha",
-        body: "Prioriza las deudas con mayor interés. Ahorras más a largo plazo aunque tarde más en verse el progreso.",
       },
     ],
   },
@@ -470,7 +330,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
   /* ══════════════════════════════════════════
      BLOQUE 7 — Define qué vivienda necesitas
      ══════════════════════════════════════════ */
-  "Crear checklist": {
+  "Crear checklist de necesidades": {
     title: "Crea tu checklist de vivienda ideal",
     sections: [
       {
@@ -498,24 +358,10 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Definir presupuesto real": {
-    title: "Define tu presupuesto real de compra",
-    sections: [
-      {
-        heading: "Presupuesto = precio + entrada + gastos",
-        body: "Tu presupuesto máximo debe incluir no solo el precio de la vivienda, sino también la entrada que aportarás y los gastos asociados.",
-      },
-      {
-        heading: "No te estires de más",
-        body: "Es tentador subir el presupuesto para acceder a mejores viviendas, pero una hipoteca demasiado alta limita tu calidad de vida durante muchos años.",
-      },
-    ],
-  },
-
   /* ══════════════════════════════════════════
      BLOQUE 8 — Analiza zonas
      ══════════════════════════════════════════ */
-  "Definir zonas": {
+  "Definir zonas objetivo": {
     title: "Cómo elegir zona para comprar",
     sections: [
       {
@@ -529,7 +375,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Evaluar riesgos": {
+  "Evaluar riesgos de zona": {
     title: "Evalúa los riesgos de la zona",
     sections: [
       {
@@ -574,20 +420,6 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Buscar viviendas": {
-    title: "Cómo buscar viviendas con criterio",
-    sections: [
-      {
-        heading: "Define filtros claros",
-        body: "Antes de buscar, establece: presupuesto máximo, zona(s), tamaño mínimo, número de habitaciones.",
-      },
-      {
-        heading: "Sé eficiente",
-        body: "Buscar con criterio claro filtra el 80% de anuncios irrelevantes y te ahorra mucho tiempo.",
-      },
-    ],
-  },
-
   "Realizar visitas": {
     title: "Qué revisar en las visitas",
     sections: [
@@ -602,118 +434,59 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     ],
   },
 
-  "Visitar propiedades": {
-    title: "Consejos para visitar propiedades",
-    sections: [
-      {
-        heading: "Qué mirar",
-        body: "Estado de la vivienda, luz natural, ruido del barrio, estado de instalaciones y zonas comunes.",
-      },
-      {
-        heading: "Visita más de una vez",
-        body: "Las visitas presenciales revelan cosas que las fotos nunca muestran. Visita a diferentes horas si puedes.",
-      },
-    ],
-  },
-
   /* ══════════════════════════════════════════
-     BLOQUE 10 — Cierra la compra
+     BLOQUE 10 — Cierra la compra con seguridad
      ══════════════════════════════════════════ */
   "Hacer oferta": {
-    title: "Cómo hacer una oferta de compra",
+    title: "Cómo cerrar la compra con seguridad",
     sections: [
       {
-        heading: "Investiga antes",
-        body: "Conoce los precios reales de venta (no de anuncio) en la zona. Un margen de negociación del 5-10% es habitual.",
+        heading: "Cómo hacer una oferta",
+        body: "Conoce los precios reales de venta (no de anuncio) en la zona. Un margen de negociación del 5-10% es habitual. Justifica tu oferta con datos.",
       },
       {
-        heading: "Haz una oferta fundamentada",
-        body: "Justifica tu oferta con datos: precios de la zona, estado de la vivienda, tiempo en el mercado. Una oferta razonada se toma más en serio.",
-      },
-    ],
-  },
-
-  "Reservar vivienda": {
-    title: "La reserva de la vivienda",
-    sections: [
-      {
-        heading: "¿Qué es la señal?",
+        heading: "Cómo reservar",
         body: "Normalmente entre 1.000€ y 5.000€ que se descuentan del precio final. Demuestra tu interés serio.",
       },
       {
         heading: "Reserva vs arras",
-        body: "La reserva es un paso previo menos formal. Las arras son un compromiso legal más firme con consecuencias si alguna parte incumple.",
-      },
-    ],
-  },
-
-  "Firmar contrato de arras": {
-    title: "El contrato de arras",
-    sections: [
-      {
-        heading: "¿Qué son las arras?",
-        body: "Es un contrato privado donde se fija el precio, las condiciones y el plazo para la firma. Normalmente pagas el 10% del precio como señal.",
+        body: "La reserva es un paso previo menos formal. Las arras son un compromiso legal: si incumples pierdes la señal, si incumple el vendedor te devuelve el doble.",
       },
       {
-        heading: "Consecuencias del incumplimiento",
-        body: "Si incumples, pierdes la señal. Si incumple el vendedor, te devuelve el doble. Es un compromiso serio — asegúrate de tener la financiación antes de firmar.",
-      },
-      {
-        heading: "Qué mirar en el contrato",
+        heading: "Qué mirar en contratos",
         body: "Condiciones, penalizaciones, plazos y cualquier cláusula especial. Si tienes dudas, consulta con un abogado.",
       },
-    ],
-  },
-
-  "Firma de hipoteca": {
-    title: "La firma ante notario",
-    sections: [
       {
-        heading: "El último paso",
-        body: "Se firma la escritura de compraventa y la hipoteca el mismo día ante notario.",
+        heading: "Comisión de apertura",
+        body: "Coste inicial del préstamo hipotecario. Algunos bancos la eliminan a cambio de contratar productos vinculados.",
       },
       {
-        heading: "Documentos necesarios",
-        body: "DNI, preaprobación del banco, justificantes de pago y toda la documentación de la vivienda.",
+        heading: "¿Cuándo empiezo a pagar?",
+        body: "La primera cuota se cobra normalmente un mes después de la firma ante notario.",
       },
       {
-        heading: "Después de la firma",
-        body: "Solo queda inscribir en el Registro de la Propiedad. ¡Y ya tienes tu casa! 🏡",
+        heading: "El notario",
+        body: "Formaliza la operación. Se firma la escritura de compraventa y la hipoteca el mismo día ante notario.",
       },
       {
-        heading: "Conceptos importantes",
-        body: "• Comisión de apertura: coste inicial del préstamo\n• Euríbor: índice que afecta hipotecas variables\n• Productos vinculados: seguros u otros obligatorios\n• LTV: % del valor financiado\n• FEIN/FiAE: documentos con condiciones finales\n• Nota simple: información legal de la vivienda",
-      },
-    ],
-  },
-
-  /* ══════════════════════════════════════════
-     BLOQUE — Explorar avales
-     ══════════════════════════════════════════ */
-  "Explorar aval público": {
-    title: "Avales públicos para la compra de vivienda",
-    sections: [
-      {
-        heading: "¿Qué es un aval público?",
-        body: "El Estado avala parte del préstamo, reduciendo el riesgo para el banco. Esto permite financiar hasta el 100% de la vivienda.",
+        heading: "Euríbor",
+        body: "Índice que afecta a las hipotecas variables. Se revisa cada 6 o 12 meses y puede hacer que tu cuota suba o baje.",
       },
       {
-        heading: "Aval ICO para jóvenes",
-        body: "Requisitos:\n• Menor de 35 años\n• Primera vivienda\n• Ingresos dentro de límites\n\nSe solicita directamente en el banco.",
-      },
-    ],
-  },
-
-  "Explorar aval familiar": {
-    title: "Avales familiares",
-    sections: [
-      {
-        heading: "¿Cómo funciona?",
-        body: "Un familiar aporta una propiedad libre de cargas como garantía adicional. Esto puede cubrir el 20% que el banco no financia.",
+        heading: "Productos vinculados",
+        body: "Seguros, domiciliación de nómina u otros productos que el banco puede exigir a cambio de mejores condiciones.",
       },
       {
-        heading: "Consideraciones",
-        body: "Es un compromiso importante para el avalista. Si no pagas, el banco puede ejecutar la garantía sobre su propiedad. Debe estar bien informado y de acuerdo.",
+        heading: "LTV (Loan-to-Value)",
+        body: "Porcentaje del valor de la vivienda que el banco financia. Normalmente 80%, puede ser más con avales o perfiles sólidos.",
+      },
+      {
+        heading: "FEIN / FiAE",
+        body: "Documentos oficiales con las condiciones finales de tu hipoteca. El banco está obligado a dártelos antes de la firma.",
+      },
+      {
+        heading: "Nota simple",
+        body: "Documento del Registro de la Propiedad con la información legal de la vivienda: quién es el propietario, si tiene cargas, etc.",
       },
     ],
   },
