@@ -613,10 +613,18 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                               {microlearn && (
                                 <div className="ml-10 pl-2">
                                   {isLearned ? (
-                                    <span className="inline-flex items-center gap-1.5 text-xs text-success font-medium">
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setMicrolearnModal(microlearn);
+                                      }}
+                                      className="inline-flex items-center gap-1.5 text-xs text-success font-medium hover:underline transition-colors cursor-pointer"
+                                    >
                                       <CheckCircle2 className="h-3.5 w-3.5" />
                                       Ya entiendes este paso
-                                    </span>
+                                      <span className="text-muted-foreground ml-1">· Repasar</span>
+                                    </button>
                                   ) : (
                                     <button
                                       type="button"
