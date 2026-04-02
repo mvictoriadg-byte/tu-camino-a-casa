@@ -196,7 +196,7 @@ const STEP_REWARDS: Record<string, string> = {
   "Revisar perfil financiero": "✔️ Tu perfil financiero está bajo control",
   "Reducir deudas": "✔️ Estás mejorando tu capacidad hipotecaria",
   "Construir la entrada": "✔️ Cada euro cuenta. Estás construyendo tu futuro",
-  "Entender financiación 80/90/100": "✔️ Ya entiendes las opciones que tienes",
+  "Elige tu financiación 80/90/100": "✔️ Ya entiendes las opciones que tienes",
   "Explorar aval público": "✔️ Conoces una herramienta que puede acelerar tu compra",
   "Explorar aval familiar": "✔️ Has explorado todas las opciones de aval",
   "Definir presupuesto real": "✔️ Tienes un presupuesto realista y claro",
