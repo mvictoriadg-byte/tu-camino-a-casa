@@ -587,7 +587,7 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
         const isCurrent = currentPhase?.id === phase.id;
         const unlocked = isMissionUnlocked(phase);
         const isExpanded = expandedPhase === phase.id;
-        const feedback = getMissionFeedback(phaseCompletedCount, phaseTotal);
+        const feedback = getMissionFeedback(phaseFullyDone, phaseTotal);
         const isAidsMission = phase.order_index === 3;
         const learning = PHASE_LEARNING[phase.order_index];
 
