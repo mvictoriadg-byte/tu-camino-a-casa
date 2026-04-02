@@ -394,15 +394,37 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
 
   const completedStepIds = new Set(stepProgress.filter(s => s.completed).map(s => s.step_id));
   const totalSteps = steps.length;
-  const completedTotal = completedStepIds.size;
-  const globalPercent = totalSteps > 0 ? Math.round((completedTotal / totalSteps) * 100) : 0;
 
-  const currentPhase = phases.find(p => p.id === trackerState?.current_phase_id);
+  // A phase is fully complete when all actions are checked AND all microlearnings are done
+  const isPhaseFullyComplete = useCallback((phaseId: string) => {
+    const phaseSteps = steps.filter(s => s.phase_id === phaseId);
+    if (phaseSteps.length === 0) return false;
+    const allActionsComplete = phaseSteps.every(s => completedStepIds.has(s.id));
+    const allLearned = phaseSteps.every(s => {
+      const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+      return !hasMicrolearn || learnedSteps.has(s.title);
+    });
+    return allActionsComplete && allLearned;
+  }, [steps, completedStepIds, learnedSteps]);
+
+  // Count completed steps (actions + microlearnings both done)
+  const fullyCompletedCount = steps.filter(s => {
+    const actionDone = completedStepIds.has(s.id);
+    const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+    const learnDone = !hasMicrolearn || learnedSteps.has(s.title);
+    return actionDone && learnDone;
+  }).length;
+
+  const globalPercent = totalSteps > 0 ? Math.round((fullyCompletedCount / totalSteps) * 100) : 0;
+
+  // Current phase = first phase not fully complete (progress-based, not time-based)
+  const sortedPhases = [...phases].sort((a, b) => a.order_index - b.order_index);
+  const currentPhase = sortedPhases.find(p => !isPhaseFullyComplete(p.id)) || sortedPhases[sortedPhases.length - 1];
   const currentOrderIdx = currentPhase?.order_index ?? 1;
 
   useEffect(() => {
     if (currentPhase && !expandedPhase) setExpandedPhase(currentPhase.id);
-  }, [currentPhase]);
+  }, [currentPhase?.id]);
 
   const handleToggleStep = useCallback(async (stepId: string, checked: boolean, stepTitle: string) => {
     await toggleStep(stepId, checked);
@@ -423,11 +445,7 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
     if (phase.order_index <= currentOrderIdx) return true;
     if (phase.order_index === currentOrderIdx + 1) return true;
     const prevPhase = phases.find(p => p.order_index === phase.order_index - 1);
-    if (prevPhase) {
-      const prevSteps = steps.filter(s => s.phase_id === prevPhase.id);
-      const allPrevDone = prevSteps.length > 0 && prevSteps.every(s => completedStepIds.has(s.id));
-      if (allPrevDone) return true;
-    }
+    if (prevPhase && isPhaseFullyComplete(prevPhase.id)) return true;
     return false;
   };
 
@@ -463,7 +481,7 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
               <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-1">Tu camino hacia tu casa</h2>
               <p className="text-sm text-muted-foreground mb-2">{getGlobalMessage(globalPercent)}</p>
               <p className="text-xs text-muted-foreground">
-                {completedTotal} de {totalSteps} pasos completados
+                {fullyCompletedCount} de {totalSteps} pasos completados
               </p>
             </div>
           </div>
@@ -553,13 +571,23 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
       {phases.map((phase, idx) => {
         const phaseSteps = steps.filter(s => s.phase_id === phase.id);
         const phaseCompletedCount = phaseSteps.filter(s => completedStepIds.has(s.id)).length;
+        const phaseLearnedCount = phaseSteps.filter(s => {
+          const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+          return !hasMicrolearn || learnedSteps.has(s.title);
+        }).length;
         const phaseTotal = phaseSteps.length;
-        const phasePercent = phaseTotal > 0 ? Math.round((phaseCompletedCount / phaseTotal) * 100) : 0;
-        const allComplete = phaseTotal > 0 && phaseCompletedCount === phaseTotal;
-        const isCurrent = phase.id === trackerState?.current_phase_id;
+        const phaseFullyDone = phaseSteps.filter(s => {
+          const actionDone = completedStepIds.has(s.id);
+          const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+          const learnDone = !hasMicrolearn || learnedSteps.has(s.title);
+          return actionDone && learnDone;
+        }).length;
+        const phasePercent = phaseTotal > 0 ? Math.round((phaseFullyDone / phaseTotal) * 100) : 0;
+        const allComplete = phaseTotal > 0 && phaseFullyDone === phaseTotal;
+        const isCurrent = currentPhase?.id === phase.id;
         const unlocked = isMissionUnlocked(phase);
         const isExpanded = expandedPhase === phase.id;
-        const feedback = getMissionFeedback(phaseCompletedCount, phaseTotal);
+        const feedback = getMissionFeedback(phaseFullyDone, phaseTotal);
         const isAidsMission = phase.order_index === 3;
         const learning = PHASE_LEARNING[phase.order_index];
 
@@ -638,11 +666,11 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                       <div className="mt-2">
                         <div className="flex items-center gap-2">
                           <Progress value={phasePercent} className="h-1.5 flex-1" />
-                          <span className="text-xs font-semibold text-muted-foreground">{phaseCompletedCount}/{phaseTotal}</span>
+                          <span className="text-xs font-semibold text-muted-foreground">{phaseFullyDone}/{phaseTotal}</span>
                         </div>
-                        {!allComplete && phaseCompletedCount > 0 && (
+                        {!allComplete && phaseFullyDone > 0 && (
                           <p className="text-[11px] text-muted-foreground mt-1">
-                            Te {phaseTotal - phaseCompletedCount === 1 ? "queda" : "quedan"} {phaseTotal - phaseCompletedCount} paso{phaseTotal - phaseCompletedCount !== 1 ? "s" : ""} para completar esta fase
+                            Te {phaseTotal - phaseFullyDone === 1 ? "queda" : "quedan"} {phaseTotal - phaseFullyDone} paso{phaseTotal - phaseFullyDone !== 1 ? "s" : ""} para completar esta fase
                           </p>
                         )}
                       </div>

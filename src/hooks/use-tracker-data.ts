@@ -53,11 +53,15 @@ export interface TrackerData {
 
 const FOCUS_MESSAGES: Record<number, string> = {
   1: "Estás en la fase de descubrimiento. ¡Conocer tu situación es el primer gran paso!",
-  2: "Es momento de construir tu base financiera. Con constancia, cada mes cuenta.",
-  3: "Explorar opciones de financiación puede acercarte mucho más a tu objetivo.",
-  4: "¡Ya puedes empezar a buscar! Tu momento de encontrar tu hogar se acerca.",
-  5: "Estás muy cerca. Comparar hipotecas puede ahorrarte mucho dinero.",
-  6: "¡Los pasos finales! Tu primera vivienda está al alcance de la mano.",
+  2: "Es momento de calcular cuánto necesitas. Con claridad, todo es más fácil.",
+  3: "Explorar ayudas puede acercarte mucho más a tu objetivo.",
+  4: "Entender la hipoteca te quita el miedo técnico. ¡Tú puedes!",
+  5: "Es hora de salir al mercado y comparar ofertas reales.",
+  6: "Prepárate para que el banco te diga que sí.",
+  7: "Define qué vivienda necesitas de verdad — evita decisiones emocionales.",
+  8: "Analiza zonas con criterio. Comprar bien es comprar inteligente.",
+  9: "¡Ya puedes buscar y visitar viviendas!",
+  10: "¡Los pasos finales! Tu primera vivienda está al alcance de la mano.",
 };
 
 export function determinePhaseFromMonths(months: number): number {
