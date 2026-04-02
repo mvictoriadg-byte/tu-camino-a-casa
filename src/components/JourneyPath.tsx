@@ -11,9 +11,10 @@ import { toast } from "sonner";
 import {
   Home, Lock, CheckCircle2, ChevronDown, ChevronUp,
   Sparkles, Zap, Target, Shield, Search,
-  FileText, Handshake, Award, BookOpen, ArrowRight,
+  FileText, Handshake, Award, BookOpen, ArrowRight, GraduationCap,
 } from "lucide-react";
 import type { TrackerData } from "@/hooks/use-tracker-data";
+import { STEP_MICROLEARNING, type MicrolearningEntry } from "@/lib/microlearning-content";
 
 /* ═══════════════════════════════════════════════════════════
    LEARNING CONTENT PER PHASE
