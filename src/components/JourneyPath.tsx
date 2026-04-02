@@ -394,15 +394,37 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
 
   const completedStepIds = new Set(stepProgress.filter(s => s.completed).map(s => s.step_id));
   const totalSteps = steps.length;
-  const completedTotal = completedStepIds.size;
-  const globalPercent = totalSteps > 0 ? Math.round((completedTotal / totalSteps) * 100) : 0;
 
-  const currentPhase = phases.find(p => p.id === trackerState?.current_phase_id);
+  // A phase is fully complete when all actions are checked AND all microlearnings are done
+  const isPhaseFullyComplete = useCallback((phaseId: string) => {
+    const phaseSteps = steps.filter(s => s.phase_id === phaseId);
+    if (phaseSteps.length === 0) return false;
+    const allActionsComplete = phaseSteps.every(s => completedStepIds.has(s.id));
+    const allLearned = phaseSteps.every(s => {
+      const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+      return !hasMicrolearn || learnedSteps.has(s.title);
+    });
+    return allActionsComplete && allLearned;
+  }, [steps, completedStepIds, learnedSteps]);
+
+  // Count completed steps (actions + microlearnings both done)
+  const fullyCompletedCount = steps.filter(s => {
+    const actionDone = completedStepIds.has(s.id);
+    const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+    const learnDone = !hasMicrolearn || learnedSteps.has(s.title);
+    return actionDone && learnDone;
+  }).length;
+
+  const globalPercent = totalSteps > 0 ? Math.round((fullyCompletedCount / totalSteps) * 100) : 0;
+
+  // Current phase = first phase not fully complete (progress-based, not time-based)
+  const sortedPhases = [...phases].sort((a, b) => a.order_index - b.order_index);
+  const currentPhase = sortedPhases.find(p => !isPhaseFullyComplete(p.id)) || sortedPhases[sortedPhases.length - 1];
   const currentOrderIdx = currentPhase?.order_index ?? 1;
 
   useEffect(() => {
     if (currentPhase && !expandedPhase) setExpandedPhase(currentPhase.id);
-  }, [currentPhase]);
+  }, [currentPhase?.id]);
 
   const handleToggleStep = useCallback(async (stepId: string, checked: boolean, stepTitle: string) => {
     await toggleStep(stepId, checked);
@@ -423,11 +445,7 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
     if (phase.order_index <= currentOrderIdx) return true;
     if (phase.order_index === currentOrderIdx + 1) return true;
     const prevPhase = phases.find(p => p.order_index === phase.order_index - 1);
-    if (prevPhase) {
-      const prevSteps = steps.filter(s => s.phase_id === prevPhase.id);
-      const allPrevDone = prevSteps.length > 0 && prevSteps.every(s => completedStepIds.has(s.id));
-      if (allPrevDone) return true;
-    }
+    if (prevPhase && isPhaseFullyComplete(prevPhase.id)) return true;
     return false;
   };
 
