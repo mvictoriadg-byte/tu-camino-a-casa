@@ -571,10 +571,20 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
       {phases.map((phase, idx) => {
         const phaseSteps = steps.filter(s => s.phase_id === phase.id);
         const phaseCompletedCount = phaseSteps.filter(s => completedStepIds.has(s.id)).length;
+        const phaseLearnedCount = phaseSteps.filter(s => {
+          const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+          return !hasMicrolearn || learnedSteps.has(s.title);
+        }).length;
         const phaseTotal = phaseSteps.length;
-        const phasePercent = phaseTotal > 0 ? Math.round((phaseCompletedCount / phaseTotal) * 100) : 0;
-        const allComplete = phaseTotal > 0 && phaseCompletedCount === phaseTotal;
-        const isCurrent = phase.id === trackerState?.current_phase_id;
+        const phaseFullyDone = phaseSteps.filter(s => {
+          const actionDone = completedStepIds.has(s.id);
+          const hasMicrolearn = !!STEP_MICROLEARNING[s.title];
+          const learnDone = !hasMicrolearn || learnedSteps.has(s.title);
+          return actionDone && learnDone;
+        }).length;
+        const phasePercent = phaseTotal > 0 ? Math.round((phaseFullyDone / phaseTotal) * 100) : 0;
+        const allComplete = phaseTotal > 0 && phaseFullyDone === phaseTotal;
+        const isCurrent = currentPhase?.id === phase.id;
         const unlocked = isMissionUnlocked(phase);
         const isExpanded = expandedPhase === phase.id;
         const feedback = getMissionFeedback(phaseCompletedCount, phaseTotal);
