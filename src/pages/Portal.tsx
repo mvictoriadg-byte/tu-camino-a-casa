@@ -240,8 +240,7 @@ const Portal = () => {
         <Tabs defaultValue="roadmap" className="space-y-6">
           <TabsList className="bg-muted rounded-full p-1 h-auto flex-wrap">
             <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan</TabsTrigger>
-            
-             <TabsTrigger value="journey" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Compass className="h-4 w-4 mr-1.5" /> Camino a casa</TabsTrigger>
+            <TabsTrigger value="journey" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Compass className="h-4 w-4 mr-1.5" /> Camino a casa</TabsTrigger>
             <TabsTrigger value="wishlist" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Heart className="h-4 w-4 mr-1.5" /> Wishlist</TabsTrigger>
             <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><User className="h-4 w-4 mr-1.5" /> Perfil</TabsTrigger>
           </TabsList>
@@ -289,14 +288,22 @@ const Portal = () => {
             )}
           </TabsContent>
 
-
-          {import.meta.env.DEV && (
           <TabsContent value="journey">
             {result && user ? (
-              <JourneyPath
-                tracker={trackerData}
-                userId={user.id}
-              />
+              trackerData.loading ? (
+                <Card className="glow-card">
+                  <CardContent className="p-12 text-center">
+                    <RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" />
+                    <h3 className="text-xl font-bold mb-2">Cargando Camino a casa</h3>
+                    <p className="text-muted-foreground text-sm">Estamos preparando tus misiones y progreso.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <JourneyPath
+                  tracker={trackerData}
+                  userId={user.id}
+                />
+              )
             ) : (
               <Card className="glow-card">
                 <CardContent className="p-12 text-center">
@@ -308,7 +315,6 @@ const Portal = () => {
               </Card>
             )}
           </TabsContent>
-          )}
 
           <TabsContent value="wishlist">
             <Card className="glow-card mb-6">
