@@ -746,40 +746,6 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                         })}
                       </div>
 
-                      {/* ── 2. Essential Learning (always visible) ── */}
-                      {learning && (
-                        <div className="mt-4 ml-14 p-4 rounded-xl bg-muted/50 border border-border/50">
-                          <div className="flex items-center gap-2 mb-3">
-                            <BookOpen className="h-4 w-4 text-primary shrink-0" />
-                            <p className="text-xs uppercase tracking-widest font-bold text-primary">
-                              🧠 Aprende lo esencial
-                            </p>
-                          </div>
-                          <ul className="space-y-2">
-                            {learning.essentials.map((item, i) => (
-                              <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                <span className="text-primary mt-0.5 shrink-0">•</span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-
-                          {/* ── 3. Deep Dive button ── */}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeepDivePhase(phase.order_index);
-                            }}
-                            className="mt-3 text-xs font-semibold text-primary hover:text-primary hover:bg-primary/10 rounded-full px-4 gap-1.5"
-                          >
-                            <Search className="h-3.5 w-3.5" />
-                            {learning.deepDive.buttonLabel}
-                            <ArrowRight className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      )}
 
                       {/* Mission complete message */}
                       {allComplete && (
