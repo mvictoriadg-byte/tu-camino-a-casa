@@ -666,11 +666,11 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                       <div className="mt-2">
                         <div className="flex items-center gap-2">
                           <Progress value={phasePercent} className="h-1.5 flex-1" />
-                          <span className="text-xs font-semibold text-muted-foreground">{phaseCompletedCount}/{phaseTotal}</span>
+                          <span className="text-xs font-semibold text-muted-foreground">{phaseFullyDone}/{phaseTotal}</span>
                         </div>
-                        {!allComplete && phaseCompletedCount > 0 && (
+                        {!allComplete && phaseFullyDone > 0 && (
                           <p className="text-[11px] text-muted-foreground mt-1">
-                            Te {phaseTotal - phaseCompletedCount === 1 ? "queda" : "quedan"} {phaseTotal - phaseCompletedCount} paso{phaseTotal - phaseCompletedCount !== 1 ? "s" : ""} para completar esta fase
+                            Te {phaseTotal - phaseFullyDone === 1 ? "queda" : "quedan"} {phaseTotal - phaseFullyDone} paso{phaseTotal - phaseFullyDone !== 1 ? "s" : ""} para completar esta fase
                           </p>
                         )}
                       </div>
