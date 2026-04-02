@@ -424,6 +424,31 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
         )}
       </Dialog>
 
+      {/* ── Microlearning Modal ── */}
+      <Dialog open={microlearnModal !== null} onOpenChange={(open) => !open && setMicrolearnModal(null)}>
+        {microlearnModal && (
+          <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-extrabold flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
+                {microlearnModal.title}
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
+                Aprende lo esencial sobre este paso
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-5 mt-2">
+              {microlearnModal.sections.map((section, i) => (
+                <div key={i}>
+                  <h4 className="font-bold text-sm text-foreground mb-1.5">{section.heading}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{section.body}</p>
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        )}
+      </Dialog>
+
       {/* ── Mission Blocks ── */}
       {phases.map((phase, idx) => {
         const phaseSteps = steps.filter(s => s.phase_id === phase.id);
