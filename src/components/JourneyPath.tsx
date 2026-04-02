@@ -11,9 +11,10 @@ import { toast } from "sonner";
 import {
   Home, Lock, CheckCircle2, ChevronDown, ChevronUp,
   Sparkles, Zap, Target, Shield, Search,
-  FileText, Handshake, Award, BookOpen, ArrowRight,
+  FileText, Handshake, Award, BookOpen, ArrowRight, GraduationCap,
 } from "lucide-react";
 import type { TrackerData } from "@/hooks/use-tracker-data";
+import { STEP_MICROLEARNING, type MicrolearningEntry } from "@/lib/microlearning-content";
 
 /* ═══════════════════════════════════════════════════════════
    LEARNING CONTENT PER PHASE
@@ -269,6 +270,27 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
   const [unlockedInsight, setUnlockedInsight] = useState<{ title: string; text: string } | null>(null);
   const [deepDivePhase, setDeepDivePhase] = useState<number | null>(null);
+  const [microlearnModal, setMicrolearnModal] = useState<MicrolearningEntry | null>(null);
+
+  // Track which steps have been "learned" — persisted in localStorage
+  const [learnedSteps, setLearnedSteps] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem(`learned_steps_${userId}`);
+      return saved ? new Set(JSON.parse(saved)) : new Set<string>();
+    } catch {
+      return new Set<string>();
+    }
+  });
+
+  const markAsLearned = useCallback((stepTitle: string) => {
+    setLearnedSteps(prev => {
+      const next = new Set(prev);
+      next.add(stepTitle);
+      localStorage.setItem(`learned_steps_${userId}`, JSON.stringify([...next]));
+      return next;
+    });
+    toast.success("✔️ Ya entiendes este paso", { duration: 2000 });
+  }, [userId]);
 
   const completedStepIds = new Set(stepProgress.filter(s => s.completed).map(s => s.step_id));
   const totalSteps = steps.length;
@@ -395,6 +417,31 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                 <div key={i}>
                   <h4 className="font-bold text-sm text-foreground mb-1.5">{section.heading}</h4>
                   <p className="text-sm text-muted-foreground leading-relaxed">{section.body}</p>
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        )}
+      </Dialog>
+
+      {/* ── Microlearning Modal ── */}
+      <Dialog open={microlearnModal !== null} onOpenChange={(open) => !open && setMicrolearnModal(null)}>
+        {microlearnModal && (
+          <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-extrabold flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
+                {microlearnModal.title}
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
+                Aprende lo esencial sobre este paso
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-5 mt-2">
+              {microlearnModal.sections.map((section, i) => (
+                <div key={i}>
+                  <h4 className="font-bold text-sm text-foreground mb-1.5">{section.heading}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{section.body}</p>
                 </div>
               ))}
             </div>
@@ -529,36 +576,64 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
                       <div className="space-y-1.5 ml-14">
                         {phaseSteps.map(step => {
                           const isCompleted = completedStepIds.has(step.id);
+                          const microlearn = STEP_MICROLEARNING[step.title];
+                          const isLearned = learnedSteps.has(step.title);
                           return (
-                            <label
-                              key={step.id}
-                              className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted/50 cursor-pointer transition-colors group"
-                            >
-                              <Checkbox
-                                checked={isCompleted}
-                                onCheckedChange={(checked) => handleToggleStep(step.id, !!checked, step.title)}
-                                className="shrink-0 mt-0.5"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <span className={`text-sm font-medium block ${isCompleted ? "line-through text-muted-foreground" : "text-foreground"}`}>
-                                  {step.title}
-                                </span>
-                                {step.description && (
-                                  <span className="text-xs text-muted-foreground block mt-0.5">
-                                    {step.description}
+                            <div key={step.id} className="space-y-1">
+                              <label
+                                className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted/50 cursor-pointer transition-colors group"
+                              >
+                                <Checkbox
+                                  checked={isCompleted}
+                                  onCheckedChange={(checked) => handleToggleStep(step.id, !!checked, step.title)}
+                                  className="shrink-0 mt-0.5"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <span className={`text-sm font-medium block ${isCompleted ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                                    {step.title}
                                   </span>
+                                  {step.description && (
+                                    <span className="text-xs text-muted-foreground block mt-0.5">
+                                      {step.description}
+                                    </span>
+                                  )}
+                                </div>
+                                {isCompleted && (
+                                  <motion.div
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                  >
+                                    <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
+                                  </motion.div>
                                 )}
-                              </div>
-                              {isCompleted && (
-                                <motion.div
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                >
-                                  <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
-                                </motion.div>
+                              </label>
+
+                              {/* Microlearning button or learned badge */}
+                              {microlearn && (
+                                <div className="ml-10 pl-2">
+                                  {isLearned ? (
+                                    <span className="inline-flex items-center gap-1.5 text-xs text-success font-medium">
+                                      <CheckCircle2 className="h-3.5 w-3.5" />
+                                      Ya entiendes este paso
+                                    </span>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setMicrolearnModal(microlearn);
+                                        markAsLearned(step.title);
+                                      }}
+                                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 hover:underline transition-colors"
+                                    >
+                                      <GraduationCap className="h-3.5 w-3.5" />
+                                      Aprende sobre esta sección
+                                    </button>
+                                  )}
+                                </div>
                               )}
-                            </label>
+                            </div>
                           );
                         })}
                       </div>
