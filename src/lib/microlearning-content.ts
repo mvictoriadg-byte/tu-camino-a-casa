@@ -168,7 +168,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
       },
       {
         heading: "Tipo variable",
-        body: "La cuota se recalcula cada 6 o 12 meses según el Euríbor. Puede subir o bajar. Históricamente más barata, pero con más riesgo.",
+        body: "La cuota se recalcula cada 6 o 12 meses según el Euríbor (Índice que afecta a las hipotecas variables. Se revisa cada 6 o 12 meses y puede hacer que tu cuota suba o baje). Históricamente más barata, pero con más riesgo.",
       },
       {
         heading: "Tipo mixto",
