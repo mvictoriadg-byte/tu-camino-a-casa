@@ -425,7 +425,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
     sections: [
       {
         heading: "Checklist de visita",
-        body: "Revisa:\n• Estado general y acabados\n• Luz natural y orientación\n• Ruido (abre ventanas)\n• Humedades\n• Estado de zonas comunes\n• Comunidad de vecinos",
+        body: "Revisa:\n• Estado general y acabados\n• Luz natural y orientación (Mejor orientación es la sur/sureste: luz natural, más calor en invierno, mejor eficiencia energética)\n• Ruido (abre ventanas)\n• Humedades\n• Estado de zonas comunes\n• Comunidad de vecinos",
       },
       {
         heading: "Preguntas importantes",
