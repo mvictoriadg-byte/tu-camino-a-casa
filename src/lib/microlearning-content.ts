@@ -147,7 +147,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
       },
       {
         heading: "🧾 Deducciones fiscales",
-        body: "Beneficios fiscales tras la compra que reducen tus impuestos en el tiempo.",
+        body: "Beneficios fiscales tras la compra que reducen tus impuestos en el tiempo.\n\nEstos suelen aplicarse en casos como:\n• Menores de 35 años\n• Compra en zonas rurales\n• Familias numerosas",
       },
     ],
   },
