@@ -117,7 +117,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
       },
       {
         heading: "🏡 Aval ICO",
-        body: "Permite financiar hasta el 100%. El Estado avala parte del préstamo, reduciendo el riesgo del banco.\n\nRequisitos:\n• Menor de 35 años\n• Primera vivienda\n• Ingresos dentro de límites\n\n👉 Se solicita en el banco.",
+        body: "Permite financiar hasta el 100%. El Estado avala parte del préstamo, reduciendo el riesgo del banco.\n\nRequisitos:\n• Menor de 35 años\n• Primera vivienda\n• Ingresos dentro de límites (~37.800€ anuales por persona)\n \n👉 Se solicita en el banco.",
       },
       {
         heading: "💸 Ayudas autonómicas",
@@ -139,7 +139,7 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
       },
       {
         heading: "🏡 Aval ICO",
-        body: "Permite financiar hasta el 100%. El Estado avala parte del préstamo, reduciendo el riesgo del banco.\n\nRequisitos:\n• Menor de 35 años\n• Primera vivienda\n• Ingresos dentro de límites\n\n👉 Se solicita en el banco.",
+        body: "Permite financiar hasta el 100%. El Estado avala parte del préstamo, reduciendo el riesgo del banco.\n\nRequisitos:\n• Menor de 35 años\n• Primera vivienda\n• Ingresos dentro de límites (~37.800€ anuales por persona)\n \n👉 Se solicita en el banco.",
       },
       {
         heading: "💸 Ayudas autonómicas",
