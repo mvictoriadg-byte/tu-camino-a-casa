@@ -534,7 +534,7 @@ const JourneyPath = ({ tracker, userId }: JourneyPathProps) => {
               {activeDeepDive.deepDive.sections.map((section, i) => (
                 <div key={i}>
                   <h4 className="font-bold text-sm text-foreground mb-1.5">{section.heading}</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{section.body}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{section.body}</p>
                 </div>
               ))}
             </div>
