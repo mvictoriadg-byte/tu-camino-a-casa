@@ -469,10 +469,6 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
         body: "Formaliza la operación. Se firma la escritura de compraventa y la hipoteca el mismo día ante notario.",
       },
       {
-        heading: "Euríbor",
-        body: "Índice que afecta a las hipotecas variables. Se revisa cada 6 o 12 meses y puede hacer que tu cuota suba o baje.",
-      },
-      {
         heading: "Productos vinculados",
         body: "Seguros, domiciliación de nómina u otros productos que el banco puede exigir a cambio de mejores condiciones.",
       },
