@@ -60,9 +60,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight mb-5">
-                Tu primera casa{" "}
-                <br className="hidden sm:block" />
-                <span className="gradient-text">está más cerca de lo que crees</span>
+                Tu primera casa empieza con un plan
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed mb-8">
                 Descubre cuánto necesitas ahorrar, qué ayudas públicas puedes aprovechar y cuándo podrías comprar tu primera vivienda.
