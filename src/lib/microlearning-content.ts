@@ -473,10 +473,6 @@ export const STEP_MICROLEARNING: Record<string, MicrolearningEntry> = {
         body: "Seguros, domiciliación de nómina u otros productos que el banco puede exigir a cambio de mejores condiciones.",
       },
       {
-        heading: "LTV (Loan-to-Value)",
-        body: "Porcentaje del valor de la vivienda que el banco financia. Normalmente 80%, puede ser más con avales o perfiles sólidos.",
-      },
-      {
         heading: "FEIN / FiAE",
         body: "Documentos oficiales con las condiciones finales de tu hipoteca. El banco está obligado a dártelos antes de la firma.",
       },
