@@ -29,12 +29,32 @@ const Index = () => {
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
   const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
   const [pendingProfile, setPendingProfile] = useState<UserProfile | null>(null);
+  const [needsAidsCompute, setNeedsAidsCompute] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchHousingAids().then(setAllAids);
+    try {
+      const savedForm = localStorage.getItem("cac_form_data");
+      const savedResult = localStorage.getItem("cac_result");
+      if (savedForm && savedResult) {
+        const profile = JSON.parse(savedForm) as UserProfile;
+        const r = JSON.parse(savedResult) as AffordabilityResult;
+        setCurrentProfile(profile);
+        setResult(r);
+        setPhase("results");
+        setNeedsAidsCompute(true);
+      }
+    } catch {/* silent */}
   }, []);
+
+  useEffect(() => {
+    if (needsAidsCompute && allAids.length > 0 && currentProfile && result) {
+      computeAids(currentProfile, result, allAids);
+      setNeedsAidsCompute(false);
+    }
+  }, [allAids, needsAidsCompute]);
 
   const computeAids = (profile: UserProfile, r: AffordabilityResult, aids: HousingAid[]) => {
     const region = profile.comunidad || cityData[profile.city]?.region || "España";
@@ -114,10 +134,14 @@ const Index = () => {
     setPhase("results");
     window.scrollTo({ top: 0, behavior: "smooth" });
 
+    try {
+      localStorage.setItem("cac_form_data", JSON.stringify(profile));
+      localStorage.setItem("cac_result", JSON.stringify(r));
+    } catch {/* silent */}
+
     if (user) {
       await saveUserData(profile, r);
     } else {
-      // Store pending plan for post-signup persistence
       try {
         localStorage.setItem("pending_plan", JSON.stringify({ profile, result: r }));
       } catch {/* silent */}
