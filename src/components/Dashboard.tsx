@@ -148,32 +148,24 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
           <Card className="glow-card h-full">
             <CardContent className="p-5">
               <div className="flex items-start justify-between mb-2">
-                <span className="text-xs uppercase tracking-wider font-bold text-muted-foreground">Coste total para comprar</span>
+                <span className="text-xs uppercase tracking-wider font-bold text-muted-foreground">Lo que necesitas ahorrar</span>
                 <Target className="h-4 w-4 text-foreground" />
               </div>
               <div className="stat-value text-foreground mb-3">{formatCurrency(displayTotalUpfront)}</div>
-              <div className="space-y-2 border-t border-border pt-3">
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrada ({100 - mortgagePercent}%)</span><span className="font-bold">{formatCurrency(requiredDownPayment)}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Impuestos (~10%)</span><span className="font-bold">{formatCurrency(taxesAndFees)}</span></div>
-                {reformCostEstimate > 0 && (
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Reforma</span><span className="font-bold text-warning">{formatCurrency(reformCostEstimate)}</span></div>
-                )}
-              </div>
+              <p className="text-xs text-muted-foreground">Entrada (20%) + impuestos y gastos (~10%) del precio de la vivienda</p>
             </CardContent>
           </Card>
         </motion.div>
       </div>
 
       {/* SECONDARY */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <StatCard label="Capacidad de compra" value={formatCurrency(maxHomePrice)} icon={TrendingUp}
-          subtitle="Máximo hipotecable" variant={canAfford ? "success" : "warning"} delay={0.25} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {reformCostEstimate > 0 && (
           <StatCard label="Reforma estimada" value={formatCurrency(reformCostEstimate)} icon={Wrench}
             subtitle="Según estado vivienda" variant="warning" delay={0.3} />
         )}
-        <StatCard label="Cuota hipotecaria" value={`${formatCurrency(monthlyMortgagePayment)}/mes`} icon={Euro}
-          subtitle={`30 años · ${city.mortgageRate}% · DTI: ${debtToIncomeRatio}%`}
+        <StatCard label="Pagarías al banco" value={`${formatCurrency(monthlyMortgagePayment)}/mes`} icon={Euro}
+          subtitle="Estimación orientativa · varía según banco y perfil"
           variant={debtToIncomeRatio <= 35 ? "success" : "destructive"} delay={0.35} />
       </div>
 

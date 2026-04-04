@@ -5,7 +5,6 @@ import OnboardingWizard from "@/components/OnboardingWizard";
 import Dashboard from "@/components/Dashboard";
 import ConvertPlanCTA from "@/components/ConvertPlanCTA";
 import ScenarioComparison from "@/components/ScenarioComparison";
-import SavingsProgressTracker from "@/components/SavingsProgressTracker";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, cityData, formatCurrency } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
 import { useAuth } from "@/contexts/AuthContext";
@@ -237,17 +236,7 @@ const Index = () => {
                       />
                     );
                   })()}
-                  {/* Tracker for logged-in, unified CTA for guests */}
-                  {user ? (
-                    <SavingsProgressTracker
-                      userId={user.id}
-                      totalUpfront={result.totalUpfront}
-                      monthlySavingsTarget={result.totalMonthlySavings}
-                      currentSavings={result.totalSavings}
-                    />
-                  ) : (
-                    <ConvertPlanCTA />
-                  )}
+                  {!user && <ConvertPlanCTA />}
                 </div>
               </div>
             </section>

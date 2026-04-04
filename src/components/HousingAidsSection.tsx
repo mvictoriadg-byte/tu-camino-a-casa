@@ -155,10 +155,14 @@ const HousingAidsSection = ({
                         {aid.region}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">{aid.benefit_description}</p>
-                    <div className="flex items-center gap-1 mt-2">
-                      <ChevronRight className={`h-3 w-3 ${colorClass}`} />
+                    <div className="flex items-center gap-3 mt-2">
                       <span className={`text-xs font-bold ${colorClass}`}>{aid.estimatedImpact}</span>
+                      <span className="relative group cursor-help">
+                        <span className="text-xs text-muted-foreground underline decoration-dotted">¿Qué significa esto?</span>
+                        <span className="absolute bottom-full left-0 mb-1 w-64 p-2 rounded-lg bg-popover border border-border text-xs shadow-lg hidden group-hover:block z-10 font-normal text-foreground">
+                          {aid.benefit_description}
+                        </span>
+                      </span>
                     </div>
                   </div>
                 </motion.div>
