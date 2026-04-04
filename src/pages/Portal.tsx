@@ -90,8 +90,8 @@ const Portal = () => {
       const d = f.data[0];
       const formData: Partial<UserProfile> = {
         city: d.city, age: d.age, employmentStatus: d.employment_status,
-        comunidad: (d as any).comunidad || undefined,
-        ciudad: (d as any).ciudad || undefined,
+        comunidad: d.comunidad || undefined,
+        ciudad: d.ciudad || undefined,
         monthlyIncome: Number(d.monthly_income), savings: Number(d.savings),
         monthlySavings: Number(d.monthly_savings), monthlyDebts: Number(d.monthly_debts),
         numBuyers: d.num_buyers, coBuyers: d.co_buyers as any || [],
