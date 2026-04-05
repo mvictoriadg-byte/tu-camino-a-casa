@@ -45,12 +45,16 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    if (window.location.hash.includes("access_token")) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) navigate("/portal");
-        else setCheckingCallback(false);
-      });
-    }
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          navigate('/portal');
+        }
+      }
+    );
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
