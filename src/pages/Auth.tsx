@@ -18,6 +18,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingCallback, setCheckingCallback] = useState(window.location.hash.includes("access_token"));
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -47,6 +48,7 @@ const Auth = () => {
     if (window.location.hash.includes("access_token")) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) navigate("/portal");
+        else setCheckingCallback(false);
       });
     }
   }, []);
@@ -80,6 +82,8 @@ const Auth = () => {
       if (error) throw error;
     } catch (err: any) { toast.error(err.message || "Error con Google"); setLoading(false); }
   };
+
+  if (checkingCallback) return <div className="min-h-screen bg-background" />;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
