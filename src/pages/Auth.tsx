@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
 import { Home, Mail, Lock, User, ArrowRight } from "lucide-react";
 import logoHouse from "@/assets/logo-house.png";
@@ -69,8 +68,8 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
-      if (result.error) throw result.error;
+      const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin + "/auth" } });
+      if (error) throw error;
     } catch (err: any) { toast.error(err.message || "Error con Google"); setLoading(false); }
   };
 
