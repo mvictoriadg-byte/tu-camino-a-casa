@@ -44,6 +44,14 @@ const Auth = () => {
   };
 
   useEffect(() => {
+    if (window.location.hash.includes("access_token")) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) navigate("/portal");
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     if (user) {
       savePendingPlan(user.id).then(() => navigate("/portal"));
     }
