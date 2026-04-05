@@ -16,6 +16,7 @@ import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type Eligibl
 import JourneyPath from "@/components/JourneyPath";
 import { useTrackerData } from "@/hooks/use-tracker-data";
 import logoHouse from "@/assets/logo-house.png";
+import doodleCelebrate from "@/assets/doodle-celebrate.png";
 import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2, AlertTriangle, Map, Compass } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -233,7 +234,7 @@ const Portal = () => {
 
       <div className="container max-w-6xl py-8 px-4 sm:px-6">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Hola, {profile?.display_name || "usuario"} 👋</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Hola, {profile?.display_name || "usuario"} <img src={doodleCelebrate} alt="" className="h-10 w-10 object-contain inline-block ml-2" /></h1>
           <p className="text-muted-foreground mt-1">Tu centro de control para comprar casa</p>
         </motion.div>
 
