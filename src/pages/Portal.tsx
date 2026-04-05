@@ -111,7 +111,7 @@ const Portal = () => {
     if (allAids.length > 0 && result && savedFormData?.city) {
       computeAids(savedFormData as UserProfile, result, allAids);
     }
-  }, [allAids]);
+  }, [allAids, result]);
 
   const addWishlistItem = async () => {
     if (!user || !newUrl.trim()) return;
