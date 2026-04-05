@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,10 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { Home, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import logoHouse from "@/assets/logo-house.png";
-import { useEffect } from "react";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -18,9 +16,25 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [checkingCallback, setCheckingCallback] = useState(window.location.hash.includes("access_token"));
+  const [checkingCallback, setCheckingCallback] = useState(
+    typeof window !== "undefined" && window.location.hash.includes("access_token")
+  );
   const navigate = useNavigate();
-  const { user } = useAuth();
+
+  // Handle OAuth callback: process token BEFORE rendering anything
+  useEffect(() => {
+    if (!window.location.hash.includes("access_token")) {
+      setCheckingCallback(false);
+      return;
+    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        savePendingPlan(session.user.id).then(() => navigate("/portal"));
+      } else {
+        setCheckingCallback(false);
+      }
+    });
+  }, []);
 
   const savePendingPlan = async (userId: string) => {
     try {
@@ -44,25 +58,6 @@ const Auth = () => {
     } catch {/* silent */}
   };
 
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          navigate('/portal');
-        }
-      }
-    );
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      savePendingPlan(user.id).then(() => navigate("/portal"));
-    }
-  }, [user, navigate]);
-
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -71,6 +66,7 @@ const Auth = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("¡Bienvenido de vuelta!");
+        navigate("/portal");
       } else {
         const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: window.location.origin } });
         if (error) throw error;
@@ -87,7 +83,14 @@ const Auth = () => {
     } catch (err: any) { toast.error(err.message || "Error con Google"); setLoading(false); }
   };
 
-  if (checkingCallback) return <div className="min-h-screen bg-background" />;
+  // Show spinner while processing OAuth callback
+  if (checkingCallback) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
