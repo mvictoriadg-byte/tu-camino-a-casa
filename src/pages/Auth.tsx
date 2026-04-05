@@ -21,19 +21,32 @@ const Auth = () => {
   );
   const navigate = useNavigate();
 
-  // Handle OAuth callback: process token BEFORE rendering anything
   useEffect(() => {
-    if (!window.location.hash.includes("access_token")) {
+    const hash = window.location.hash;
+    if (!hash.includes("access_token")) {
       setCheckingCallback(false);
       return;
     }
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        savePendingPlan(session.user.id).then(() => navigate("/portal"));
-      } else {
-        setCheckingCallback(false);
-      }
+
+    supabase.auth.exchangeCodeForSession(hash).catch(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          navigate("/portal");
+        } else {
+          setCheckingCallback(false);
+        }
+      });
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          navigate("/portal");
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const savePendingPlan = async (userId: string) => {
