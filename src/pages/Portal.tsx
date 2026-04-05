@@ -237,13 +237,41 @@ const Portal = () => {
           <p className="text-muted-foreground mt-1">Tu centro de control para comprar casa</p>
         </motion.div>
 
-        <Tabs defaultValue="roadmap" className="space-y-6">
+        <Tabs defaultValue="journey" className="space-y-6">
           <TabsList className="bg-muted rounded-full p-1 h-auto flex-wrap">
-            <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan</TabsTrigger>
             <TabsTrigger value="journey" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Compass className="h-4 w-4 mr-1.5" /> Camino a casa</TabsTrigger>
+            <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan</TabsTrigger>
             <TabsTrigger value="wishlist" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Heart className="h-4 w-4 mr-1.5" /> Wishlist</TabsTrigger>
             <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><User className="h-4 w-4 mr-1.5" /> Perfil</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="journey">
+            {result && user ? (
+              trackerData.loading ? (
+                <Card className="glow-card">
+                  <CardContent className="p-12 text-center">
+                    <RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" />
+                    <h3 className="text-xl font-bold mb-2">Cargando Camino a casa</h3>
+                    <p className="text-muted-foreground text-sm">Estamos preparando tus misiones y progreso.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <JourneyPath
+                  tracker={trackerData}
+                  userId={user.id}
+                />
+              )
+            ) : (
+              <Card className="glow-card">
+                <CardContent className="p-12 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4"><Compass className="h-8 w-8 text-primary" /></div>
+                  <h3 className="text-xl font-bold mb-2">Tu camino estará disponible cuando tengas un plan</h3>
+                  <p className="text-muted-foreground text-sm mb-6">Primero completa el simulador para generar tu plan personalizado.</p>
+                  <Button className="rounded-full font-bold" onClick={() => navigate("/")}><Home className="h-4 w-4 mr-2" /> Ir al calculador</Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
           <TabsContent value="roadmap">
             {result ? (
@@ -282,34 +310,6 @@ const Portal = () => {
                   <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4"><Home className="h-8 w-8 text-primary" /></div>
                   <h3 className="text-xl font-bold mb-2">Aún no tienes un plan</h3>
                   <p className="text-muted-foreground text-sm mb-6">Rellena el formulario para generar tu plan</p>
-                  <Button className="rounded-full font-bold" onClick={() => navigate("/")}><Home className="h-4 w-4 mr-2" /> Ir al calculador</Button>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="journey">
-            {result && user ? (
-              trackerData.loading ? (
-                <Card className="glow-card">
-                  <CardContent className="p-12 text-center">
-                    <RefreshCw className="h-8 w-8 text-primary animate-spin mx-auto mb-4" />
-                    <h3 className="text-xl font-bold mb-2">Cargando Camino a casa</h3>
-                    <p className="text-muted-foreground text-sm">Estamos preparando tus misiones y progreso.</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                <JourneyPath
-                  tracker={trackerData}
-                  userId={user.id}
-                />
-              )
-            ) : (
-              <Card className="glow-card">
-                <CardContent className="p-12 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4"><Compass className="h-8 w-8 text-primary" /></div>
-                  <h3 className="text-xl font-bold mb-2">Tu camino estará disponible cuando tengas un plan</h3>
-                  <p className="text-muted-foreground text-sm mb-6">Primero completa el simulador para generar tu plan personalizado.</p>
                   <Button className="rounded-full font-bold" onClick={() => navigate("/")}><Home className="h-4 w-4 mr-2" /> Ir al calculador</Button>
                 </CardContent>
               </Card>
