@@ -151,8 +151,15 @@ const Dashboard = ({ result, eligibleAids, aidsImpact, aidsEnabled, onToggleAids
                 <span className="text-xs uppercase tracking-wider font-bold text-muted-foreground">Lo que necesitas ahorrar</span>
                 <Target className="h-4 w-4 text-foreground" />
               </div>
-              <div className="stat-value text-foreground mb-3">{formatCurrency(displayTotalUpfront)}</div>
-              <p className="text-xs text-muted-foreground">Entrada (20%) + impuestos y gastos (~10%) del precio de la vivienda</p>
+              <div className="stat-value text-foreground mb-3">{formatCurrency(requiredDownPayment + taxesAndFees + reformCostEstimate)}</div>
+              <div className="space-y-1 border-t border-border pt-3 mb-3">
+                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Entrada ({100 - mortgagePercent}%)</span><span className="font-bold">{formatCurrency(requiredDownPayment)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Impuestos y gastos (~10%)</span><span className="font-bold">{formatCurrency(taxesAndFees)}</span></div>
+                {reformCostEstimate > 0 && (
+                  <div className="flex justify-between text-xs"><span className="text-muted-foreground">Reforma estimada</span><span className="font-bold text-warning">{formatCurrency(reformCostEstimate)}</span></div>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">Calculado con un {mortgagePercent}% de financiación bancaria. Puedes ajustarlo volviendo al formulario.</p>
             </CardContent>
           </Card>
         </motion.div>
