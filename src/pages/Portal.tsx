@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
 import SavingsProgressTracker from "@/components/SavingsProgressTracker";
-import ScenarioComparison from "@/components/ScenarioComparison";
 import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
@@ -181,23 +180,6 @@ const Portal = () => {
     setPendingProfile(null);
   };
 
-  // Compute scenario comparison data
-  const getScenarioData = () => {
-    if (!result || !savedFormData) return null;
-    const currentYears = result.yearsToSave;
-    const currentMonths = result.monthsToSave;
-    const aidsYears = aidsImpact ? aidsImpact.adjustedYearsToSave : null;
-    const aidsMonths = aidsImpact ? aidsImpact.adjustedMonthsToSave : null;
-
-    // +200€/month scenario
-    const extraMonthlySavings = result.totalMonthlySavings + 200;
-    const gap = Math.max(0, result.totalUpfront - result.totalSavings);
-    const extraMonths = extraMonthlySavings > 0 ? Math.ceil(gap / extraMonthlySavings) : 0;
-    const extraYears = Math.round((extraMonths / 12) * 10) / 10;
-
-    return { currentYears, currentMonths, aidsYears, aidsMonths, extraSavingsYears: extraYears, extraSavingsMonths: extraMonths };
-  };
-
   if (authLoading || loadingData) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
@@ -206,8 +188,6 @@ const Portal = () => {
       </div>
     </div>
   );
-
-  const scenarioData = getScenarioData();
 
   return (
     <div className="min-h-screen bg-background">
@@ -290,20 +270,6 @@ const Portal = () => {
                   />
                 )}
 
-                {/* 3. Scenario comparison */}
-                {scenarioData && (
-                  <ScenarioComparison
-                    currentYears={scenarioData.currentYears}
-                    currentMonths={scenarioData.currentMonths}
-                    aidsYears={scenarioData.aidsYears}
-                    aidsMonths={scenarioData.aidsMonths}
-                    extraSavingsYears={scenarioData.extraSavingsYears}
-                    extraSavingsMonths={scenarioData.extraSavingsMonths}
-                    totalUpfront={result.totalUpfront}
-                    totalSavings={result.totalSavings}
-                    monthlySavings={result.totalMonthlySavings}
-                  />
-                )}
               </div>
             ) : (
               <Card className="glow-card">
