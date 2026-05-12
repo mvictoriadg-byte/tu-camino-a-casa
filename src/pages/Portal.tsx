@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Dashboard from "@/components/Dashboard";
-import SavingsProgressTracker from "@/components/SavingsProgressTracker";
+import SavingsJournal from "@/components/SavingsJournal";
 import InputForm from "@/components/InputForm";
 import { calculateAffordability, type AffordabilityResult, type UserProfile, formatCurrency, cityData } from "@/lib/housing-data";
 import { fetchHousingAids, filterEligibleAids, calculateAidsImpact, type EligibleAid, type AidsImpactSummary, type HousingAid } from "@/lib/housing-aids";
@@ -16,7 +16,7 @@ import JourneyPath from "@/components/JourneyPath";
 import { useTrackerData } from "@/hooks/use-tracker-data";
 import logoHouse from "@/assets/logo-house.png";
 import doodleCelebrate from "@/assets/doodle-celebrate.png";
-import { Home, LogOut, User, TrendingUp, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2, AlertTriangle, Map, Compass } from "lucide-react";
+import { Home, LogOut, User, TrendingUp, TrendingDown, Heart, Plus, Trash2, ExternalLink, ArrowLeft, RefreshCw, Building2, AlertTriangle, Map, Compass } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -222,6 +222,7 @@ const Portal = () => {
           <TabsList className="bg-muted rounded-full p-1 h-auto flex-wrap">
             <TabsTrigger value="journey" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Compass className="h-4 w-4 mr-1.5" /> Camino a casa</TabsTrigger>
             <TabsTrigger value="roadmap" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingUp className="h-4 w-4 mr-1.5" /> Mi Plan</TabsTrigger>
+            <TabsTrigger value="progreso" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><TrendingDown className="h-4 w-4 mr-1.5" /> Mi Progreso</TabsTrigger>
             <TabsTrigger value="wishlist" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><Heart className="h-4 w-4 mr-1.5" /> Wishlist</TabsTrigger>
             <TabsTrigger value="profile" className="rounded-full px-5 py-2 font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm"><User className="h-4 w-4 mr-1.5" /> Perfil</TabsTrigger>
           </TabsList>
@@ -259,17 +260,6 @@ const Portal = () => {
               <div className="space-y-6">
                 {/* 1. Dashboard: hero + plan summary + estimated time + costs + housing aids + banks */}
                 <Dashboard result={result} eligibleAids={eligibleAids} aidsImpact={aidsImpact} aidsEnabled={aidsEnabled} onToggleAids={setAidsEnabled} />
-
-                {/* 2. Savings progress tracker */}
-                {user && (
-                  <SavingsProgressTracker
-                    userId={user.id}
-                    totalUpfront={aidsEnabled && aidsImpact ? aidsImpact.adjustedTotalUpfront : result.totalUpfront}
-                    monthlySavingsTarget={result.totalMonthlySavings}
-                    currentSavings={result.totalSavings}
-                  />
-                )}
-
               </div>
             ) : (
               <Card className="glow-card">
@@ -278,6 +268,25 @@ const Portal = () => {
                   <h3 className="text-xl font-bold mb-2">Aún no tienes un plan</h3>
                   <p className="text-muted-foreground text-sm mb-6">Rellena el formulario para generar tu plan</p>
                   <Button className="rounded-full font-bold" onClick={() => navigate("/")}><Home className="h-4 w-4 mr-2" /> Ir al calculador</Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="progreso">
+            {result && user ? (
+              <SavingsJournal
+                userId={user.id}
+                totalUpfront={aidsEnabled && aidsImpact ? aidsImpact.adjustedTotalUpfront : result.totalUpfront}
+                monthlySavingsTarget={result.totalMonthlySavings}
+                currentSavings={result.totalSavings}
+                yearsToSave={result.yearsToSave}
+                monthsToSave={result.monthsToSave}
+              />
+            ) : (
+              <Card className="glow-card">
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground text-sm">Necesitas un plan activo para ver tu progreso.</p>
                 </CardContent>
               </Card>
             )}
